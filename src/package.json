@@ -13,6 +13,7 @@
     "electron-winstaller": "^4.0.0"
   },
   "dependencies": {
+    "electron-squirrel-startup": "^1.0.0",
     "file-system": "^2.2.2",
     "path": "^0.12.7",
     "xml-js": "^1.6.11"
