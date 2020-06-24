@@ -2,12 +2,21 @@ const fs = require('fs');
 const path = require('path');
 const { dialog } = require('electron');
 
+function getPath() {
+    let app = require('electron').app
+    let path = app.getAppPath()
+    while(path.includes("\\")) {
+        path = path.replace("\\", "/");
+    }
+    return path
+}
+
 let syntaxes = {
-    events: JSON.parse(fs.readFileSync('resources\\app\\transpiler\\syntaxes\\events.json')),
-    effects: JSON.parse(fs.readFileSync('resources\\app\\transpiler\\syntaxes\\effects.json')),
-    expressions: JSON.parse(fs.readFileSync('resources\\app\\transpiler\\syntaxes\\expressions.json')),
-    conditions: JSON.parse(fs.readFileSync('resources\\app\\transpiler\\syntaxes\\conditions.json')),
-    types: JSON.parse(fs.readFileSync('resources\\app\\transpiler\\syntaxes\\types.json'))
+    events: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/events.json")),
+    effects: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/effects.json")),
+    expressions: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/expressions.json")),
+    conditions: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/conditions.json")),
+    types: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/types.json"))
 }
 
 function generateArgument(properties, required_type) {
@@ -60,7 +69,6 @@ function generateArgument(properties, required_type) {
     return java_argument;
 }
 
-
 function generateBranch(nodes) {
 
     let imports = [];
@@ -87,7 +95,7 @@ function generateBranch(nodes) {
             let child_nodes = generateBranch(nodes[node]["child_nodes"])
             imports = imports.concat(child_nodes[1])
 
-            java_nodes += "\r" + fs.readFileSync('resources\\app\\transpiler\\patterns\\' + category + '.txt', 'utf8').replace("%instruction%", java_instruction).replace("%ID%", node).replace("%child_nodes%", child_nodes[0]);
+            java_nodes += "\r" + fs.readFileSync(getPath() + '/transpiler/patterns/' + category + '.txt', 'utf8').replace("%instruction%", java_instruction).replace("%ID%", node).replace("%child_nodes%", child_nodes[0]);
         } else {
             java_nodes += "\r" + java_instruction
         }
@@ -106,7 +114,7 @@ module.exports = {
 
     generateJavaClass: function generateJavaClass(AST) {
 
-        let file = fs.readFileSync('resources\\app\\transpiler\\patterns\\Event.java', 'utf8');
+        let file = fs.readFileSync(getPath() + '/transpiler/patterns/Event.java', 'utf8');
         let java = generateBranch(AST);
         file = file.replace("%child_nodes%", java[0])
 
@@ -119,24 +127,27 @@ module.exports = {
             }
         })
 
-        fs.writeFile('temp\\fr\\blosky\\Event.java', file, function(err) {
+        fs.mkdirSync(getPath() + "/temp")
+        fs.mkdirSync(getPath()+ "/temp/fr")
+        fs.mkdirSync(getPath() + "/temp/fr/blosky")
+        fs.writeFile(getPath() + '/temp/fr/blosky/Event.java', file, function(err) {
+            if (err) throw err;
+        });
+    },
+    
+    generateMainClass: function generateMainClass() {
+        fs.writeFile(getPath() + '/temp/fr/blosky/Main.java', fs.readFileSync(getPath() + '/transpiler/patterns/Main.java', 'utf8'), function(err) {
             if (err) throw err;
         });
     },
 
     generatePluginYML: function generatePluginYML(settings) {
-        let file = fs.readFileSync('resources\\app\\transpiler\\patterns\\plugin.yml', 'utf8');
+        let file = fs.readFileSync(getPath() + '/transpiler/patterns/plugin.yml', 'utf8');
         file = file.replace("%name%", settings["name"]);
         file = file.replace("%description%", settings["description"]);
         file = file.replace("%version%", settings["version"]);
         file = file.replace("%author%", settings["author"]);
-        fs.writeFile('temp\\plugin.yml', file, function(err) {
-            if (err) throw err;
-        });
-    },
-
-    generateMainClass: function generateMainClass() {
-        fs.writeFile('temp\\fr\\blosky\\Main.java', fs.readFileSync('resources\\app\\transpiler\\patterns\\Main.java', 'utf8'), function(err) {
+        fs.writeFile(getPath() + '/temp/plugin.yml', file, function(err) {
             if (err) throw err;
         });
     },
@@ -144,8 +155,8 @@ module.exports = {
     compile: function compile(filename) {
 
         const child_process = require("child_process");
-        
-        child_process.execSync("javac -classpath resources/app/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 temp/fr/blosky/*.java", (error, stdout, stderr) => {
+
+        child_process.execSync("javac -classpath " + getPath() + "/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + getPath() + "/temp/fr/blosky/*.java", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;
@@ -158,10 +169,10 @@ module.exports = {
             console.log(`stdout: ${stdout}`);
         });
 
-        fs.unlinkSync("temp/fr/blosky/Main.java")
-        fs.unlinkSync("temp/fr/blosky/Event.java");
+        fs.unlinkSync(getPath() + "/temp/fr/blosky/Main.java")
+        fs.unlinkSync(getPath() + "/temp/fr/blosky/Event.java");
 
-        child_process.execSync('jar cvf "' + filename + '.jar" -C temp .', (error, stdout, stderr) => {
+        child_process.execSync('jar cvf "' + filename + '.jar" -C ' + getPath() + '/temp .', (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
                 return;
@@ -173,8 +184,10 @@ module.exports = {
             console.log(`stdout: ${stdout}`);
         });
 
-        fs.unlinkSync("temp/fr/blosky/Main.class")
-        fs.unlinkSync("temp/fr/blosky/Event.class");
-        fs.unlinkSync("temp/plugin.yml");
+        fs.rmdir(getPath() + "/temp", { recursive: true }, (err) => {
+            if (err) {
+                throw err;
+            }
+        });
     }
 };

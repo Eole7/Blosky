@@ -106,7 +106,6 @@ function blockToArgument(block) {
     })
 
     return args;
-
 }
 
 function Arg(category, ID, content, subargs) {
