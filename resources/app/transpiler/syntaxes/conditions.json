@@ -1,0 +1,76 @@
+{
+  "1": {
+    "syntax": "§{string-1} equals §{string-2}",
+    "java_syntax": "(§{string-1}).equals(§{string-2})",
+    "arguments": {
+      "§{string-1}": {
+        "required_type": "String"
+      },
+      "§{string-2}": {
+        "required_type": "String"
+      }
+    }
+  },
+  "2": {
+    "syntax": "§{object-1} = §{object-2}",
+    "negated_syntax": "§{object-1} ≠ §{object-2}",
+    "negated_java_syntax": "§{object-1} != §{object-2}",
+    "java_syntax": "§{object-1} == §{object-2}",
+    "arguments": {
+      "§{object-1}": {
+        "required_type": "float"
+      },
+      "§{object-2}": {
+        "required_type": "float"
+      }
+    }
+  },
+  "3": {
+    "syntax": "§{object-1} > §{object-2}",
+    "java_syntax": "§{object-1} > §{object-2}",
+    "arguments": {
+      "§{object-1}": {
+        "required_type": "float"
+      },
+      "§{object-2}": {
+        "required_type": "float"
+      }
+    }
+  },
+  "4": {
+    "syntax": "§{object-1} < §{object-2}",
+    "java_syntax": "§{object-1} < §{object-2}",
+    "arguments": {
+      "§{object-1}": {
+        "required_type": "float"
+      },
+      "§{object-2}": {
+        "required_type": "float"
+      }
+    }
+  },
+  "5": {
+    "syntax": "§{object-1} >= §{object-2}",
+    "java_syntax": "§{object-1} >= §{object-2}",
+    "arguments": {
+      "§{object-1} ": {
+        "required_type": "float"
+      },
+      "§{object-2}": {
+        "required_type": "float"
+      }
+    }
+  },
+  "6": {
+    "syntax": "§{object-1} <= §{object-2}",
+    "java_syntax": "§{object-1} <= §{object-2}",
+    "arguments": {
+      "§{object-1}": {
+        "required_type": "float"
+      },
+      "§{object-2}": {
+        "required_type": "float"
+      }
+    }
+  }
+}

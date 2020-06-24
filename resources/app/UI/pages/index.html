@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Blosky</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="../../main.js"></script>
+</head>
+<style>
+    body {
+        background-color: #202125;
+    }
+
+    h1 {
+        user-select: none;
+        font-family: "Lato", sans-serif;
+        color: lightblue;
+        text-align: center;
+        font-size: 50px;
+        margin-top: 90px;
+    }
+
+    button {
+        cursor: pointer;
+        border: 1px solid black;
+        font-size: 20px;
+        font-family: "Lato", sans-serif;
+        background-color: #14a698;
+        border-radius: 4px;
+        width: 100%;
+        height: 31px;
+    }
+
+    img {
+        margin-left: auto;
+        margin-right: auto;
+        width: 10em;
+        margin-bottom: 50px;
+    }
+
+    #create_menu,
+    #open_menu {
+        display: flex;
+        flex-direction: column;
+        border-radius: 10px;
+        padding: 25px;
+        background-color: #383838;
+        width: 13em;
+    }
+
+    #open_menu {
+        margin-right: 50px;
+    }
+
+    #projects {
+        display: flex;
+        flex-direction: row;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+
+<body>
+    <h1>Blosky</h1>
+    <div id=projects>
+        <div id=open_menu>
+            <img src="../pictures/open_project.png">
+            <button onclick="openProject()">Open project</button>
+        </div>
+        <div id=create_menu>
+            <img src="../pictures/create_project.png">
+            <a href="settings.html">
+                <button>Create new project</button>
+            </a>
+        </div>
+    </div>
+</body>
+<script>
+    sessionStorage.clear()
+</script>
+
+</html>

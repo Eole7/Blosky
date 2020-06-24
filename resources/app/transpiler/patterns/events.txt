@@ -1,0 +1,6 @@
+@EventHandler
+public void Event%ID%(%instruction% e) {
+
+    %child_nodes%
+
+}

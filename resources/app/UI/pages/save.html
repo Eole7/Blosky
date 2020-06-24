@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Blosky</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="../../main.js"></script>
+    <script type="text/javascript" src="../../bridge.js"></script>
+</head>
+<style>
+    body {
+        font-family: "Lato", sans-serif;
+        background-color: #383838;
+    }
+
+    .sidenav {
+        height: 100%;
+        width: auto;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #202125;
+        overflow-x: hidden;
+        padding-top: 20px;
+    }
+
+    .sidenav a {
+        user-select: none;
+        padding: 6px 32px 6px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #f1f1f1;
+        display: block;
+    }
+
+    .sidenav a.active {
+        background-color: #383838 !important;
+    }
+
+    .sidenav a:hover {
+        color: darkgray;
+    }
+
+    #main {
+        margin-top: 100px;
+        margin-left: 50%;
+        user-select: none;
+    }
+
+    button,
+    #autosavediv {
+        background-color: lightblue;
+        border-color: #202125;
+        border-width: 1px;
+        font-size: 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        display: block;
+        width: 250px;
+        margin-top: 5px;
+        height: 30px;
+        text-align: center
+    }
+
+    #autosave {
+        cursor: pointer;
+    }
+
+    #export_button {
+        background-color: #e9eb83;
+        margin-top: 30px;
+    }
+</style>
+
+<body>
+    <div class="sidenav">
+        <a href="index.html">Switch project</a>
+        <a href="settings.html">Settings</a>
+        <a href="code.html">Code</a>
+        <a class="active">Save & Export</a>
+    </div>
+    <div id="main">
+        <button onclick="saveProject(JSON.stringify(getProjectSettings()) + '\r' + sessionStorage.getItem('code'), sessionStorage.getItem('path'))">Save</button>
+        <button onclick="saveProjectAs(JSON.stringify(getProjectSettings()) + '\r' + sessionStorage.getItem('code'))">Save as</button>
+        <!--
+            <div id="autosavediv">
+                <label for="autosave">Auto save</label>
+                <input type="checkbox" id="autosave">
+                
+            </div>
+        -->
+        <button id="export_button" onclick="exportProject(sessionStorage.getItem('pretty_code'), getProjectSettings())">Export to Spigot Plugin</button>
+    </div>
+</body>
+<script>
+    function getProjectSettings() {
+        return {
+            name: sessionStorage.getItem("name"),
+            author: sessionStorage.getItem("author"),
+            version: sessionStorage.getItem("version"),
+            description: sessionStorage.getItem("description")
+        }
+    }
+</script>
+
+</html>

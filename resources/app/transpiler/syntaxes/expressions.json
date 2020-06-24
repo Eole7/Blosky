@@ -1,0 +1,45 @@
+{
+  "1": {
+    "syntax": "§{player}'s health",
+    "java_syntax": "§{player}.getHealth()",
+    "type": "double",
+    "arguments": {
+      "§{player}": {
+        "required_type": "Player",
+        "nullable": "false"
+      }
+    }
+  },
+  "2": {
+    "syntax": "§{player}'s name",
+    "java_syntax": "§{player}.getName()",
+    "type": "String",
+    "arguments": {
+      "§{player}": {
+        "required_type": "Player",
+        "nullable": "false"
+      }
+    }
+  },
+  "3": {
+    "syntax": "all online players",
+    "java_syntax": "Bukkit.getOnlinePlayers()",
+    "type": "Collection"
+  },
+  "4": {
+    "syntax": "event player",
+    "java_syntax": "e.getPlayer()",
+    "type": "Player",
+    "availabilty": {
+      "1": {
+        "type": "true",
+        "in": "event"
+      },
+      "2": {
+        "type": "false",
+        "in": "events",
+        "IDs": "events"
+      }
+    }
+  }
+}

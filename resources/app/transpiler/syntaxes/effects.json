@@ -1,0 +1,24 @@
+{
+  "1": {
+    "syntax": "broadcast §{text}",
+    "java_syntax": "Bukkit.broadcastMessage(§{text});",
+    "import" : "org.bukkit.event.player.PlayerMoveEvent",
+    "arguments": {
+      "§{text}": {
+        "required_type": "String"
+      }
+    }
+  },
+  "2": {
+    "syntax": "send §{text} to §{player}",
+    "java_syntax": "§{player}.sendMessage(§{text});",
+    "arguments": {
+      "§{player}": {
+        "required_type": "Player"
+      },
+      "§{text}": {
+        "required_type": "String"
+      }
+    }
+  }
+}

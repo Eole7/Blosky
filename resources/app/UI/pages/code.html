@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="fr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Blosky</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="../../main.js"></script>
+    <script src="../blockly/blockly_compressed.js"></script>
+    <script src="../blockly/blocks_compressed.js"></script>
+    <script src="../blockly/msg/js/en.js"></script>
+    <script src="../blockly/blocks/test.js"></script>
+</head>
+
+<style>
+    body {
+        font-family: "Lato", sans-serif;
+        background-color: #383838;
+    }
+
+    .sidenav {
+        height: 100%;
+        width: auto;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #202125;
+        overflow-x: hidden;
+        padding-top: 20px;
+    }
+
+    .sidenav a {
+        user-select: none;
+        padding: 6px 32px 6px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #f1f1f1;
+        display: block;
+    }
+
+    .sidenav a.active {
+        background-color: #383838 !important;
+    }
+
+    .sidenav a:hover {
+        color: darkgray;
+    }
+
+    #blocklyArea {
+        width: auto;
+        height: 1000px;
+        margin-left: 225px;
+    }
+</style>
+
+<body>
+    <div class="sidenav">
+        <a href="index.html">Switch project</a>
+        <a href="settings.html">Settings</a>
+        <a class="active">Code</a>
+        <a href="Save.html">Save & Export</a>
+    </div>
+
+    <div id=container>
+        <div id="blocklyDiv" style="position: absolute"></div>
+        <div id="blocklyArea"></div>
+    </div>
+
+    <script>
+        let colors = {
+            "events": "230",
+            "effects": "#1E90FF",
+            "expressions": "120",
+            "conditions": "#ffa500",
+        }
+
+        let toolbox = '<xml>'
+        var syntaxes = getAllSyntaxes()
+
+        Object.keys(syntaxes).forEach(function(categorie) {
+            toolbox += '<category name="' + categorie + '" colour="' + colors[categorie] + '">'
+
+            if (categorie == "expressions") {
+                toolbox += '<block type="text"></block>'
+            }
+
+            Object.keys(syntaxes[categorie]).forEach(function(syntax_key) {
+                Blockly.Blocks[categorie + "_" + syntax_key] = {
+                    init: function() {
+
+                        let block = this;
+                        let syntax = syntaxes[categorie][syntax_key]["syntax"];
+                        let next_argument_ID = 1;
+                        let args = []
+
+                        if (syntaxes[categorie][syntax_key]["arguments"] != undefined) {
+                            Object.keys(syntaxes[categorie][syntax_key]["arguments"]).forEach(function(argument) {
+
+                                syntax = syntax.replace(argument, "%" + next_argument_ID);
+                                next_argument_ID++
+                                args.push({
+                                    "type": "input_value",
+                                    "name": argument,
+                                })
+                            });
+                        }
+
+                        if (categorie == "conditions") {
+                            this.jsonInit({
+                                "type": "text",
+                                "message0": "if " + syntax,
+                                "args0": args,
+                                "message1": "do %1",
+                                "args1": [{
+                                    "type": "input_statement",
+                                    "name": "do"
+                                }],
+
+                            });
+
+                            this.setPreviousStatement(true)
+                            this.setNextStatement(true)
+
+                        } else {
+
+                            this.jsonInit({
+                                "type": "text",
+                                "message0": syntax,
+                                "args0": args,
+                            });
+
+                            if (categorie == "events") {
+                                this.setNextStatement(true)
+                            } else if (categorie == "effects") {
+                                this.setPreviousStatement(true)
+                                this.setNextStatement(true)
+                            } else if (categorie == "expressions") {
+                                this.setOutput("String")
+
+                            }
+
+                        }
+
+                        this.setInputsInline(true);
+                        this.setColour(colors[categorie])
+                    }
+                }
+                toolbox += '<block type="' + categorie + "_" + syntax_key + '"></block>'
+            })
+            toolbox += '</category>'
+        })
+        toolbox += '</xml>'
+
+        let dark_theme = Blockly.Theme.defineTheme('dark', {
+            'base': Blockly.Themes.Classic,
+            'componentStyles': {
+                'workspaceBackgroundColour': '#202125',
+                'toolboxBackgroundColour': '#383838',
+                'toolboxForegroundColour': '#fff',
+                'flyoutBackgroundColour': '#252526',
+                'flyoutForegroundColour': '#ccc',
+                'flyoutOpacity': 1,
+                'scrollbarColour': '#797979',
+                'insertionMarkerColour': '#fff',
+                'insertionMarkerOpacity': 0.3,
+                'scrollbarOpacity': 0.4,
+                'cursorColour': '#d0d0d0'
+            }
+        });
+
+        let blocklyArea = document.getElementById('blocklyArea');
+        let blocklyDiv = document.getElementById('blocklyDiv');
+        let workspace = Blockly.inject(blocklyDiv, {
+            toolbox: toolbox
+        });
+
+        workspace.setTheme(dark_theme);
+
+        let onresize = function(e) {
+            let element = blocklyArea;
+            let x = 0;
+            let y = 0;
+            do {
+                x += element.offsetLeft;
+                y += element.offsetTop;
+                element = element.offsetParent;
+            } while (element);
+            blocklyDiv.style.left = x + 'px';
+            blocklyDiv.style.top = y + 'px';
+            blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
+            blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
+            Blockly.svgResize(workspace);
+        };
+        window.addEventListener('resize', onresize, false);
+        onresize();
+        Blockly.svgResize(workspace);
+
+        window.onload = function() {
+            let xml = Blockly.Xml.textToDom(sessionStorage.getItem("code"));
+            Blockly.Xml.domToWorkspace(xml, workspace);
+        };
+
+        window.onunload = function() {
+            let xml = Blockly.Xml.workspaceToDom(workspace);
+            sessionStorage.setItem("code", Blockly.Xml.domToText(xml));
+            sessionStorage.setItem("pretty_code", Blockly.Xml.domToPrettyText(xml));
+        }
+    </script>
+</body>
+
+</html>

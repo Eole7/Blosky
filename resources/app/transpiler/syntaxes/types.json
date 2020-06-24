@@ -1,0 +1,39 @@
+{
+    "String": {
+        "java_type": "String",
+        "syntax": "\"%argument%\"",
+        "conversion": {
+          "int": "String.valueOf(%argument%)",
+          "double": "String.valueOf(%argument%)",
+          "float": "String.valueOf(%argument%)",
+          "Collection": "%argument%.toString()"
+        }
+    },
+    "int": {
+        "java_type": "int",
+        "conversion": {
+            "String": "Integer.parseInt(%argument%)"
+        }
+    },
+    "float": {
+        "java_type": "float",
+        "conversion": {
+          "String" : "Float.parseFloat(%argument%)"
+        }
+    },
+    "Player": {
+        "java_type": "Player",
+        "conversion": {
+            "String": "Bukkit.getPlayer(%argument%)"
+        }
+    },
+    "double": {
+        "java_type": "double",
+        "conversion": {
+          "String" : "Double.parseDouble(%argument%)"
+        }
+    },
+    "Collection": {
+        "java_type": "Collection"
+    }
+}
