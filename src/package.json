@@ -8,12 +8,10 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "electron": "^8.3.3",
-    "electron-packager": "^14.2.1",
-    "electron-winstaller": "^4.0.0"
+    "electron": "^8.3.4",
+    "electron-packager": "^14.2.1"
   },
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.0",
     "file-system": "^2.2.2",
     "path": "^0.12.7",
     "xml-js": "^1.6.11"
