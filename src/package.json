@@ -2,7 +2,7 @@
   "name": "Blosky",
   "version": "0.0.0",
   "author": "Eole_",
-  "description": "Create Spigot plugins with a visual programming language",
+  "description": "Create Minecraft Java plugins with a visual programming language",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
