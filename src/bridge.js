@@ -1,9 +1,7 @@
 function exportProject(code, settings) {
 
-    let AST = blocklyToAST(code)
-
     const transpiler = require('electron').remote.require('./transpiler/transpiler.js');
-    transpiler.generateJavaClass(AST["nodes"])
+    transpiler.generateJavaClass(blocklyToAST(code)["nodes"])
     transpiler.generateMainClass()
     transpiler.generatePluginYML(settings)
 
@@ -21,11 +19,7 @@ function exportProject(code, settings) {
 }
 
 function blocklyToAST(code) {
-    var convert = require('xml-js');
-
-    let project = JSON.parse(convert.xml2json(code, {
-        compact: true
-    }))["xml"]
+    let project = JSON.parse(require('xml-js').xml2json(code, {compact: true}))["xml"]
     project = blockToNode(project["block"], ["nodes"], 1, {})
     return project
 }
@@ -67,6 +61,7 @@ function Node(category, ID, args, child_nodes) {
     this.ID = ID;
     this.arguments = args;
     this.child_nodes = child_nodes
+
     return this
 }
 
@@ -75,9 +70,10 @@ function blockToArgument(block) {
     let args = {};
     let unconverted_args = [];
 
+    //If the block contains 1 argument
     if (Object.keys(block)[0] != "0") {
         unconverted_args.push(block)
-    } else {
+    } else { //If the block contains several arguments
         unconverted_args = block;
     }
 
@@ -117,5 +113,6 @@ function Arg(category, ID, content, subargs) {
         this.ID = ID;
     }
     this.arguments = subargs
+
     return this
 }

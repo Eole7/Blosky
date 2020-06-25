@@ -36,20 +36,17 @@ app.on('activate', () => {
 })
 
 function getAllSyntaxes() {
-    function getPath() {
-        let app = require('electron').remote.app
-        let path = app.getAppPath()
-        while(path.includes("\\")) {
-            path = path.replace("\\", "/");
-        }
-        return path
+    let app = require('electron').remote.app
+    let path = app.getAppPath()
+    while(path.includes("\\")) {
+        path = path.replace("\\", "/");
     }
     
     return {
-        events: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/events.json")),
-        effects: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/effects.json")),
-        expressions: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/expressions.json")),
-        conditions: JSON.parse(fs.readFileSync(getPath() + "/transpiler/syntaxes/conditions.json")),
+        events: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/events.json")),
+        effects: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/effects.json")),
+        expressions: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/expressions.json")),
+        conditions: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/conditions.json")),
     } 
 }
 
