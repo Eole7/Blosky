@@ -29,17 +29,6 @@
   "4": {
     "syntax": "event player",
     "java_syntax": "e.getPlayer()",
-    "type": "Player",
-    "availabilty": {
-      "1": {
-        "type": "true",
-        "in": "event"
-      },
-      "2": {
-        "type": "false",
-        "in": "events",
-        "IDs": "events"
-      }
-    }
+    "type": "Player"
   }
 }

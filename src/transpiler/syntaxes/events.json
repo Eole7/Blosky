@@ -2,39 +2,11 @@
   "1": {
     "syntax": "On move",
     "java_syntax": "PlayerMoveEvent",
-    "import": "org.bukkit.event.player.PlayerMoveEvent",
-    "expressions": {
-      "1": {
-        "java_syntax": "e.getPlayer()",
-        "syntax": "event player",
-        "java_type": "player"
-      },
-      "2": {
-        "syntax": "cancel event",
-        "java_syntax": "e.setCancelled(true);"
-      },
-      "3": {
-        "syntax": "uncancel event",
-        "java_syntax": "e.setCancelled(false);"
-      }
-    }
+    "import": "org.bukkit.event.player.PlayerMoveEvent"
   },
   "2": {
     "syntax": "On command",
     "java_syntax": "PlayerCommandPreprocessEvent",
-    "import": "org.bukkit.event.player.PlayerCommandPreprocessEvent",
-    "1": {
-      "java_syntax": "e.getPlayer()",
-      "syntax": "event player",
-      "java_type": "Player"
-    },
-    "2": {
-      "syntax": "cancel event",
-      "java_syntax": "e.setCancelled(true);"
-    },
-    "3": {
-      "syntax": "uncancel event",
-      "java_syntax": "e.setCancelled(false);"
-    }
+    "import": "org.bukkit.event.player.PlayerCommandPreprocessEvent"
   }
 }
