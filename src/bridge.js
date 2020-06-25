@@ -20,11 +20,22 @@ function exportProject(code, settings) {
 
 function blocklyToAST(code) {
     let project = JSON.parse(require('xml-js').xml2json(code, {compact: true}))["xml"]
-    project = blockToNode(project["block"], ["nodes"], 1, {})
-    return project
+    let AST = {};
+
+    //If the project contains multiple events
+    if (Object.keys(project["block"])[0] == "0") {
+        Object.keys(project["block"]).forEach(value => {
+            AST = blockToNode(project["block"][value], ["nodes"], parseInt(value)+1, AST)
+        })
+    } else { //If the project contains 1 event
+        AST = blockToNode(project["block"], ["nodes"], 1, AST)
+    }
+
+    return AST
 }
 
 function blockToNode(block, path, key, converted) {
+
     let type = block["_attributes"]["type"].split("_")
     let category = type[0]
     let ID = type[1]
