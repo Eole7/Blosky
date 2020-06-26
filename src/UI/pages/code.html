@@ -116,7 +116,6 @@
                                     "type": "input_statement",
                                     "name": "do"
                                 }],
-
                             });
 
                             this.setPreviousStatement(true)
@@ -152,30 +151,27 @@
         })
         toolbox += '</xml>'
 
-        let dark_theme = Blockly.Theme.defineTheme('dark', {
-            'base': Blockly.Themes.Classic,
-            'componentStyles': {
-                'workspaceBackgroundColour': '#202125',
-                'toolboxBackgroundColour': '#383838',
-                'toolboxForegroundColour': '#fff',
-                'flyoutBackgroundColour': '#252526',
-                'flyoutForegroundColour': '#ccc',
-                'flyoutOpacity': 1,
-                'scrollbarColour': '#797979',
-                'insertionMarkerColour': '#fff',
-                'insertionMarkerOpacity': 0.3,
-                'scrollbarOpacity': 0.4,
-                'cursorColour': '#d0d0d0'
-            }
-        });
-
         let blocklyArea = document.getElementById('blocklyArea');
         let blocklyDiv = document.getElementById('blocklyDiv');
         let workspace = Blockly.inject(blocklyDiv, {
-            toolbox: toolbox
+            toolbox: toolbox, theme: {
+                'base': Blockly.Themes.Classic,
+                'startHats': true,
+                'componentStyles': {
+                    'workspaceBackgroundColour': '#202125',
+                    'toolboxBackgroundColour': '#383838',
+                    'toolboxForegroundColour': '#fff',
+                    'flyoutBackgroundColour': '#252526',
+                    'flyoutForegroundColour': '#ccc',
+                    'flyoutOpacity': 1,
+                    'scrollbarColour': '#797979',
+                    'insertionMarkerColour': '#fff',
+                    'insertionMarkerOpacity': 0.3,
+                    'scrollbarOpacity': 0.4,
+                    'cursorColour': '#d0d0d0'
+                }
+            }
         });
-
-        workspace.setTheme(dark_theme);
 
         let onresize = function(e) {
             let element = blocklyArea;
