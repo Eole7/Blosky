@@ -154,7 +154,8 @@
         let blocklyArea = document.getElementById('blocklyArea');
         let blocklyDiv = document.getElementById('blocklyDiv');
         let workspace = Blockly.inject(blocklyDiv, {
-            toolbox: toolbox, theme: {
+            toolbox: toolbox,
+            theme: {
                 'base': Blockly.Themes.Classic,
                 'startHats': true,
                 'componentStyles': {
@@ -170,6 +171,11 @@
                     'scrollbarOpacity': 0.4,
                     'cursorColour': '#d0d0d0'
                 }
+            },
+            move: {
+                scrollbars: true,
+                drag: true,
+                wheel: true
             }
         });
 
