@@ -1,5 +1,5 @@
 # Blosky
-![alt text](https://i.imgur.com/8kaAXzs.jpg)
+![alt text](https://i.goopics.net/LnGLj.jpg)
 
 ## Read before use
 - You need to install the JDK (Java Development Kit) in order to compile your plugins: https://www.oracle.com/java/technologies/javase-jdk14-downloads.html  
