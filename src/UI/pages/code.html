@@ -154,8 +154,8 @@
         let blocklyArea = document.getElementById('blocklyArea');
         let blocklyDiv = document.getElementById('blocklyDiv');
         let workspace = Blockly.inject(blocklyDiv, {
-            toolbox: toolbox,
-            theme: {
+            "toolbox": toolbox,
+            "theme": {
                 'base': Blockly.Themes.Classic,
                 'startHats': true,
                 'componentStyles': {
@@ -172,11 +172,20 @@
                     'cursorColour': '#d0d0d0'
                 }
             },
-            move: {
-                scrollbars: true,
-                drag: true,
-                wheel: true
-            }
+            "move": {
+                "scrollbars": true,
+                "drag": true,
+                "wheel": true
+            },
+            "zoom": {
+                "controls": true,
+                "wheel": false,
+                "startScale": 1.05,
+                "maxScale": 3,
+                "minScale": 0.2,
+                "scaleSpeed": 1.2
+            },
+            "trashcan": true
         });
 
         let onresize = function(e) {
@@ -208,6 +217,7 @@
             sessionStorage.setItem("code", Blockly.Xml.domToText(xml));
             sessionStorage.setItem("pretty_code", Blockly.Xml.domToPrettyText(xml));
         }
+
     </script>
 </body>
 
