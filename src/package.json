@@ -1,6 +1,5 @@
 {
   "name": "Blosky",
-  "version": "0.0.0",
   "author": "Eole_",
   "description": "Create Minecraft Java plugins with a visual programming language",
   "main": "main.js",
