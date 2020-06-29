@@ -8,7 +8,7 @@ const {
 
 function createWindow() {
     const win = new BrowserWindow({
-        icon: "UI/pictures/icon.png",
+        icon: "UI/images/icon.png",
         width: 1800,
         height: 1200,
         minHeight: 800,
