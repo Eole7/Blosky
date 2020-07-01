@@ -79,7 +79,7 @@
         var syntaxes = getAllSyntaxes()
 
         Object.keys(syntaxes).forEach(function(categorie) {
-            toolbox += '<category name="' + categorie + '" colour="' + colors[categorie] + '">'
+            toolbox += '<category name="' + categorie.charAt(0).toUpperCase() + categorie.slice(1) + '" colour="' + colors[categorie] + '">'
 
             if (categorie == "expressions") {
                 toolbox += '<block type="text"></block>'
@@ -95,7 +95,6 @@
 
                         if (syntaxes[categorie][syntax_key]["arguments"] != undefined) {
                             Object.keys(syntaxes[categorie][syntax_key]["arguments"]).forEach(function(argument) {
-
                                 syntax = syntax.replace(argument, "%" + next_argument_ID);
                                 next_argument_ID++
                                 args.push({
@@ -133,11 +132,8 @@
                                 this.setNextStatement(true)
                             } else if (categorie == "expressions") {
                                 this.setOutput("String")
-
                             }
-
                         }
-
                         this.setInputsInline(true);
                         this.setColour(colors[categorie])
                     }
