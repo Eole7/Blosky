@@ -1,5 +1,4 @@
 function exportProject(code, settings) {
-
     const transpiler = require('electron').remote.require('./transpiler/transpiler.js');
     transpiler.generateJavaClass(blocklyToAST(code)["nodes"])
     transpiler.generateMainClass()
@@ -35,7 +34,6 @@ function blocklyToAST(code) {
 }
 
 function blockToNode(block, path, key, converted) {
-
     let type = block["_attributes"]["type"].split("_")
     let category = type[0]
     let ID = type[1]
@@ -77,7 +75,6 @@ function Node(category, ID, args, child_nodes) {
 }
 
 function blockToArgument(block) {
-
     let args = {};
     let unconverted_args = [];
 
@@ -89,7 +86,6 @@ function blockToArgument(block) {
     }
 
     Object.keys(unconverted_args).forEach(element => {
-
         let category;
         let ID;
         let content; //Either the ID of the expression or the content of the String
@@ -109,7 +105,6 @@ function blockToArgument(block) {
         }
 
         args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, subargs)
-
     })
 
     return args;

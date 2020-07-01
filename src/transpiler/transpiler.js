@@ -20,7 +20,6 @@ let syntaxes = {
 }
 
 function generateArgument(properties, required_type) {
-
     let java_argument; //The transpiled argument
     let type; //int, String, ...
     let category = properties["category"]; //expressions or plain_text
@@ -36,9 +35,7 @@ function generateArgument(properties, required_type) {
                 java_argument += " + ";
             }
         });
-
     } else {
-
         if (category == "plain_text") {
             type = properties["type"];
             if (syntaxes["types"][type]["syntax"] != undefined) {
@@ -47,6 +44,7 @@ function generateArgument(properties, required_type) {
                 java_argument = properties["content"];
             }
         }
+
         if (category == "expressions") {
             type = syntaxes["expressions"][(properties["ID"])]["type"];
             java_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"];
@@ -63,19 +61,16 @@ function generateArgument(properties, required_type) {
                 java_argument = java_argument.replace(argument_ID, generateArgument(properties["arguments"][argument_ID], "unimplemented"))
             });
         }
-
     }
 
     return java_argument;
 }
 
 function generateBranch(nodes) {
-
     let imports = [];
     let java_nodes = ""; //Contains the transpiled branch
 
     Object.keys(nodes).forEach(node => {
-
         let ID = nodes[node]["ID"];
         let category = nodes[node]["category"]
         let java_instruction = syntaxes[category][ID]["java_syntax"];
@@ -103,7 +98,6 @@ function generateBranch(nodes) {
         if (syntaxes[category][ID]["import"] != null && !(imports.includes(syntaxes[category][ID]["import"]))) {
             imports.push(syntaxes[category][ID]["import"]);
         }
-
     })
 
     return [java_nodes, imports];
@@ -112,7 +106,6 @@ function generateBranch(nodes) {
 module.exports = {
 
     generateJavaClass: function generateJavaClass(AST) {
-
         let file = fs.readFileSync(appPath + '/transpiler/patterns/Event.java', 'utf8');
         let java = generateBranch(AST);
         file = file.replace("%child_nodes%", java[0])
@@ -152,7 +145,6 @@ module.exports = {
     },
 
     compile: function compile(filename) {
-
         const child_process = require("child_process");
 
         child_process.execSync("javac -classpath " + appPath + "/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java", (error, stdout, stderr) => {

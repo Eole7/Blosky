@@ -70,7 +70,6 @@ function openProject() {
             sessionStorage.setItem("description", settings["description"])
             sessionStorage.setItem("path", result.filePaths[0])
             window.location.replace("settings.html")
-
         }
     })
 }

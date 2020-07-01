@@ -88,7 +88,6 @@
             Object.keys(syntaxes[categorie]).forEach(function(syntax_key) {
                 Blockly.Blocks[categorie + "_" + syntax_key] = {
                     init: function() {
-
                         let block = this;
                         let syntax = syntaxes[categorie][syntax_key]["syntax"];
                         let next_argument_ID = 1;
@@ -120,9 +119,7 @@
 
                             this.setPreviousStatement(true)
                             this.setNextStatement(true)
-
                         } else {
-
                             this.jsonInit({
                                 "type": "text",
                                 "message0": syntax,
