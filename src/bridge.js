@@ -52,7 +52,7 @@ function blockToNode(block, path, key, converted) {
             //Adding childs nodes
             child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, converted)
         } else {
-            //Adding blocks which are in the same block as the current one
+            //Adding blocks which are in the same branch as the current one
             blockToNode(block["next"]["block"], path, key + 1, converted)
         }
     }
@@ -88,7 +88,7 @@ function blockToArgument(block) {
     Object.keys(unconverted_args).forEach(element => {
         let category;
         let ID;
-        let content; //Either the ID of the expression or the content of the String
+        let content; //Either the name of the expression or the content of the String
 
         if (unconverted_args[element]["block"]["_attributes"]["type"] == "text") {
             category = "plain_text"
@@ -106,6 +106,7 @@ function blockToArgument(block) {
             sub_arguments = blockToArgument(unconverted_args[element]["block"]["value"])
         }
 
+         //If the argument is part of an argument constructor
         if(unconverted_args[element]["_attributes"]["name"].startsWith("ADD")) args[parseInt(unconverted_args[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, sub_arguments)
         else args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, sub_arguments)
     })

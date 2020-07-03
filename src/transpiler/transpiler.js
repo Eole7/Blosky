@@ -8,6 +8,7 @@ let appPath = function(){
     while(path.includes("\\")) {
         path = path.replace("\\", "/");
     }
+
     return path
 }();
 
@@ -22,7 +23,7 @@ let syntaxes = {
 function generateArgument(properties, required_type) {
     let java_argument; //The transpiled argument
     let type; //int, String, ...
-    let category = properties["category"]; //expressions or plain_text
+    let category = properties["category"]; //expressions, plain_text or argument_constructor
 
     if (category == "plain_text") {
         type = properties["type"];
@@ -74,10 +75,8 @@ function generateBranch(nodes) {
         //Getting arguments
         if (syntaxes[category][ID]["arguments"] != null) {
             Object.keys(syntaxes[category][ID]["arguments"]).forEach(function(argument_ID) {
-
                 let required_type = syntaxes[category][ID]["arguments"][argument_ID]["required_type"];
                 java_instruction = java_instruction.replace(argument_ID, generateArgument(nodes[node]["arguments"][argument_ID], required_type))
-
             });
         }
 
@@ -100,7 +99,6 @@ function generateBranch(nodes) {
 }
 
 module.exports = {
-
     generateJavaClass: function generateJavaClass(AST) {
         let file = fs.readFileSync(appPath + '/transpiler/patterns/Event.java', 'utf8');
         let java = generateBranch(AST);
@@ -143,6 +141,7 @@ module.exports = {
     compile: function compile(filename) {
         const child_process = require("child_process");
 
+        //Compiling .java files to bytecode (.class)
         child_process.execSync("javac -classpath " + appPath + "/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
@@ -159,6 +158,7 @@ module.exports = {
         fs.unlinkSync(appPath + "/temp/fr/blosky/Main.java")
         fs.unlinkSync(appPath + "/temp/fr/blosky/Event.java");
 
+        //Folder to .jar
         child_process.execSync('jar cvf "' + filename + '.jar" -C ' + appPath + '/temp .', (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`);
