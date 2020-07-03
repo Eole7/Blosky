@@ -24,43 +24,39 @@ function generateArgument(properties, required_type) {
     let type; //int, String, ...
     let category = properties["category"]; //expressions or plain_text
 
-    //NOT SUPPORTED BY THE UI YET
-    //If an argument is constructed of several types, the argument is divided into several arguments and then reassembled
-    //eg send "Hi" and player's health to player 
-    if (properties["multitypes"] == "true") {
-        java_argument = "";
-        Object.keys(properties["types"]).forEach(function(type) {
-            java_argument += generateArgument(properties["types"][type], "unimplemented")
-            if (Object.keys(properties["types"]).length != type) {
+    if (category == "plain_text") {
+        type = properties["type"];
+        if (syntaxes["types"][type]["syntax"] != undefined) {
+            java_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["content"]);
+        } else {
+            java_argument = properties["content"];
+        }
+    } else if (category == "expressions") {
+        type = syntaxes["expressions"][(properties["ID"])]["type"];
+        java_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"];
+    } else if (category == "argument_constructor") {
+        java_argument = "(";
+        type = "String"
+        Object.keys(properties["arguments"]).forEach(function(sub_argument) {
+            java_argument += generateArgument(properties["arguments"][sub_argument], "String")
+            if (Object.keys(properties["arguments"]).length != sub_argument) {
                 java_argument += " + ";
+            } else {
+                java_argument += ")"
             }
         });
-    } else {
-        if (category == "plain_text") {
-            type = properties["type"];
-            if (syntaxes["types"][type]["syntax"] != undefined) {
-                java_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["content"]);
-            } else {
-                java_argument = properties["content"];
-            }
-        }
+    } 
 
-        if (category == "expressions") {
-            type = syntaxes["expressions"][(properties["ID"])]["type"];
-            java_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"];
-        }
+    //Checking types and fixing them if needed
+    if (required_type != "unimplemented" && required_type != type && required_type != undefined && syntaxes["types"][required_type]["conversion"] != undefined && syntaxes["types"][required_type]["conversion"][type] != undefined) {
+        java_argument = syntaxes["types"][required_type]["conversion"][type].replace("%argument%", java_argument)
+    }
 
-        //Checking types and fixing them if needed
-        if (required_type != "unimplemented" && required_type != type && required_type != undefined && syntaxes["types"][required_type]["conversion"] != undefined && syntaxes["types"][required_type]["conversion"][type] != undefined) {
-            java_argument = syntaxes["types"][required_type]["conversion"][type].replace("%argument%", java_argument)
-        }
-
-        //If the current argument contains arguments
-        if (properties["arguments"] != null) {
-            Object.keys(properties["arguments"]).forEach(function(argument_ID) {
-                java_argument = java_argument.replace(argument_ID, generateArgument(properties["arguments"][argument_ID], "unimplemented"))
-            });
-        }
+    //If the current argument contains arguments
+    if (properties["arguments"] != null && category != "argument_constructor") {
+        Object.keys(properties["arguments"]).forEach(function(sub_argument) {
+            java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
+        });
     }
 
     return java_argument;

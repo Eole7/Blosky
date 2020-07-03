@@ -94,23 +94,26 @@ function blockToArgument(block) {
             category = "plain_text"
             ID = "String"
             content = unconverted_args[element]["block"]["field"]["_text"]
+        } else if (unconverted_args[element]["block"]["_attributes"]["type"] == "text_join") {
+            category = "argument_constructor"
         } else if (unconverted_args[element]["block"]["_attributes"]["type"].startsWith("expressions")) {
             category = "expressions"
             ID = unconverted_args[element]["block"]["_attributes"]["type"].split("_")[1]
         }
 
-        let subargs;
+        let sub_arguments;
         if (unconverted_args[element]["block"]["value"] != undefined) {
-            subargs = blockToArgument(unconverted_args[element]["block"]["value"])
+            sub_arguments = blockToArgument(unconverted_args[element]["block"]["value"])
         }
 
-        args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, subargs)
+        if(unconverted_args[element]["_attributes"]["name"].startsWith("ADD")) args[parseInt(unconverted_args[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, sub_arguments)
+        else args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, sub_arguments)
     })
 
     return args;
 }
 
-function Arg(category, ID, content, subargs) {
+function Arg(category, ID, content, sub_arguments) {
     this.category = category
     if (category == "plain_text") {
         this.content = content
@@ -118,7 +121,7 @@ function Arg(category, ID, content, subargs) {
     } else if (category == "expressions") {
         this.ID = ID;
     }
-    this.arguments = subargs
+    this.arguments = sub_arguments
 
     return this
 }
