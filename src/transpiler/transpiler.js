@@ -1,6 +1,4 @@
 const fs = require('fs');
-const path = require('path');
-const { dialog } = require('electron');
 
 let appPath = function(){
     let app = require('electron').app
