@@ -110,8 +110,9 @@ function blockToArgument(block) {
             sub_arguments = blockToArgument(unconverted_args[element]["block"]["value"])
         }
 
-         //If the argument is part of an argument constructor
+        //If the argument is part of an argument constructor
         if(unconverted_args[element]["_attributes"]["name"].startsWith("ADD")) args[parseInt(unconverted_args[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, type, sub_arguments)
+        //If the argument is part of a parsed_as argument
         else if(unconverted_args[element]["_attributes"]["name"] == "expression") args["1"] = new Arg(category, ID, content, type, sub_arguments)
         else args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, type, sub_arguments)
     })
