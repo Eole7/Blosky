@@ -21,7 +21,7 @@ let syntaxes = {
 function generateArgument(properties, required_type) {
     let java_argument; //The transpiled argument
     let type; //int, String, ...
-    let category = properties["category"]; //expressions, plain_text or argument_constructor
+    let category = properties["category"]; //expressions, plain_text, argument_constructor or parsed_as
 
     if (category == "plain_text") {
         type = properties["type"];
@@ -33,9 +33,16 @@ function generateArgument(properties, required_type) {
     } else if (category == "expressions") {
         type = syntaxes["expressions"][(properties["ID"])]["type"];
         java_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"];
-    } else if (category == "argument_constructor") {
+        
+        if (properties["arguments"] != undefined) {
+            Object.keys(properties["arguments"]).forEach(function(sub_argument) {
+                java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
+            });
+        }
+    } else if (category == "argument_constructor" && properties["arguments"] != null) {
         java_argument = "(";
         type = "String"
+
         Object.keys(properties["arguments"]).forEach(function(sub_argument) {
             java_argument += generateArgument(properties["arguments"][sub_argument], "String")
             if (Object.keys(properties["arguments"]).length != sub_argument) {
@@ -44,18 +51,13 @@ function generateArgument(properties, required_type) {
                 java_argument += ")"
             }
         });
-    } 
+    } else if(category == "parsed_as" && properties["arguments"] != null){
+        java_argument = generateArgument(properties["arguments"]["1"], properties["type"])
+    }
 
     //Checking types and fixing them if needed
     if (required_type != "unimplemented" && required_type != type && required_type != undefined && syntaxes["types"][required_type]["conversion"] != undefined && syntaxes["types"][required_type]["conversion"][type] != undefined) {
         java_argument = syntaxes["types"][required_type]["conversion"][type].replace("%argument%", java_argument)
-    }
-
-    //If the current argument contains arguments
-    if (properties["arguments"] != null && category != "argument_constructor") {
-        Object.keys(properties["arguments"]).forEach(function(sub_argument) {
-            java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
-        });
     }
 
     return java_argument;

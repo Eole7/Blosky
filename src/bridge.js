@@ -38,7 +38,7 @@ function blockToNode(block, path, key, converted) {
     let category = type[0]
     let ID = type[1]
     let child_nodes;
-    let args = {};
+    let args;
 
     if (block["value"] != undefined) {
         args = blockToArgument(block["value"])
@@ -88,40 +88,42 @@ function blockToArgument(block) {
     Object.keys(unconverted_args).forEach(element => {
         let category;
         let ID;
-        let content; //Either the name of the expression or the content of the String
+        let content;
+        let type;
+        let sub_arguments;
 
         if (unconverted_args[element]["block"]["_attributes"]["type"] == "text") {
             category = "plain_text"
-            ID = "String"
+            type = "String"
             content = unconverted_args[element]["block"]["field"]["_text"]
         } else if (unconverted_args[element]["block"]["_attributes"]["type"] == "text_join") {
             category = "argument_constructor"
         } else if (unconverted_args[element]["block"]["_attributes"]["type"].startsWith("expressions")) {
             category = "expressions"
             ID = unconverted_args[element]["block"]["_attributes"]["type"].split("_")[1]
+        } else if(unconverted_args[element]["block"]["_attributes"]["type"] == "parsed_as") {
+            category = "parsed_as"
+            type = unconverted_args[element]["block"]["field"]["_text"]
         }
 
-        let sub_arguments;
         if (unconverted_args[element]["block"]["value"] != undefined) {
             sub_arguments = blockToArgument(unconverted_args[element]["block"]["value"])
         }
 
          //If the argument is part of an argument constructor
-        if(unconverted_args[element]["_attributes"]["name"].startsWith("ADD")) args[parseInt(unconverted_args[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, sub_arguments)
-        else args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, sub_arguments)
+        if(unconverted_args[element]["_attributes"]["name"].startsWith("ADD")) args[parseInt(unconverted_args[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, type, sub_arguments)
+        else if(unconverted_args[element]["_attributes"]["name"] == "expression") args["1"] = new Arg(category, ID, content, type, sub_arguments)
+        else args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, type, sub_arguments)
     })
 
     return args;
 }
 
-function Arg(category, ID, content, sub_arguments) {
+function Arg(category, ID, content, type, sub_arguments) {
     this.category = category
-    if (category == "plain_text") {
-        this.content = content
-        this.type = ID
-    } else if (category == "expressions") {
-        this.ID = ID;
-    }
+    this.ID = ID;
+    this.content = content
+    this.type = type
     this.arguments = sub_arguments
 
     return this

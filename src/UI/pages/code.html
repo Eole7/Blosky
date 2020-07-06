@@ -82,8 +82,22 @@
             toolbox += '<category name="' + categorie.charAt(0).toUpperCase() + categorie.slice(1) + '" colour="' + colors[categorie] + '">'
 
             if (categorie == "expressions") {
+                Blockly.Blocks['parsed_as'] = {
+                    init: function() {
+                        this.appendValueInput("expression")
+                            .setCheck(null);
+                        this.appendDummyInput()
+                            .appendField("parsed as")
+                            .appendField(new Blockly.FieldDropdown([["text","String"], ["number","float"], ["integer","int"], ["world","World"], ["player","Player"], ["offline player","OfflinePlayer"], ["boolean","boolean"]]), "type");
+                        this.setInputsInline(true);
+                        this.setColour("#0c945d");
+                        this.setOutput(true)
+                    }
+                };
+
                 toolbox += '<block type="text"></block>'
                 toolbox += '<block type="text_join"></block>' //TODO: +/- buttons instead of mutator, and inline inputs
+                toolbox += '<block type="parsed_as"></block>'
             }
 
             Object.keys(syntaxes[categorie]).forEach(function(syntax_key) {
