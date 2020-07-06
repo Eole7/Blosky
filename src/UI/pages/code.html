@@ -78,10 +78,10 @@
         let toolbox = '<xml>'
         var syntaxes = getAllSyntaxes()
 
-        Object.keys(syntaxes).forEach(function(categorie) {
-            toolbox += '<category name="' + categorie.charAt(0).toUpperCase() + categorie.slice(1) + '" colour="' + colors[categorie] + '">'
+        Object.keys(syntaxes).forEach(function(category) {
+            toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
 
-            if (categorie == "expressions") {
+            if (category == "expressions") {
                 Blockly.Blocks['parsed_as'] = {
                     init: function() {
                         this.appendValueInput("expression")
@@ -100,16 +100,16 @@
                 toolbox += '<block type="parsed_as"></block>'
             }
 
-            Object.keys(syntaxes[categorie]).forEach(function(syntax_key) {
-                Blockly.Blocks[categorie + "_" + syntax_key] = {
+            Object.keys(syntaxes[category]).forEach(function(syntax_key) {
+                Blockly.Blocks[category + "_" + syntax_key] = {
                     init: function() {
                         let block = this;
-                        let syntax = syntaxes[categorie][syntax_key]["syntax"];
+                        let syntax = syntaxes[category][syntax_key]["syntax"];
                         let next_argument_ID = 1;
                         let args = []
 
-                        if (syntaxes[categorie][syntax_key]["arguments"] != undefined) {
-                            Object.keys(syntaxes[categorie][syntax_key]["arguments"]).forEach(function(argument) {
+                        if (syntaxes[category][syntax_key]["arguments"] != undefined) {
+                            Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(function(argument) {
                                 syntax = syntax.replace(argument, "%" + next_argument_ID);
                                 next_argument_ID++
                                 args.push({
@@ -119,7 +119,7 @@
                             });
                         }
 
-                        if (categorie == "conditions") {
+                        if (category == "conditions") {
                             this.jsonInit({
                                 "type": "text",
                                 "message0": "if " + syntax,
@@ -140,20 +140,20 @@
                                 "args0": args,
                             });
 
-                            if (categorie == "events") {
+                            if (category == "events") {
                                 this.setNextStatement(true)
-                            } else if (categorie == "effects") {
+                            } else if (category == "effects") {
                                 this.setPreviousStatement(true)
                                 this.setNextStatement(true)
-                            } else if (categorie == "expressions") {
+                            } else if (category == "expressions") {
                                 this.setOutput(true)
                             }
                         }
                         this.setInputsInline(true);
-                        this.setColour(colors[categorie])
+                        this.setColour(colors[category])
                     }
                 }
-                toolbox += '<block type="' + categorie + "_" + syntax_key + '"></block>'
+                toolbox += '<block type="' + category + "_" + syntax_key + '"></block>'
             })
             toolbox += '</category>'
         })
