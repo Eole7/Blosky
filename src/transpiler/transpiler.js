@@ -70,13 +70,13 @@ function generateBranch(nodes) {
     Object.keys(nodes).forEach(node => {
         let ID = nodes[node]["ID"];
         let category = nodes[node]["category"]
-        let java_instruction = syntaxes[category][ID]["java_syntax"];
+        let java_node = syntaxes[category][ID]["java_syntax"];
 
         //Getting arguments
         if (syntaxes[category][ID]["arguments"] != null) {
             Object.keys(syntaxes[category][ID]["arguments"]).forEach(function(argument_ID) {
                 let required_type = syntaxes[category][ID]["arguments"][argument_ID]["required_type"];
-                java_instruction = java_instruction.replace(argument_ID, generateArgument(nodes[node]["arguments"][argument_ID], required_type))
+                java_node = java_node.replace(argument_ID, generateArgument(nodes[node]["arguments"][argument_ID], required_type))
             });
         }
 
@@ -85,9 +85,9 @@ function generateBranch(nodes) {
             let child_nodes = generateBranch(nodes[node]["child_nodes"])
             imports = imports.concat(child_nodes[1])
 
-            java_nodes += "\r" + fs.readFileSync(appPath + '/transpiler/patterns/' + category + '.txt', 'utf8').replace("%instruction%", java_instruction).replace("%ID%", node).replace("%child_nodes%", child_nodes[0]);
+            java_nodes += "\r" + fs.readFileSync(appPath + '/transpiler/patterns/' + category + '.txt', 'utf8').replace("%instruction%", java_node).replace("%ID%", node).replace("%child_nodes%", child_nodes[0]);
         } else {
-            java_nodes += "\r" + java_instruction
+            java_nodes += "\r" + java_node
         }
 
         if (syntaxes[category][ID]["import"] != null && !(imports.includes(syntaxes[category][ID]["import"]))) {
