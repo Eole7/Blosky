@@ -1,9 +1,7 @@
 const fs = require('fs');
-const path = require('path');
 const {
     app,
-    BrowserWindow,
-    session
+    BrowserWindow
 } = require('electron')
 
 function createWindow() {
