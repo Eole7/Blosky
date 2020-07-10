@@ -25,7 +25,7 @@ function generateArgument(properties, required_type) {
 
     if (category == "plain_text") {
         type = properties["type"];
-        if (syntaxes["types"][type]["syntax"] != undefined) {
+        if (syntaxes["types"][type]["syntax"] != undefined) { //If the argument's type has a special syntax (eg "" around Strings)
             java_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["content"]);
         } else {
             java_argument = properties["content"];
@@ -34,8 +34,8 @@ function generateArgument(properties, required_type) {
         type = syntaxes["expressions"][(properties["ID"])]["type"];
         java_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"];
         
-        if (properties["arguments"] != undefined) {
-            Object.keys(properties["arguments"]).forEach(function(sub_argument) {
+        if (properties["arguments"] != undefined) { //Adding sub arguments
+            Object.keys(properties["arguments"]).forEach(sub_argument => {
                 java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
             });
         }
@@ -43,7 +43,7 @@ function generateArgument(properties, required_type) {
         java_argument = "(";
         type = "String"
 
-        Object.keys(properties["arguments"]).forEach(function(sub_argument) {
+        Object.keys(properties["arguments"]).forEach(sub_argument => {
             java_argument += generateArgument(properties["arguments"][sub_argument], "String")
             if (Object.keys(properties["arguments"]).length != sub_argument) {
                 java_argument += " + ";
@@ -55,7 +55,7 @@ function generateArgument(properties, required_type) {
         java_argument = generateArgument(properties["arguments"]["1"], properties["type"])
     }
 
-    //Checking types and fixing them if needed
+    //Fixing types
     if (required_type != "unimplemented" && required_type != type && required_type != undefined && syntaxes["types"][required_type]["conversion"] != undefined && syntaxes["types"][required_type]["conversion"][type] != undefined) {
         java_argument = syntaxes["types"][required_type]["conversion"][type].replace("%argument%", java_argument)
     }
@@ -72,16 +72,15 @@ function generateBranch(nodes) {
         let category = nodes[node]["category"]
         let java_node = syntaxes[category][ID]["java_syntax"];
 
-        //Getting arguments
+        //Transpiling arguments
         if (syntaxes[category][ID]["arguments"] != null) {
-            Object.keys(syntaxes[category][ID]["arguments"]).forEach(function(argument_ID) {
-                let required_type = syntaxes[category][ID]["arguments"][argument_ID]["required_type"];
-                java_node = java_node.replace(argument_ID, generateArgument(nodes[node]["arguments"][argument_ID], required_type))
+            Object.keys(syntaxes[category][ID]["arguments"]).forEach(argument => {
+                let required_type = syntaxes[category][ID]["arguments"][argument]["required_type"];
+                java_node = java_node.replace(argument, generateArgument(nodes[node]["arguments"][argument], required_type))
             });
         }
-
-        if (nodes[node]["child_nodes"] != undefined) {
-            //Transpiling child nodes of the current node
+        
+        if (nodes[node]["child_nodes"] != undefined) { //Transpiling child nodes of the current node
             let child_nodes = generateBranch(nodes[node]["child_nodes"])
             imports = imports.concat(child_nodes[1])
 

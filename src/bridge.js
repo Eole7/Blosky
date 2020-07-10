@@ -33,7 +33,7 @@ function blocklyToAST(code) {
     return AST
 }
 
-function blockToNode(block, path, key, converted) {
+function blockToNode(block, path, key, AST) {
     let type = block["_attributes"]["type"].split("_")
     let category = type[0]
     let ID = type[1]
@@ -45,24 +45,24 @@ function blockToNode(block, path, key, converted) {
     }
 
     //Sets a json value at a specific dynamic path
-    path.reduce((o, k) => o[k] = o[k] || {}, converted)[key] = new Node(category, ID, args, child_nodes);
+    path.reduce((o, k) => o[k] = o[k] || {}, AST)[key] = new Node(category, ID, args, child_nodes);
 
     if (block["next"] != undefined && block["next"]["block"] != undefined) {
         if (category == "events") {
             //Adding childs nodes
-            child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, converted)
+            child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, AST)
         } else {
             //Adding blocks which are in the same branch as the current one
-            blockToNode(block["next"]["block"], path, key + 1, converted)
+            blockToNode(block["next"]["block"], path, key + 1, AST)
         }
     }
 
     //Adding child nodes
     if (category == "conditions" && block["statement"]["block"] != undefined) {
-        child_nodes = blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, converted)
+        child_nodes = blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, AST)
     }
 
-    return converted
+    return AST
 }
 
 function Node(category, ID, args, child_nodes) {
