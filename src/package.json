@@ -3,6 +3,7 @@
   "author": "Eole_",
   "description": "Create Minecraft Java plugins with a visual programming language",
   "main": "main.js",
+  "homepage": "https://github.com/Eole7/Blosky",
   "devDependencies": {
     "electron": "^8.3.4",
     "electron-packager": "^14.2.1"
