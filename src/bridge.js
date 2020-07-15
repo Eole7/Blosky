@@ -1,5 +1,5 @@
 function exportProject(code, settings) {
-    const transpiler = require('electron').remote.require('./transpiler/transpiler.js');
+    const transpiler = require('electron').remote.require('./transpiler/transpiler.js')
     transpiler.generateJavaClass(blocklyToAST(code)["nodes"])
     transpiler.generateMainClass()
     transpiler.generatePluginYML(settings)
@@ -19,10 +19,9 @@ function exportProject(code, settings) {
 
 function blocklyToAST(code) {
     let project = JSON.parse(require('xml-js').xml2json(code, {compact: true}))["xml"]
-    let AST = {};
+    let AST = {}
 
-    //If the project contains multiple events
-    if (Object.keys(project["block"])[0] == "0") {
+    if (Object.keys(project["block"])[0] == "0") { //If the project contains multiple events
         Object.keys(project["block"]).forEach(value => {
             AST = blockToNode(project["block"][value], ["nodes"], parseInt(value)+1, AST)
         })
@@ -37,24 +36,22 @@ function blockToNode(block, path, key, AST) {
     let type = block["_attributes"]["type"].split("_")
     let category = type[0]
     let ID = type[1]
-    let child_nodes;
-    let args;
+    let child_nodes
+    let args
 
     if (block["value"] != undefined) {
         args = blockToArgument(block["value"])
     }
 
     //Sets a json value at a specific dynamic path
-    path.reduce((o, k) => o[k] = o[k] || {}, AST)[key] = new Node(category, ID, args, child_nodes);
+    path.reduce((o, k) => o[k] = o[k] || {}, AST)[key] = new Node(category, ID, args, child_nodes)
 
+    //Adding blocks which are in the same branch as the current one
     if (block["next"] != undefined && block["next"]["block"] != undefined) {
-        if (category == "events") {
-            //Adding childs nodes
-            child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, AST)
-        } else {
-            //Adding blocks which are in the same branch as the current one
-            blockToNode(block["next"]["block"], path, key + 1, AST)
-        }
+        //Blocks followed by an event are in the same branch as the event's one, but we want them as child nodes
+        if (category == "events") child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, AST)
+        
+        else blockToNode(block["next"]["block"], path, key + 1, AST)
     }
 
     //Adding child nodes
@@ -66,31 +63,30 @@ function blockToNode(block, path, key, AST) {
 }
 
 function Node(category, ID, args, child_nodes) {
-    this.category = category;
-    this.ID = ID;
-    this.arguments = args;
+    this.category = category
+    this.ID = ID
+    this.arguments = args
     this.child_nodes = child_nodes
 
     return this
 }
 
 function blockToArgument(block) {
-    let args = {};
-    let unconverted_args = [];
+    let args = {}
+    let unconverted_args = []
 
-    //If the block contains 1 argument
-    if (Object.keys(block)[0] != "0") {
+    if (Object.keys(block)[0] != "0") { //If the block contains 1 argument
         unconverted_args.push(block)
     } else { //If the block contains several arguments
-        unconverted_args = block;
+        unconverted_args = block
     }
 
     Object.keys(unconverted_args).forEach(element => {
-        let category;
-        let ID;
-        let content;
-        let type;
-        let sub_arguments;
+        let category
+        let ID
+        let content
+        let type
+        let sub_arguments
 
         if (unconverted_args[element]["block"]["_attributes"]["type"] == "text") {
             category = "plain_text"
@@ -117,12 +113,12 @@ function blockToArgument(block) {
         else args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, type, sub_arguments)
     })
 
-    return args;
+    return args
 }
 
 function Arg(category, ID, content, type, sub_arguments) {
     this.category = category
-    this.ID = ID;
+    this.ID = ID
     this.content = content
     this.type = type
     this.arguments = sub_arguments

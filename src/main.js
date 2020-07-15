@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require('fs')
 const {
     app,
     BrowserWindow
@@ -36,9 +36,7 @@ app.on('activate', () => {
 function getAllSyntaxes() {
     let app = require('electron').remote.app
     let path = app.getAppPath()
-    while(path.includes("\\")) {
-        path = path.replace("\\", "/");
-    }
+    while(path.includes("\\")) path = path.replace("\\", "/")
     
     return {
         events: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/events.json")),
@@ -77,8 +75,8 @@ function saveProject(project, path) {
         saveProjectAs(project)
     } else {
         fs.writeFile(path, project, function(err) {
-            if (err) throw err;
-        });
+            if (err) throw err
+        })
     }
 }
 
@@ -96,8 +94,8 @@ function saveProjectAs(project) {
         if (result.canceled == false) {
             sessionStorage.setItem("path", result.filePath)
             fs.writeFile(result.filePath, project, function(err) {
-                if (err) throw err;
-            });
+                if (err) throw err
+            })
         }
     })
 }
