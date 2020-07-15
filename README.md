@@ -7,3 +7,13 @@
   - If you select the version to be installed, ignore the Windows SmartScreen alerts, and then follow the instructions given by the installer
   - If you choose the portable version, just extract the zip file
 - Blosky has only a few syntaxes for the moment and lacks basic features; don't plan to make a real plugin with it
+
+## To-Do
+- Commands
+- Variables
+- Plugin config
+- Bukkit Runnables
+- Compiling to multiple Minecraft versions
+- Real-time detection of potential compilation errors
+- Syntaxes search bar
+- Support for other server software: Sponge, NukkitX, ...
