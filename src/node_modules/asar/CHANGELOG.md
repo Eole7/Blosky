@@ -1,9 +1,9 @@
-# [2.1.0](https://github.com/electron/asar/compare/v2.0.3...v2.1.0) (2020-02-19)
+## [3.0.3](https://github.com/electron/asar/compare/v3.0.2...v3.0.3) (2020-03-31)
 
 
-### Features
+### Bug Fixes
 
-* add TypeScript definition ([#190](https://github.com/electron/asar/issues/190)) ([f9eb91d](https://github.com/electron/asar/commit/f9eb91d))
+* CreateOptions.transform should return stream or void ([#195](https://github.com/electron/asar/issues/195)) ([c9cc0a1](https://github.com/electron/asar/commit/c9cc0a186c0f621b8e13e57be055035a41b65af7))
 
 # Changes By Version
 
