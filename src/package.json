@@ -12,11 +12,9 @@
   "bugs": {
     "url": "https://github.com/Eole7/Blosky/issues"
   },
-  "devDependencies": {
-    "electron": "^8.4.0",
-    "electron-packager": "^15.0.0"
-  },
   "dependencies": {
+    "electron": "^9.1.0",
+    "electron-packager": "^15.0.0",
     "file-system": "^2.2.2",
     "xml-js": "^1.6.11"
   }
