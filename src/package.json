@@ -5,15 +5,15 @@
   "main": "main.js",
   "homepage": "https://github.com/Eole7/Blosky",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/Eole7/Blosky"
+    "type": "git",
+    "url": "https://github.com/Eole7/Blosky"
   },
-  "license" : "SEE LICENSE AT 'https://github.com/Eole7/Blosky/blob/master/LICENSE'",
+  "license": "SEE LICENSE AT 'https://github.com/Eole7/Blosky/blob/master/LICENSE'",
   "bugs": {
-    "url" : "https://github.com/Eole7/Blosky/issues"
+    "url": "https://github.com/Eole7/Blosky/issues"
   },
   "devDependencies": {
-    "electron": "^8.3.4",
+    "electron": "^8.4.0",
     "electron-packager": "^14.2.1"
   },
   "dependencies": {
