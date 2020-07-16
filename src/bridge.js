@@ -14,6 +14,7 @@ function exportProject(code, settings) {
             transpiler.compile(result.filePath)
             alert(settings["name"] + " was successfully compiled to " + result.filePath)
         }
+        transpiler.clearFolder()
     })
 }
 

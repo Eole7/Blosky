@@ -169,11 +169,11 @@ module.exports = {
             }
             console.log(`stdout: ${stdout}`)
         })
+    },
 
+    clearFolder: function clearFolder(){
         fs.rmdir(appPath + "/temp", { recursive: true }, (err) => {
-            if (err) {
-                throw err
-            }
+            if (err) throw err
         })
     }
 }
