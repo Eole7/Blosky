@@ -6,7 +6,7 @@ const {
 
 function createWindow() {
     const win = new BrowserWindow({
-        icon: "src/UI/images/icon.png",
+        icon:  app.getAppPath() + "/src/UI/images/icon.png",
         width: 1800,
         height: 1200,
         minHeight: 800,
@@ -15,7 +15,7 @@ function createWindow() {
             nodeIntegration: true
         }
     })
-    win.loadFile('src/UI/pages/index.html')
+    win.loadFile(app.getAppPath() + '/src/UI/pages/index.html')
     win.setMenuBarVisibility(false)
 }
 
