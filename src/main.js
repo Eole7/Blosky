@@ -6,7 +6,7 @@ const {
 
 function createWindow() {
     const win = new BrowserWindow({
-        icon: "UI/images/icon.png",
+        icon: "src/UI/images/icon.png",
         width: 1800,
         height: 1200,
         minHeight: 800,
@@ -15,7 +15,7 @@ function createWindow() {
             nodeIntegration: true
         }
     })
-    win.loadFile('UI/pages/index.html')
+    win.loadFile('src/UI/pages/index.html')
     win.setMenuBarVisibility(false)
 }
 
@@ -39,10 +39,10 @@ function getAllSyntaxes() {
     while(path.includes("\\")) path = path.replace("\\", "/")
     
     return {
-        events: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/events.json")),
-        effects: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/effects.json")),
-        expressions: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/expressions.json")),
-        conditions: JSON.parse(fs.readFileSync(path + "/transpiler/syntaxes/conditions.json")),
+        events: JSON.parse(fs.readFileSync(path + "/src/transpiler/syntaxes/events.json")),
+        effects: JSON.parse(fs.readFileSync(path + "/src/transpiler/syntaxes/effects.json")),
+        expressions: JSON.parse(fs.readFileSync(path + "/src/transpiler/syntaxes/expressions.json")),
+        conditions: JSON.parse(fs.readFileSync(path + "/src/transpiler/syntaxes/conditions.json")),
     } 
 }
 

@@ -2,7 +2,7 @@
   "name": "Blosky",
   "author": "Eole_",
   "description": "Create Minecraft Java plugins with a visual programming language",
-  "main": "main.js",
+  "main": "src/main.js",
   "homepage": "https://github.com/Eole7/Blosky",
   "repository": {
     "type": "git",

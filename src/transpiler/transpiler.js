@@ -11,11 +11,11 @@ let appPath = function(){
 }()
 
 let syntaxes = {
-    events: JSON.parse(fs.readFileSync(appPath + "/transpiler/syntaxes/events.json")),
-    effects: JSON.parse(fs.readFileSync(appPath + "/transpiler/syntaxes/effects.json")),
-    expressions: JSON.parse(fs.readFileSync(appPath + "/transpiler/syntaxes/expressions.json")),
-    conditions: JSON.parse(fs.readFileSync(appPath + "/transpiler/syntaxes/conditions.json")),
-    types: JSON.parse(fs.readFileSync(appPath + "/transpiler/syntaxes/types.json"))
+    events: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/events.json")),
+    effects: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/effects.json")),
+    expressions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/expressions.json")),
+    conditions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/conditions.json")),
+    types: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/types.json"))
 }
 
 function generateArgument(properties, required_type) {
@@ -84,7 +84,7 @@ function generateBranch(nodes) {
             let child_nodes = generateBranch(nodes[node]["child_nodes"])
             imports = imports.concat(child_nodes[1])
 
-            java_nodes += "\r" + fs.readFileSync(appPath + '/transpiler/patterns/' + category + '.txt', 'utf8').replace("%instruction%", java_node).replace("%ID%", node).replace("%child_nodes%", child_nodes[0])
+            java_nodes += "\r" + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.txt', 'utf8').replace("%instruction%", java_node).replace("%ID%", node).replace("%child_nodes%", child_nodes[0])
         } else {
             java_nodes += "\r" + java_node
         }
@@ -99,7 +99,7 @@ function generateBranch(nodes) {
 
 module.exports = {
     generateJavaClass: function generateJavaClass(AST) {
-        let file = fs.readFileSync(appPath + '/transpiler/patterns/Event.java', 'utf8')
+        let file = fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')
         let java = generateBranch(AST)
         file = file.replace("%child_nodes%", java[0])
 
@@ -121,13 +121,13 @@ module.exports = {
     },
     
     generateMainClass: function generateMainClass() {
-        fs.writeFile(appPath + '/temp/fr/blosky/Main.java', fs.readFileSync(appPath + '/transpiler/patterns/Main.java', 'utf8'), function(err) {
+        fs.writeFile(appPath + '/temp/fr/blosky/Main.java', fs.readFileSync(appPath + '/src/transpiler/patterns/Main.java', 'utf8'), function(err) {
             if (err) throw err
         })
     },
 
     generatePluginYML: function generatePluginYML(settings) {
-        let file = fs.readFileSync(appPath + '/transpiler/patterns/plugin.yml', 'utf8')
+        let file = fs.readFileSync(appPath + '/src/transpiler/patterns/plugin.yml', 'utf8')
         file = file.replace("%name%", settings["name"])
         file = file.replace("%description%", settings["description"])
         file = file.replace("%version%", settings["version"])
@@ -141,7 +141,7 @@ module.exports = {
         const child_process = require("child_process")
 
         //Compiling .java files to Java bytecode (.class)
-        child_process.execSync("javac -classpath " + appPath + "/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java", (error, stdout, stderr) => {
+        child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java", (error, stdout, stderr) => {
             if (error) {
                 console.log(`error: ${error.message}`)
                 return
