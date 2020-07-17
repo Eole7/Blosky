@@ -12,9 +12,11 @@ function exportProject(code, settings) {
     dialog.showSaveDialog(options).then(result => {
         if (result.canceled == false) {
             transpiler.compile(result.filePath)
+            transpiler.clearFolder()
             alert(settings["name"] + " was successfully compiled to " + result.filePath)
+        } else {
+            transpiler.clearFolder()
         }
-        transpiler.clearFolder()
     })
 }
 
