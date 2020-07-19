@@ -4,7 +4,8 @@
   "description": "Create Minecraft Java plugins with a visual programming language",
   "main": "src/main.js",
   "homepage": "https://github.com/Eole7/Blosky",
-  "version": "0.3.0",
+  "version": "@INSERT VERSION@",
+  "email": "42918804+Eole7@users.noreply.github.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/Eole7/Blosky"
@@ -16,7 +17,15 @@
   "build": {
     "appId": "fr.eole_.blosky",
     "productName": "Blosky",
-    "asar": "false"
+    "asar": "false",
+    "win": {
+      "target": "nsis",
+      "icon": "src/UI/images/icon.ico"
+    },
+    "nsis": {
+      "oneClick": "false",
+      "license": "LICENSE"
+    }
   },
   "dependencies": {
     "file-system": "^2.2.2",
