@@ -23,15 +23,18 @@ jobs:
         uses: samuelmeuli/action-electron-builder@v1
         with:
           # GitHub token, automatically provided to the action
-          # (No need to define this secret in the repo settings)
           github_token: ${{ secrets.github_token }}
 
-          # If the commit is tagged with a version (e.g. "v1.0.0"),
-          # release the app after building
+          # If the commit is tagged with a version (e.g. "v1.0.0"), release the app after building
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
       - name: Upload to artifacts
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
-          path: dist/*.exe
+          path: 
+            - dist/*.exe
+            - dist/*.appImage
+            - dist/*.snap
+            - dist/*.zip
+            - dist/*.dmg
