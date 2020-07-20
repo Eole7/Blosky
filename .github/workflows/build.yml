@@ -32,9 +32,9 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
-          path: 
-            - dist/*.exe
-            - dist/*.appImage
-            - dist/*.snap
-            - dist/*.zip
-            - dist/*.dmg
+          path: |
+            dist/*.exe
+            dist/*.appImage
+            dist/*.snap
+            dist/*.zip
+            dist/*.dmg
