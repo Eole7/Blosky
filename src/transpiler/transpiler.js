@@ -1,14 +1,5 @@
 const fs = require('fs')
-
-let appPath = function(){
-    let app = require('electron').app
-    let path = app.getAppPath()
-    while(path.includes("\\")) {
-        path = path.replace("\\", "/")
-    }
-
-    return path
-}()
+let appPath = require('electron').app.getAppPath()
 
 let syntaxes = {
     events: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/events.json")),
