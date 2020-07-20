@@ -31,7 +31,7 @@ jobs:
       - name: Upload to artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: artifacts
+          name: blosky-nightly-all
           path: |
             dist/*.exe
             dist/*.appImage
