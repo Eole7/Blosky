@@ -3,7 +3,7 @@
 
 ## Installation
 - Install the JDK (Java Development Kit) to be able to compile your plugins: https://www.oracle.com/java/technologies/javase-jdk14-downloads.html
-- [Download](https://github.com/Eole7/Blosky/releases) the latest version of Blosky in portable or installer version. If you want to use nightly builds, download them in [Actions](https://github.com/Eole7/Blosky/actions?query=branch:master%20is:completed).
+- [Download](https://github.com/Eole7/Blosky/releases) the latest version of Blosky in portable or installer version. If you want to use nightly builds, download them in [Actions](https://github.com/Eole7/Blosky/actions?query=branch%3Amaster+is%3Asuccess).
   Blosky has been packaged for Windows, macOS and Linux, but it has Blosky only been tested on Windows for the moment.
   - If you select the version to be installed, ignore the Windows SmartScreen alerts, and then follow the instructions given by the installer
   - If you choose the portable version, just extract the zip file
