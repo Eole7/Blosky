@@ -9,8 +9,8 @@ function createWindow() {
         icon:  app.getAppPath() + "/src/UI/images/icon.png",
         width: 1800,
         height: 1200,
-        minHeight: 800,
-        minWidth: 1000,
+        minHeight: 600,
+        minWidth: 800,
         webPreferences: {
             nodeIntegration: true
         }
