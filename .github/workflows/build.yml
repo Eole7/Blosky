@@ -30,8 +30,8 @@ jobs:
           # release the app after building
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
-      - name: Add artifacts
-      - uses: actions/upload-artifact@v2
+      - name: Upload to artifacts
+        uses: actions/upload-artifact@v2
         with:
           name: artifacts
           path: dist/*.exe
