@@ -18,6 +18,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 10
+    
+      - name: Add artifacts
+      - uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: path/to/artifact/ # or path/to/artifact
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1

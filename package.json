@@ -19,11 +19,21 @@
     "productName": "Blosky",
     "asar": "false",
     "win": {
-      "target": "nsis",
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "src/UI/images/icon.ico"
+    },
+    "linux": {
       "icon": "src/UI/images/icon.ico"
     },
     "nsis": {
       "oneClick": "false",
+      "license": "LICENSE"
+    }, 
+    "appImage": {
+      "category": "Development",
       "license": "LICENSE"
     }
   },
