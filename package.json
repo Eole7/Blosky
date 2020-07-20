@@ -26,7 +26,7 @@
       "icon": "src/UI/images/icon.ico"
     },
     "linux": {
-      "icon": "src/UI/images/icon.ico"
+      "icon": "src/UI/images/icon.png"
     },
     "nsis": {
       "oneClick": "false",
