@@ -34,7 +34,7 @@ jobs:
           name: blosky-nightly-all
           path: |
             dist/*.exe
-            dist/*.appImage
+            dist/*.AppImage
             dist/*.snap
             dist/*.zip
             dist/*.dmg
