@@ -82,7 +82,7 @@ module.exports = {
         })
     },
     
-    clearFolder: function clearFolder(){
+    clearTemporaryFolder: function clearTemporaryFolder() {
         fs.rmdir(appPath + "/temp", { recursive: true }, (err) => {
             if (err) throw err
         })

@@ -1,5 +1,6 @@
 function exportProject(code, settings) {
     const transpiler = require('electron').remote.require('./transpiler/transpiler.js')
+    transpiler.clearTemporaryFolder() //If the previous compilation failed
     transpiler.generateJavaClass(blocklyToAST(code)["nodes"])
     transpiler.generateMainClass()
     transpiler.generatePluginYML(settings)
@@ -12,10 +13,10 @@ function exportProject(code, settings) {
     dialog.showSaveDialog(options).then(result => {
         if (result.canceled == false) {
             transpiler.compile(result.filePath)
-            transpiler.clearFolder()
+            transpiler.clearTemporaryFolder()
             alert(settings["name"] + " was successfully compiled to " + result.filePath)
         } else {
-            transpiler.clearFolder()
+            transpiler.clearTemporaryFolder()
         }
     })
 }
