@@ -10,7 +10,7 @@
         <script src="../blockly/msg/js/en.js"></script>
         <script src="../blockly/blocks/test.js"></script>
     </head>
-
+    
     <style>
         body {
             font-family: "Lato", sans-serif;
@@ -52,7 +52,7 @@
             margin-left: 225px;
         }
     </style>
-
+    
     <body>
         <nav class="sidenav">
             <a href="index.html">Switch project</a>
@@ -66,7 +66,7 @@
             <div id="blocklyArea"></div>
         </div>
     </body>
-
+    
     <script>
         let colors = {
             "events": "230",
@@ -74,13 +74,13 @@
             "expressions": "120",
             "conditions": "#ffa500",
         }
-
+        
         let toolbox = '<xml>'
         var syntaxes = getAllSyntaxes()
-
+        
         Object.keys(syntaxes).forEach(function(category) {
             toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
-
+            
             if (category == "expressions") {
                 Blockly.Blocks['parsed_as'] = {
                     init: function() {
@@ -94,12 +94,12 @@
                         this.setOutput(true)
                     }
                 };
-
+                
                 toolbox += '<block type="text"></block>'
                 toolbox += '<block type="text_join"></block>' //TODO: +/- buttons instead of mutator, and inline inputs
                 toolbox += '<block type="parsed_as"></block>'
             }
-
+            
             Object.keys(syntaxes[category]).forEach(function(syntax_key) {
                 Blockly.Blocks[category + "_" + syntax_key] = {
                     init: function() {
@@ -107,7 +107,7 @@
                         let syntax = syntaxes[category][syntax_key]["syntax"];
                         let next_argument_ID = 1;
                         let args = []
-
+                        
                         if (syntaxes[category][syntax_key]["arguments"] != undefined) {
                             Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(function(argument) {
                                 syntax = syntax.replace(argument, "%" + next_argument_ID);
@@ -118,7 +118,7 @@
                                 })
                             });
                         }
-
+                        
                         if (category == "conditions") {
                             this.jsonInit({
                                 "type": "text",
@@ -130,7 +130,7 @@
                                     "name": "do"
                                 }],
                             });
-
+                            
                             this.setPreviousStatement(true)
                             this.setNextStatement(true)
                         } else {
@@ -158,7 +158,7 @@
             toolbox += '</category>'
         })
         toolbox += '</xml>'
-
+        
         let blocklyArea = document.getElementById('blocklyArea');
         let blocklyDiv = document.getElementById('blocklyDiv');
         let workspace = Blockly.inject(blocklyDiv, {
@@ -195,7 +195,7 @@
             },
             "trashcan": true
         });
-
+        
         let onresize = function(e) {
             let element = blocklyArea;
             let x = 0;
@@ -214,12 +214,12 @@
         window.addEventListener('resize', onresize, false);
         onresize();
         Blockly.svgResize(workspace);
-
+        
         window.onload = function() {
             let xml = Blockly.Xml.textToDom(getCode());
             Blockly.Xml.domToWorkspace(xml, workspace);
         };
-
+        
         window.onunload = function() {
             let xml = Blockly.Xml.workspaceToDom(workspace);
             setCode(Blockly.Xml.domToText(xml))

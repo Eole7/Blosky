@@ -23,7 +23,7 @@ function exportProject(code, settings) {
 function blocklyToAST(code) {
     let project = JSON.parse(require('xml-js').xml2json(code, {compact: true}))["xml"]
     let AST = {}
-
+    
     if (Object.keys(project["block"])[0] == "0") { //If the project contains multiple events
         Object.keys(project["block"]).forEach(value => {
             AST = blockToNode(project["block"][value], ["nodes"], parseInt(value)+1, AST)
@@ -31,7 +31,7 @@ function blocklyToAST(code) {
     } else { //If the project contains 1 event
         AST = blockToNode(project["block"], ["nodes"], 1, AST)
     }
-
+    
     return AST
 }
 
@@ -41,11 +41,11 @@ function blockToNode(block, path, key, AST) {
     let ID = type[1]
     let child_nodes
     let args
-
+    
     if (block["value"] != undefined) {
         args = blockToArgument(block["value"])
     }
-
+    
     //Sets a json value at a specific dynamic path
     path.reduce((o, k) => o[k] = o[k] || {}, AST)[key] = new Node(category, ID, args, child_nodes)
 
@@ -56,12 +56,12 @@ function blockToNode(block, path, key, AST) {
         
         else blockToNode(block["next"]["block"], path, key + 1, AST)
     }
-
+    
     //Adding child nodes
     if (category == "conditions" && block["statement"]["block"] != undefined) {
         child_nodes = blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, AST)
     }
-
+    
     return AST
 }
 
@@ -70,27 +70,27 @@ function Node(category, ID, args, child_nodes) {
     this.ID = ID
     this.arguments = args
     this.child_nodes = child_nodes
-
+    
     return this
 }
 
 function blockToArgument(block) {
     let args = {}
     let unconverted_args = []
-
+    
     if (Object.keys(block)[0] != "0") { //If the block contains 1 argument
         unconverted_args.push(block)
     } else { //If the block contains several arguments
         unconverted_args = block
     }
-
+    
     Object.keys(unconverted_args).forEach(element => {
         let category
         let ID
         let content
         let type
         let sub_arguments
-
+        
         if (unconverted_args[element]["block"]["_attributes"]["type"] == "text") {
             category = "plain_text"
             type = "String"
@@ -104,18 +104,18 @@ function blockToArgument(block) {
             category = "parsed_as"
             type = unconverted_args[element]["block"]["field"]["_text"]
         }
-
+        
         if (unconverted_args[element]["block"]["value"] != undefined) {
             sub_arguments = blockToArgument(unconverted_args[element]["block"]["value"])
         }
-
+        
         //If the argument is part of an argument constructor
         if(unconverted_args[element]["_attributes"]["name"].startsWith("ADD")) args[parseInt(unconverted_args[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, type, sub_arguments)
         //If the argument is part of a parsed_as argument
         else if(unconverted_args[element]["_attributes"]["name"] == "expression") args["1"] = new Arg(category, ID, content, type, sub_arguments)
         else args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, type, sub_arguments)
     })
-
+    
     return args
 }
 
@@ -125,6 +125,6 @@ function Arg(category, ID, content, type, sub_arguments) {
     this.content = content
     this.type = type
     this.arguments = sub_arguments
-
+    
     return this
 }

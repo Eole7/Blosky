@@ -32,9 +32,9 @@ function createWindow() {
     })
     win.loadFile(app.getAppPath() + '/src/UI/pages/index.html')
     win.setMenuBarVisibility(false)
-
+    
     win.on('close', function(e) {
-
+        
         //TODO: it currently only works if the changes has been cached to the global storage
         //TODO: Implement this for Switch workspace too
         if(!win.webContents.getURL().endsWith("index.html")) {
@@ -49,9 +49,9 @@ function createWindow() {
                     });
                 if (choice === 1) {
                     e.preventDefault();
-                
+                }
                 /* Doesn't work without canceling the event
-                } else if (choice === 0) {
+                else if (choice === 0) {
                     //Cannot use the saveProjectAs as it only works from the renderer process
                     const { dialog } = require('electron')
                     var options = {
@@ -70,8 +70,7 @@ function createWindow() {
                             })
                         }
                     })
-                */
-                }
+                }*/
             
             } else { //If it's not a new project which has unsaved modifications
                 var lines = fs.readFileSync(global.path.path, "utf-8").split("\r")

@@ -12,52 +12,68 @@ let syntaxes = {
 function generateArgument(properties, required_type) {
     let java_argument //The transpiled argument
     let type //int, String, ...
-    let category = properties["category"] //expressions, plain_text, argument_constructor or parsed_as
+    let category = properties["category"]
 
-    if (category == "plain_text") {
-        type = properties["type"]
-        if (syntaxes["types"][type]["syntax"] != undefined) { //If the argument's type has a special syntax (eg "" around Strings)
-            java_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["content"])
-        } else {
-            java_argument = properties["content"]
-        }
-    } else if (category == "expressions") {
-        type = syntaxes["expressions"][(properties["ID"])]["type"]
-        java_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"]
-        
-        if (properties["arguments"] != undefined) { //Adding sub arguments
-            Object.keys(properties["arguments"]).forEach(sub_argument => {
-                java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
-            })
-        }
-    } else if (category == "argument_constructor" && properties["arguments"] != null) {
-        java_argument = "("
-        type = "String"
-
-        Object.keys(properties["arguments"]).forEach(sub_argument => {
-            java_argument += generateArgument(properties["arguments"][sub_argument], "String")
-            if (Object.keys(properties["arguments"]).length != sub_argument) {
-                java_argument += " + "
+    switch(category) {
+        case "plain_text":
+            type = properties["type"]
+            if (syntaxes["types"][type]["syntax"] != undefined) { //If the argument's type has a special syntax (eg "" around Strings)
+                java_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["content"])
             } else {
-                java_argument += ")"
+                java_argument = properties["content"]
             }
-        })
-    } else if(category == "parsed_as" && properties["arguments"] != null){
-        java_argument = generateArgument(properties["arguments"]["1"], properties["type"])
-    }
 
-    //Fixing types
+            break;
+        
+        case "expressions":
+            type = syntaxes["expressions"][(properties["ID"])]["type"]
+            java_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"]
+
+            if (properties["arguments"] != undefined) { //Adding sub arguments
+                Object.keys(properties["arguments"]).forEach(sub_argument => {
+                    java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
+                })
+            }
+
+            break;
+        
+        case "argument_constructor":
+            if (properties["arguments"] != null) {
+                java_argument = "("
+                type = "String"
+
+                Object.keys(properties["arguments"]).forEach(sub_argument => {
+                    java_argument += generateArgument(properties["arguments"][sub_argument], "String")
+                    if (Object.keys(properties["arguments"]).length != sub_argument) {
+                        java_argument += " + "
+                    } else {
+                        java_argument += ")"
+                    }
+                })
+            }
+
+            break;
+        
+        case "parsed_as":
+            if (properties["arguments"] != null) {
+                java_argument = generateArgument(properties["arguments"]["1"], properties["type"])
+            }
+
+            break;
+    }
+    
+    //Checking types and fixing them if needed
     if (required_type != "unimplemented" && required_type != type && required_type != undefined && syntaxes["types"][required_type]["conversion"] != undefined && syntaxes["types"][required_type]["conversion"][type] != undefined) {
         java_argument = syntaxes["types"][required_type]["conversion"][type].replace("%argument%", java_argument)
     }
-
+    
     return java_argument
 }
 
 function generateBranch(nodes) {
     let imports = []
     let java_nodes = "" //Contains the transpiled branch
-
+    
     Object.keys(nodes).forEach(node => {
         let ID = nodes[node]["ID"]
         let category = nodes[node]["category"]
@@ -79,12 +95,12 @@ function generateBranch(nodes) {
         } else {
             java_nodes += "\r" + java_node
         }
-
+        
         if (syntaxes[category][ID]["import"] != null && !(imports.includes(syntaxes[category][ID]["import"]))) {
             imports.push(syntaxes[category][ID]["import"])
         }
     })
-
+    
     return [java_nodes, imports]
 }
 
@@ -93,7 +109,7 @@ module.exports = {
         let file = fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')
         let java = generateBranch(AST)
         file = file.replace("%child_nodes%", java[0])
-
+        
         //Adding imports
         java[1].forEach((element, index) => {
             if (index + 1 != java[1].length) {
@@ -102,7 +118,7 @@ module.exports = {
                 file = file.replace("%imports%", "import " + element + ";")
             }
         })
-
+        
         fs.mkdirSync(appPath + "/temp")
         fs.mkdirSync(appPath+ "/temp/fr")
         fs.mkdirSync(appPath + "/temp/fr/blosky")
@@ -116,7 +132,7 @@ module.exports = {
             if (err) throw err
         })
     },
-
+    
     generatePluginYML: function generatePluginYML(settings) {
         let file = fs.readFileSync(appPath + '/src/transpiler/patterns/plugin.yml', 'utf8')
         file = file.replace("%name%", settings["name"])
@@ -127,10 +143,10 @@ module.exports = {
             if (err) throw err
         })
     },
-
+    
     compile: function compile(filename) {
         const child_process = require("child_process")
-
+        
         //Compiling .java files to Java bytecode (.class)
         child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java", (error, stdout, stderr) => {
             if (error) {
@@ -138,16 +154,15 @@ module.exports = {
                 return
             }
             if (stderr) {
-                
                 console.log(`stderr: ${stderr}`)
                 return
             }
             console.log(`stdout: ${stdout}`)
         })
-
+        
         fs.unlinkSync(appPath + "/temp/fr/blosky/Main.java")
         fs.unlinkSync(appPath + "/temp/fr/blosky/Event.java")
-
+        
         //Encapsulates the files into a .jar
         child_process.execSync('jar cvf "' + filename + '.jar" -C ' + appPath + '/temp .', (error, stdout, stderr) => {
             if (error) {
@@ -161,7 +176,7 @@ module.exports = {
             console.log(`stdout: ${stdout}`)
         })
     },
-
+    
     clearFolder: function clearFolder(){
         fs.rmdir(appPath + "/temp", { recursive: true }, (err) => {
             if (err) throw err
