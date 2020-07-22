@@ -6,7 +6,8 @@
           "int": "String.valueOf(%argument%)",
           "double": "String.valueOf(%argument%)",
           "float": "String.valueOf(%argument%)",
-          "Collection": "%argument%.toString()"
+          "Collection": "%argument%.toString()",
+          "Player": "%argument%.toString()"
         }
     },
     "int": {
