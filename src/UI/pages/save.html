@@ -81,8 +81,8 @@
             <a class="active">Save & Export</a>
         </nav>
         <div id="main">
-            <button onclick="saveProject(JSON.stringify(getProjectSettings()) + '\r' + sessionStorage.getItem('code'), sessionStorage.getItem('path'))">Save</button>
-            <button onclick="saveProjectAs(JSON.stringify(getProjectSettings()) + '\r' + sessionStorage.getItem('code'))">Save as</button>
+            <button onclick="saveProject(JSON.stringify(getProjectSettings()) + '\r' + getCode(), getPath())">Save</button>
+            <button onclick="saveProjectAs(JSON.stringify(getProjectSettings()) + '\r' + getCode())">Save as</button>
             <!--
                 <div id="autosavediv">
                     <label for="autosave">Auto save</label>
@@ -90,7 +90,7 @@
                     
                 </div>
             -->
-            <button id="export_button" onclick="exportProject(sessionStorage.getItem('pretty_code'), getProjectSettings())">Export to Spigot Plugin</button>
+            <button id="export_button" onclick="exportProject(getCode(), getProjectSettings())">Export to Spigot Plugin</button>
         </div>
     </body>
 
@@ -98,10 +98,10 @@
         function getProjectSettings() {
             
             return {
-                name: sessionStorage.getItem("name"),
-                author: sessionStorage.getItem("author"),
-                version: sessionStorage.getItem("version"),
-                description: sessionStorage.getItem("description")
+                name: getSettings("name"),
+                version: getSettings("version"),
+                author: getSettings("author"),
+                description: getSettings("description")
             }
         }
     </script>

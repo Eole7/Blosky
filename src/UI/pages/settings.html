@@ -94,10 +94,10 @@
 
     <script>
         window.onload = function() {
-            document.getElementById("name_value").innerHTML = sessionStorage.getItem("name");
-            document.getElementById("version_value").innerHTML = sessionStorage.getItem("version");
-            document.getElementById("author_value").innerHTML = sessionStorage.getItem("author");
-            document.getElementById("description_value").innerHTML = sessionStorage.getItem("description");
+            document.getElementById("name_value").innerHTML = getSettings("name");
+            document.getElementById("version_value").innerHTML = getSettings("version");
+            document.getElementById("author_value").innerHTML = getSettings("author");
+            document.getElementById("description_value").innerHTML = getSettings("description");
 
             //Makes the textareas aligned
             let description_width = parseInt(document.getElementById("description").offsetWidth);
@@ -110,10 +110,10 @@
         }
 
         window.onunload = function() {
-            sessionStorage.setItem("name", document.getElementById("name_value").value);
-            sessionStorage.setItem("version", document.getElementById("version_value").value);
-            sessionStorage.setItem("author", document.getElementById("author_value").value);
-            sessionStorage.setItem("description", document.getElementById("description_value").value);
+            setSettings("name", document.getElementById("name_value").value)
+            setSettings("version", document.getElementById("version_value").value)
+            setSettings("author", document.getElementById("author_value").value)
+            setSettings("description", document.getElementById("description_value").value)
         }
     </script>
 </html>

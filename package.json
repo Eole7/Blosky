@@ -31,7 +31,7 @@
     "nsis": {
       "oneClick": "false",
       "license": "LICENSE"
-    }, 
+    },
     "appImage": {
       "category": "Development",
       "license": "LICENSE"

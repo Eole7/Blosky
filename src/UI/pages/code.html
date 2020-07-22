@@ -216,14 +216,13 @@
         Blockly.svgResize(workspace);
 
         window.onload = function() {
-            let xml = Blockly.Xml.textToDom(sessionStorage.getItem("code"));
+            let xml = Blockly.Xml.textToDom(getCode());
             Blockly.Xml.domToWorkspace(xml, workspace);
         };
 
         window.onunload = function() {
             let xml = Blockly.Xml.workspaceToDom(workspace);
-            sessionStorage.setItem("code", Blockly.Xml.domToText(xml));
-            sessionStorage.setItem("pretty_code", Blockly.Xml.domToPrettyText(xml));
+            setCode(Blockly.Xml.domToText(xml))
         }
     </script>
 </html>

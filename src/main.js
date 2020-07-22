@@ -4,9 +4,24 @@ const {
     BrowserWindow
 } = require('electron')
 
+global.settings = {
+    "name": null,
+    "version": null,
+    "author": null,
+    "description": null
+}
+
+global.code = { //TODO: Make this cleaner
+    "code": null
+}
+
+global.path = { //TODO: Make this cleaner
+    "path": null 
+}
+
 function createWindow() {
     const win = new BrowserWindow({
-        icon:  app.getAppPath() + "/src/UI/images/icon.png",
+        icon: app.getAppPath() + "/src/UI/images/icon.png",
         width: 1800,
         height: 1200,
         minHeight: 600,
@@ -17,6 +32,68 @@ function createWindow() {
     })
     win.loadFile(app.getAppPath() + '/src/UI/pages/index.html')
     win.setMenuBarVisibility(false)
+
+    win.on('close', function(e) {
+
+        //TODO: it currently only works if the changes has been cached to the global storage
+        //TODO: Implement this for Switch workspace too
+        if(!win.webContents.getURL().endsWith("index.html")) {
+            //If it's a new insaved project
+            if(global.path.path == null) { //TODO: check if modifications has been made
+                const choice = require("electron").dialog.showMessageBoxSync(this,
+                    {
+                        type: "warning",
+                        buttons: ["Quit", "Cancel"], //TODO: add Save button
+                        title: "Confirm closing",
+                        message: "You have unsaved changes"
+                    });
+                if (choice === 1) {
+                    e.preventDefault();
+                
+                /* Doesn't work without canceling the event
+                } else if (choice === 0) {
+                    //Cannot use the saveProjectAs as it only works from the renderer process
+                    const { dialog } = require('electron')
+                    var options = {
+                        title: "Save project",
+                        buttonLabel: "Save project",
+                        filters: [{
+                            name: 'Blosky Projects',
+                            extensions: ['bsk']
+                        }]
+                    }
+                    dialog.showSaveDialog(options).then(result => {
+                        if (result.canceled == false) {
+                            setPath(result.filePath)
+                            fs.writeFile(result.filePath, project, function(err) {
+                                if (err) throw err
+                            })
+                        }
+                    })
+                */
+                }
+            
+            } else { //If it's not a new project which has unsaved modifications
+                var lines = fs.readFileSync(global.path.path, "utf-8").split("\r")
+
+                //stringify & parse is needed or the comparaison won't work
+                if(global.code.code != lines[1] || JSON.stringify(JSON.parse(lines[0])) != JSON.stringify(global.settings)) { 
+                    const choice = require("electron").dialog.showMessageBoxSync(this,
+                        {
+                        type: "warning",
+                        buttons: ["Save", "Don't save", "Cancel"],
+                        title: "Confirm closing",
+                        message: "You have unsaved changes"
+                        });
+                    if (choice === 2) {
+                        e.preventDefault();
+                    } else if (choice === 0) {
+                        saveProject(JSON.stringify(global.settings) + "\r" + global.code.code, global.path.path)
+                    }
+                }
+            }
+        }
+    });
 }
 
 app.whenReady().then(createWindow)
@@ -57,12 +134,12 @@ function openProject() {
         if (result.canceled == false) {
             var lines = fs.readFileSync(result.filePaths[0], "utf-8").split("\r")
             var settings = JSON.parse(lines[0])
-            sessionStorage.setItem("code", lines[1])
-            sessionStorage.setItem("name", settings["name"])
-            sessionStorage.setItem("version", settings["version"])
-            sessionStorage.setItem("author", settings["author"])
-            sessionStorage.setItem("description", settings["description"])
-            sessionStorage.setItem("path", result.filePaths[0])
+            setCode(lines[1])
+            setSettings("name", settings["name"])
+            setSettings("version", settings["version"])
+            setSettings("author", settings["author"])
+            setSettings("description", settings["description"])
+            setPath(result.filePaths[0])
             window.location.replace("settings.html")
         }
     })
@@ -90,10 +167,43 @@ function saveProjectAs(project) {
     }
     dialog.showSaveDialog(options).then(result => {
         if (result.canceled == false) {
-            sessionStorage.setItem("path", result.filePath)
+            setPath(result.filePath)
             fs.writeFile(result.filePath, project, function(err) {
                 if (err) throw err
             })
         }
     })
+}
+
+function setPath(value){
+    require('electron').remote.getGlobal('path').path = value
+}
+
+function getPath(){
+    return require('electron').remote.getGlobal('path').path
+}
+
+function setCode(value) {
+    require('electron').remote.getGlobal('code').code = value
+}
+
+function getCode() {
+    return require('electron').remote.getGlobal('code').code
+}
+
+function setSettings(key, value) {
+    require('electron').remote.getGlobal('settings')[key] = value
+}
+
+function getSettings(key) {
+    return require('electron').remote.getGlobal('settings')[key]
+}
+
+function clearStorage() { //TODO: find a cleaner way to do that
+    require('electron').remote.getGlobal('code').code = null
+    require('electron').remote.getGlobal('path').path = null
+    require('electron').remote.getGlobal('settings').name = null
+    require('electron').remote.getGlobal('settings').version = null
+    require('electron').remote.getGlobal('settings').author = null
+    require('electron').remote.getGlobal('settings').description = null
 }
