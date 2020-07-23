@@ -38,3 +38,4 @@ jobs:
             dist/*.snap
             dist/*.zip
             dist/*.dmg
+            dist/win-unpacked/
