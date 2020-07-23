@@ -12,9 +12,8 @@ const syntaxes = {
 
 module.exports = {
     generateJavaClass: function generateJavaClass(AST) {
-        let file = fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')
-        let java = generateBranch(AST) //java[0] corresponds to the transpiled code, java[1] to the new imports
-        file = file.replace("%child_nodes%", java[0])
+        const java = generateBranch(AST) //java[0] corresponds to the transpiled code, java[1] to the new imports
+        let file = (fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')).replace("%child_nodes%", java[0])
         
         //Adding imports
         java[1].forEach((element, index) => {
@@ -89,8 +88,8 @@ function generateBranch(nodes) {
     let java_nodes = "" //Contains the transpiled branch
     
     Object.keys(nodes).forEach(node => {
+        const category = nodes[node]["category"]
         let ID = nodes[node]["ID"]
-        let category = nodes[node]["category"]
         let java_node = syntaxes[category][ID]["java_syntax"]
 
         //Transpiling arguments
@@ -120,9 +119,9 @@ function generateBranch(nodes) {
 
 
 function generateArgument(properties, required_type) {
+    const category = properties["category"]
     let java_argument //The transpiled argument
     let type //int, String, ...
-    let category = properties["category"]
 
     switch(category) {
         case "plain_text":

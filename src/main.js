@@ -1,8 +1,5 @@
 const fs = require('fs')
-const {
-    app,
-    BrowserWindow
-} = require('electron')
+const {app, BrowserWindow} = require('electron')
 
 global.settings = {
     "name": null,
@@ -73,7 +70,7 @@ function createWindow() {
                 }*/
             
             } else { //If it's not a new project which has unsaved modifications
-                var lines = fs.readFileSync(global.path.path, "utf-8").split("\r")
+                const lines = fs.readFileSync(global.path.path, "utf-8").split("\r")
 
                 //stringify & parse is needed or the comparaison won't work
                 if(global.code.code != lines[1] || JSON.stringify(JSON.parse(lines[0])) != JSON.stringify(global.settings)) { 
@@ -110,7 +107,7 @@ app.on('activate', () => {
 })
 
 function getAllSyntaxes() {
-    let appPath = require('electron').remote.app.getAppPath()
+    const appPath = require('electron').remote.app.getAppPath()
     
     return {
         events: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/events.json")),
@@ -122,7 +119,7 @@ function getAllSyntaxes() {
 
 function openProject() {
     const dialog = require('electron').remote.dialog
-    var options = {
+    const options = {
         properties: ['openFile'],
         filters: [{
             name: 'Blosky Projects',
@@ -131,8 +128,8 @@ function openProject() {
     }
     dialog.showOpenDialog(options).then(result => {
         if (result.canceled == false) {
-            var lines = fs.readFileSync(result.filePaths[0], "utf-8").split("\r")
-            var settings = JSON.parse(lines[0])
+            const lines = fs.readFileSync(result.filePaths[0], "utf-8").split("\r")
+            const settings = JSON.parse(lines[0])
             setCode(lines[1])
             setSettings("name", settings["name"])
             setSettings("version", settings["version"])
@@ -156,7 +153,7 @@ function saveProject(project, path) {
 
 function saveProjectAs(project) {
     const dialog = require('electron').remote.dialog
-    var options = {
+    const options = {
         title: "Save project",
         buttonLabel: "Save project",
         filters: [{

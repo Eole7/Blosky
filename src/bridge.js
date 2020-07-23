@@ -6,7 +6,7 @@ function exportProject(code, settings) {
     transpiler.generatePluginYML(settings)
 
     const dialog = require('electron').remote.dialog
-    var options = {
+    const options = {
         title: "Save plugin",
         buttonLabel: "Save plugin",
     }
@@ -22,7 +22,7 @@ function exportProject(code, settings) {
 }
 
 function blocklyToAST(code) {
-    let project = JSON.parse(require('xml-js').xml2json(code, {compact: true}))["xml"]
+    const project = JSON.parse(require('xml-js').xml2json(code, {compact: true}))["xml"]
     let AST = {}
     
     if (Object.keys(project["block"])[0] == "0") { //If the project contains multiple events
@@ -37,11 +37,12 @@ function blocklyToAST(code) {
 }
 
 function blockToNode(block, path, key, AST) {
-    let type = block["_attributes"]["type"].split("_")
-    let category = type[0]
-    let ID = type[1]
-    let child_nodes
+    const type = block["_attributes"]["type"].split("_")
+    const category = type[0]
+    const ID = type[1]
     let args
+    let child_nodes
+    
     
     if (block["value"] != undefined) {
         args = blockToArgument(block["value"])
