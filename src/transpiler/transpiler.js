@@ -1,7 +1,8 @@
-const fs = require('fs')
-let appPath = require('electron').app.getAppPath()
+const fs = require("fs")
+const appPath = require("electron").app.getAppPath()
+const dialog = require("electron").dialog
 
-let syntaxes = {
+const syntaxes = {
     events: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/events.json")),
     effects: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/effects.json")),
     expressions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/expressions.json")),
@@ -27,14 +28,20 @@ module.exports = {
         fs.mkdirSync(appPath + "/temp")
         fs.mkdirSync(appPath+ "/temp/fr")
         fs.mkdirSync(appPath + "/temp/fr/blosky")
-        fs.writeFile(appPath + '/temp/fr/blosky/Event.java', file, function(err) {
-            if (err) throw err
+        fs.writeFile(appPath + '/temp/fr/blosky/Event.java', file, error => {
+            if(error) {
+                dialog.showErrorBox("Compilation failed", "Fail ID: 1\rError:" + error)
+                console.log(error)
+            }
         })
     },
     
     generateMainClass: function generateMainClass() {
-        fs.writeFile(appPath + '/temp/fr/blosky/Main.java', fs.readFileSync(appPath + '/src/transpiler/patterns/Main.java', 'utf8'), function(err) {
-            if (err) throw err
+        fs.writeFile(appPath + '/temp/fr/blosky/Main.java', fs.readFileSync(appPath + '/src/transpiler/patterns/Main.java', 'utf8'), error => {
+            if(error) {
+                dialog.showErrorBox("Compilation failed", "Fail ID: 2\rError:" + error)
+                console.log(error)
+            }
         })
     },
     
@@ -44,8 +51,11 @@ module.exports = {
         file = file.replace("%description%", settings["description"])
         file = file.replace("%version%", settings["version"])
         file = file.replace("%author%", settings["author"])
-        fs.writeFile(appPath + '/temp/plugin.yml', file, function(err) {
-            if (err) throw err
+        fs.writeFile(appPath + '/temp/plugin.yml', file, error => {
+            if(error) {
+                dialog.showErrorBox("Compilation failed", "Fail ID: 3\rError:" + error)
+                console.log(error)
+            }
         })
     },
     
@@ -53,38 +63,23 @@ module.exports = {
         const child_process = require("child_process")
         
         //Compiling .java files to Java bytecode (.class)
-        child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java", (error, stdout, stderr) => {
-            if (error) {
-                console.log(`error: ${error.message}`)
-                return
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`)
-                return
-            }
-            console.log(`stdout: ${stdout}`)
-        })
-        
+        child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
+        //TODO: async compilation for reporting error to user
+
         fs.unlinkSync(appPath + "/temp/fr/blosky/Main.java")
         fs.unlinkSync(appPath + "/temp/fr/blosky/Event.java")
         
         //Encapsulates the files into a .jar
-        child_process.execSync('jar cvf "' + filename + '.jar" -C ' + appPath + '/temp .', (error, stdout, stderr) => {
-            if (error) {
-                console.log(`error: ${error.message}`)
-                return
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`)
-                return
-            }
-            console.log(`stdout: ${stdout}`)
-        })
+        child_process.execSync('jar cvf "' + filename + '.jar" -C ' + appPath + '/temp .')
+        //TODO: async encapsulation for reporting error to user
     },
     
     clearTemporaryFolder: function clearTemporaryFolder() {
-        fs.rmdir(appPath + "/temp", { recursive: true }, (err) => {
-            if (err) throw err
+        fs.rmdir(appPath + "/temp", { recursive: true }, error => {
+            if(error) {
+                dialog.showErrorBox("Compilation failed", "Fail ID: 4\rError:" + error)
+                console.log(error)
+            }
         })
     }
 }
