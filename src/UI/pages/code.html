@@ -78,7 +78,7 @@
         let toolbox = '<xml>'
         var syntaxes = getAllSyntaxes()
         
-        Object.keys(syntaxes).forEach(function(category) {
+        Object.keys(syntaxes).forEach(category => {
             toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
             
             if (category == "expressions") {
@@ -100,7 +100,7 @@
                 toolbox += '<block type="parsed_as"></block>'
             }
             
-            Object.keys(syntaxes[category]).forEach(function(syntax_key) {
+            Object.keys(syntaxes[category]).forEach(syntax_key => {
                 Blockly.Blocks[category + "_" + syntax_key] = {
                     init: function() {
                         let block = this;
@@ -109,7 +109,7 @@
                         let args = []
                         
                         if (syntaxes[category][syntax_key]["arguments"] != undefined) {
-                            Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(function(argument) {
+                            Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(argument => {
                                 syntax = syntax.replace(argument, "%" + next_argument_ID);
                                 next_argument_ID++
                                 args.push({
@@ -196,7 +196,7 @@
             "trashcan": true
         });
         
-        let onresize = function(e) {
+        let onresize = e => {
             let element = blocklyArea;
             let x = 0;
             let y = 0;
