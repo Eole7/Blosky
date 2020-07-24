@@ -35,7 +35,7 @@ function createWindow() {
         //TODO: it currently only works if the changes has been cached to the global storage
         //TODO: Implement this for Switch workspace too
         if(!win.webContents.getURL().endsWith("index.html")) {
-            //If it's a new insaved project
+            //If it's a new unsaved project
             if(global.path.path == null) { //TODO: check if modifications has been made
                 const choice = require("electron").dialog.showMessageBoxSync(this,
                     {
@@ -43,32 +43,37 @@ function createWindow() {
                         buttons: ["Quit", "Cancel"], //TODO: add Save button
                         title: "Confirm closing",
                         message: "You have unsaved changes"
-                    });
-                if (choice === 1) {
-                    e.preventDefault();
-                }
-                /* Doesn't work without canceling the event
-                else if (choice === 0) {
-                    //Cannot use the saveProjectAs as it only works from the renderer process
-                    const { dialog } = require('electron')
-                    var options = {
-                        title: "Save project",
-                        buttonLabel: "Save project",
-                        filters: [{
-                            name: 'Blosky Projects',
-                            extensions: ['bsk']
-                        }]
-                    }
-                    dialog.showSaveDialog(options).then(result => {
-                        if (result.canceled == false) {
-                            setPath(result.filePath)
-                            fs.writeFile(result.filePath, project, function(err) {
-                                if (err) throw err
-                            })
+                    }) 
+                switch(choice) {
+                    case 1:
+                        e.preventDefault() 
+                        break
+                    
+                    /*
+                    Doesn't work without canceling the event
+                    case 0 :
+                        //Cannot use the saveProjectAs as it only works from the renderer process
+                        const { dialog } = require('electron')
+                        var options = {
+                            title: "Save project",
+                            buttonLabel: "Save project",
+                            filters: [{
+                                name: 'Blosky Projects',
+                                extensions: ['bsk']
+                            }]
                         }
-                    })
-                }*/
-            
+                        dialog.showSaveDialog(options).then(result => {
+                            if (result.canceled == false) {
+                                setPath(result.filePath)
+                                fs.writeFile(result.filePath, project, function(err) {
+                                    if (err) throw err
+                                })
+                            }
+                        })
+                    break
+                    */
+
+                }
             } else { //If it's not a new project which has unsaved modifications
                 const lines = fs.readFileSync(global.path.path, "utf-8").split("\r")
 
@@ -76,20 +81,24 @@ function createWindow() {
                 if(global.code.code != lines[1] || JSON.stringify(JSON.parse(lines[0])) != JSON.stringify(global.settings)) { 
                     const choice = require("electron").dialog.showMessageBoxSync(this,
                         {
-                        type: "warning",
-                        buttons: ["Save", "Don't save", "Cancel"],
-                        title: "Confirm closing",
-                        message: "You have unsaved changes"
-                        });
-                    if (choice === 2) {
-                        e.preventDefault();
-                    } else if (choice === 0) {
-                        saveProject(JSON.stringify(global.settings) + "\r" + global.code.code, global.path.path)
+                            type: "warning",
+                            buttons: ["Save", "Don't save", "Cancel"],
+                            title: "Confirm closing",
+                            message: "You have unsaved changes"
+                        }) 
+                    switch(choice) {
+                        case 0:
+                            saveProject(JSON.stringify(global.settings) + "\r" + global.code.code, global.path.path)
+                            break
+
+                        case 2:
+                            e.preventDefault()
+                            break
                     }
                 }
             }
         }
-    });
+    }) 
 }
 
 app.whenReady().then(createWindow)

@@ -15,7 +15,7 @@ module.exports = {
         const java = generateBranch(AST) //java[0] corresponds to the transpiled code, java[1] to the new imports
         let file = (fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')).replace("%child_nodes%", java[0])
         
-        //Adding imports
+        //Adding imports to the Java class
         java[1].forEach((element, index) => {
             if (index + 1 != java[1].length) {
                 file = file.replace("%imports%", "import " + element + "; \r%imports%")
@@ -45,11 +45,12 @@ module.exports = {
     },
     
     generatePluginYML: function generatePluginYML(settings) {
-        let file = fs.readFileSync(appPath + '/src/transpiler/patterns/plugin.yml', 'utf8')
-        file = file.replace("%name%", settings["name"])
-        file = file.replace("%description%", settings["description"])
-        file = file.replace("%version%", settings["version"])
-        file = file.replace("%author%", settings["author"])
+        const file = fs.readFileSync(appPath + '/src/transpiler/patterns/plugin.yml', 'utf8')
+            .replace("%name%", settings["name"])
+            .replace("%description%", settings["description"])
+            .replace("%version%", settings["version"])
+            .replace("%author%", settings["author"])
+        
         fs.writeFile(appPath + '/temp/plugin.yml', file, error => {
             if(error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 3\rError:" + error)
@@ -62,19 +63,19 @@ module.exports = {
         const child_process = require("child_process")
         
         //Compiling .java files to Java bytecode (.class)
-        child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
         //TODO: async compilation for reporting error to user
-
+        child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
+        
         fs.unlinkSync(appPath + "/temp/fr/blosky/Main.java")
         fs.unlinkSync(appPath + "/temp/fr/blosky/Event.java")
         
         //Encapsulates the files into a .jar
-        child_process.execSync('jar cvf "' + filename + '.jar" -C ' + appPath + '/temp .')
         //TODO: async encapsulation for reporting error to user
+        child_process.execSync('jar cvf "' + filename + '.jar" -C ' + appPath + '/temp .')
     },
     
     clearTemporaryFolder: function clearTemporaryFolder() {
-        fs.rmdir(appPath + "/temp", { recursive: true }, error => {
+        fs.rmdir(appPath + "/temp", {recursive: true}, error => {
             if(error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 4\rError:" + error)
                 console.log(error)
@@ -90,7 +91,7 @@ function generateBranch(nodes) {
     Object.keys(nodes).forEach(node => {
         const category = nodes[node]["category"]
         let ID = nodes[node]["ID"]
-        let java_node = syntaxes[category][ID]["java_syntax"]
+        let java_node = syntaxes[category][ID]["java_syntax"] //Contains the transpiled node
 
         //Transpiling arguments
         if (syntaxes[category][ID]["arguments"] != null) {
@@ -101,10 +102,14 @@ function generateBranch(nodes) {
         }
         
         if (nodes[node]["child_nodes"] != undefined) { //Transpiling child nodes of the current node
-            let child_nodes = generateBranch(nodes[node]["child_nodes"])
+            const child_nodes = generateBranch(nodes[node]["child_nodes"])
             imports = imports.concat(child_nodes[1])
 
-            java_nodes += "\r" + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.txt', 'utf8').replace("%instruction%", java_node).replace("%ID%", node).replace("%child_nodes%", child_nodes[0])
+            java_nodes += "\r" 
+                + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.txt', 'utf8')
+                .replace("%instruction%", java_node)
+                .replace("%ID%", node)
+                .replace("%child_nodes%", child_nodes[0])
         } else {
             java_nodes += "\r" + java_node
         }
@@ -131,8 +136,7 @@ function generateArgument(properties, required_type) {
             } else {
                 java_argument = properties["content"]
             }
-
-            break;
+            break
         
         case "expressions":
             type = syntaxes["expressions"][(properties["ID"])]["type"]
@@ -143,8 +147,7 @@ function generateArgument(properties, required_type) {
                     java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
                 })
             }
-
-            break;
+            break
         
         case "argument_constructor":
             if (properties["arguments"] != null) {
@@ -160,15 +163,13 @@ function generateArgument(properties, required_type) {
                     }
                 })
             }
-
-            break;
+            break
         
         case "parsed_as":
             if (properties["arguments"] != null) {
                 java_argument = generateArgument(properties["arguments"]["1"], properties["type"])
             }
-
-            break;
+            break
     }
     
     //Checking types and fixing them if needed
