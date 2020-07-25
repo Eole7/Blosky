@@ -26,7 +26,7 @@ See the full To-Do list on [Trello](https://trello.com/b/QUSLjWyG/blosky)
 
 ## Contributing
 - Install Node.js and Git
-- Clone the repository
+- Fork the repository then clone yours
 - Open the command prompt in the folder you just cloned to
 - Do `npm install` to install all node modules
 
