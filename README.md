@@ -2,7 +2,7 @@
 ![alt text](https://i.goopics.net/aDZpR.jpg)
 ![alt text](https://i.goopics.net/X8Nog.jpg)
 
-Blosky is an app that allows you to create Minecraft Spigot plugins from a visual interface, and compile them into Java
+Blosky is a visual programming editor for creating Minecraft plugins, and compiling them into Java.
 
 ## Installation
 - Install the JDK (Java Development Kit) to be able to compile your plugins: https://www.oracle.com/java/technologies/javase-jdk14-downloads.html
