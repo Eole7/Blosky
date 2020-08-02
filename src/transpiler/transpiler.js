@@ -15,14 +15,14 @@ var imports = []
 module.exports = {
     generateJavaClass: function generateJavaClass(AST) {
         imports = []
-        const listeners_class = fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')
+        const listeners_class = fs.readFileSync(appPath + '/src/transpiler/patterns/Listeners.java', 'utf8')
                               .replace("%child_nodes%", generateBranch(AST))
                               .replace("%imports%", imports.map(element => "import " + element + ";").join("\r"))
         
         fs.mkdirSync(appPath + "/temp")
         fs.mkdirSync(appPath+ "/temp/fr")
         fs.mkdirSync(appPath + "/temp/fr/blosky")
-        fs.writeFile(appPath + '/temp/fr/blosky/Event.java', listeners_class, error => {
+        fs.writeFile(appPath + '/temp/fr/blosky/Listeners.java', listeners_class, error => {
             if(error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 1\rError:" + error)
                 console.log(error)
@@ -62,7 +62,7 @@ module.exports = {
         child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
         
         fs.unlinkSync(appPath + "/temp/fr/blosky/Main.java")
-        fs.unlinkSync(appPath + "/temp/fr/blosky/Event.java")
+        fs.unlinkSync(appPath + "/temp/fr/blosky/Listeners.java")
         
         //Encapsulates the files into a .jar
         //TODO: async encapsulation for reporting error to user
