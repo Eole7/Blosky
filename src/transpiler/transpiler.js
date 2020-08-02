@@ -10,18 +10,19 @@ const syntaxes = {
     types: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/types.json"))
 }
 
+var imports = []
+
 module.exports = {
     generateJavaClass: function generateJavaClass(AST) {
-        const java = generateBranch(AST) //java[0] corresponds to the transpiled code, java[1] to the new imports
-        let file = (fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')).replace("%child_nodes%", java[0])
-        
-        //Adding imports to the Java class
-        file = file.replace("%imports%", java[1].map(element => "import " + element + ";").join("\r"))
+        imports = []
+        const listeners_class = fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')
+                              .replace("%child_nodes%", generateBranch(AST))
+                              .replace("%imports%", imports.map(element => "import " + element + ";").join("\r"))
         
         fs.mkdirSync(appPath + "/temp")
         fs.mkdirSync(appPath+ "/temp/fr")
         fs.mkdirSync(appPath + "/temp/fr/blosky")
-        fs.writeFile(appPath + '/temp/fr/blosky/Event.java', file, error => {
+        fs.writeFile(appPath + '/temp/fr/blosky/Event.java', listeners_class, error => {
             if(error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 1\rError:" + error)
                 console.log(error)
@@ -79,7 +80,6 @@ module.exports = {
 }
 
 function generateBranch(nodes) {
-    let imports = []
     let java_nodes = "" //Contains the transpiled branch
     
     Object.keys(nodes).forEach(node => {
@@ -96,24 +96,20 @@ function generateBranch(nodes) {
         }
         
         if (nodes[node]["child_nodes"] != undefined) { //Transpiling child nodes of the current node
-            const child_nodes = generateBranch(nodes[node]["child_nodes"])
-            imports = imports.concat(child_nodes[1])
-
             java_nodes += "\r" 
                 + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.txt', 'utf8')
                 .replace("%instruction%", java_node)
                 .replace("%ID%", node)
-                .replace("%child_nodes%", child_nodes[0])
+                .replace("%child_nodes%", generateBranch(nodes[node]["child_nodes"]))
         } else {
             java_nodes += "\r" + java_node
         }
-        
-        if (syntaxes[category][ID]["import"] != null && !(imports.includes(syntaxes[category][ID]["import"]))) {
-            imports.push(syntaxes[category][ID]["import"])
-        }
+
+        //Adding required import by the current node
+        if(syntaxes[category][ID]["import"] != null) addImport(syntaxes[category][ID]["import"])
     })
     
-    return [java_nodes, imports]
+    return java_nodes
 }
 
 
@@ -176,4 +172,8 @@ function generateArgument(properties, required_type) {
     }
     
     return java_argument
+}
+
+function addImport(java_import) {
+    if(!(imports.includes(java_import))) imports.push(java_import)
 }
