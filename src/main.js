@@ -145,7 +145,7 @@ function openProject() {
             setSettings("author", settings["author"])
             setSettings("description", settings["description"])
             setPath(result.filePaths[0])
-            window.location.replace("settings.html")
+            window.location.replace("plugin_config.html")
         }
     })
 }
