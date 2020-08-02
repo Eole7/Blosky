@@ -2,11 +2,15 @@
   "1": {
     "syntax": "On move",
     "java_syntax": "PlayerMoveEvent",
-    "import": "org.bukkit.event.player.PlayerMoveEvent"
+    "imports": [
+      "org.bukkit.event.player.PlayerMoveEvent"
+    ]
   },
   "2": {
     "syntax": "On command",
     "java_syntax": "PlayerCommandPreprocessEvent",
-    "import": "org.bukkit.event.player.PlayerCommandPreprocessEvent"
+    "imports": [
+      "org.bukkit.event.player.PlayerCommandPreprocessEvent"
+    ]
   }
 }

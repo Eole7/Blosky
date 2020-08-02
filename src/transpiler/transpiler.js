@@ -105,8 +105,8 @@ function generateBranch(nodes) {
             java_nodes += "\r" + java_node
         }
 
-        //Adding required import by the current node
-        if(syntaxes[category][ID]["import"] != null) addImport(syntaxes[category][ID]["import"])
+        //Adding imports required by the current node
+        if(syntaxes[category][ID]["imports"] != null) addImports(syntaxes[category][ID]["imports"])
     })
     
     return java_nodes
@@ -137,6 +137,9 @@ function generateArgument(properties, required_type) {
                     java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
                 })
             }
+
+            //Adding imports required by the expression
+            if(syntaxes[category][(properties["ID"])]["imports"] != null) addImports(syntaxes[category][(properties["ID"])]["imports"])
             break
         
         case "argument_constructor":
@@ -174,6 +177,8 @@ function generateArgument(properties, required_type) {
     return java_argument
 }
 
-function addImport(java_import) {
-    if(!(imports.includes(java_import))) imports.push(java_import)
+function addImports(new_imports) {
+    new_imports.forEach(value => {
+        if (!(imports.includes(value))) imports.push(value)
+    })
 }
