@@ -16,13 +16,7 @@ module.exports = {
         let file = (fs.readFileSync(appPath + '/src/transpiler/patterns/Event.java', 'utf8')).replace("%child_nodes%", java[0])
         
         //Adding imports to the Java class
-        java[1].forEach((element, index) => {
-            if (index + 1 != java[1].length) {
-                file = file.replace("%imports%", "import " + element + "; \r%imports%")
-            } else {
-                file = file.replace("%imports%", "import " + element + ";")
-            }
-        })
+        file = file.replace("%imports%", java[1].map(element => "import " + element + ";").join("\r"))
         
         fs.mkdirSync(appPath + "/temp")
         fs.mkdirSync(appPath+ "/temp/fr")
