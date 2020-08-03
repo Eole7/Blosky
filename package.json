@@ -23,10 +23,10 @@
         "nsis",
         "portable"
       ],
-      "icon": "src/UI/images/icon.ico"
+      "icon": "resources/icon.ico"
     },
     "linux": {
-      "icon": "src/UI/images/icon.png"
+      "icon": "resources/icon.png"
     },
     "nsis": {
       "oneClick": "false",
