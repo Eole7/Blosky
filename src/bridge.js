@@ -1,3 +1,8 @@
+/*
+    This files makes a bridge between the Blockly code workspace and the transpiler
+    It converts the Blockly Workspace (xml) to JSON, while reorganizing the syntax tree for better readability
+*/
+
 function exportProject(workspace, settings) {
     const transpiler = require('electron').remote.require('./transpiler/transpiler.js')
     transpiler.clearTemporaryFolder() //If the previous compilation failed
@@ -22,20 +27,21 @@ function exportProject(workspace, settings) {
 }
 
 function blocklyWorkspaceToSyntaxTree(workspace) {
-    const project = JSON.parse(require('xml-js').xml2json(workspace, {compact: true}))["xml"]
+    workspace = JSON.parse(require('xml-js').xml2json(workspace, {compact: true}))["xml"]
     let syntax_tree = {}
     
-    if (Object.keys(project["block"])[0] == "0") { //If the project contains multiple events
-        Object.keys(project["block"]).forEach(event_ID => {
-            syntax_tree = blockToNode(project["block"][event_ID], ["nodes"], parseInt(event_ID)+1, syntax_tree)
+    if (Object.keys(workspace["block"])[0] == "0") { //If the project contains multiple events
+        Object.keys(workspace["block"]).forEach(event_ID => {
+            syntax_tree = blockToNode(workspace["block"][event_ID], ["nodes"], parseInt(event_ID)+1, syntax_tree)
         })
     } else { //If the project contains 1 event
-        syntax_tree = blockToNode(project["block"], ["nodes"], 1, syntax_tree)
+        syntax_tree = blockToNode(workspace["block"], ["nodes"], 1, syntax_tree)
     }
     
     return syntax_tree
 }
 
+//This function converts a Blockly block to a node
 function blockToNode(block, path, key, syntax_tree) {
     const type = block["_attributes"]["type"].split("_")
     const category = type[0]
@@ -54,9 +60,12 @@ function blockToNode(block, path, key, syntax_tree) {
     //Adding blocks which are in the same branch as the current one
     if (block["next"] != undefined && block["next"]["block"] != undefined) {
         //Blocks followed by an event are in the same branch as the event's one, but we want them as child nodes
-        if (category == "events") child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
-        
-        else blockToNode(block["next"]["block"], path, key + 1, syntax_tree)
+        if (category == "events") {
+            child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
+        }
+        else {
+            blockToNode(block["next"]["block"], path, key + 1, syntax_tree)
+        }
     }
     
     //Adding child nodes
@@ -76,46 +85,53 @@ function Node(category, ID, args, child_nodes) {
     return this
 }
 
+//This function converts generates arguments of a Blockly block
 function blockToArgument(block) {
     let args = {}
-    let unconverted_args = []
+    let blockly_arguments = [] //The unconverted arguments - in the Blockly's format
     
     if (Object.keys(block)[0] != "0") { //If the block contains 1 argument
-        unconverted_args.push(block)
+        blockly_arguments.push(block)
     } else { //If the block contains several arguments
-        unconverted_args = block
+        blockly_arguments = block
     }
     
-    Object.keys(unconverted_args).forEach(element => {
+    Object.keys(blockly_arguments).forEach(element => {
         let category
         let ID
         let content
         let type
         let sub_arguments
         
-        if (unconverted_args[element]["block"]["_attributes"]["type"] == "text") {
+        if (blockly_arguments[element]["block"]["_attributes"]["type"] == "text") {
             category = "plain_text"
             type = "String"
-            content = unconverted_args[element]["block"]["field"]["_text"]
-        } else if (unconverted_args[element]["block"]["_attributes"]["type"] == "text_join") {
+            content = blockly_arguments[element]["block"]["field"]["_text"]
+        } else if (blockly_arguments[element]["block"]["_attributes"]["type"] == "text_join") {
             category = "argument_constructor"
-        } else if (unconverted_args[element]["block"]["_attributes"]["type"].startsWith("expressions")) {
+        } else if (blockly_arguments[element]["block"]["_attributes"]["type"].startsWith("expressions")) {
             category = "expressions"
-            ID = unconverted_args[element]["block"]["_attributes"]["type"].split("_")[1]
-        } else if(unconverted_args[element]["block"]["_attributes"]["type"] == "parsed_as") {
+            ID = blockly_arguments[element]["block"]["_attributes"]["type"].split("_")[1]
+        } else if(blockly_arguments[element]["block"]["_attributes"]["type"] == "parsed_as") {
             category = "parsed_as"
-            type = unconverted_args[element]["block"]["field"]["_text"]
+            type = blockly_arguments[element]["block"]["field"]["_text"]
         }
         
-        if (unconverted_args[element]["block"]["value"] != undefined) {
-            sub_arguments = blockToArgument(unconverted_args[element]["block"]["value"])
+        if (blockly_arguments[element]["block"]["value"] != undefined) {
+            sub_arguments = blockToArgument(blockly_arguments[element]["block"]["value"])
         }
         
         //If the argument is part of an argument constructor
-        if(unconverted_args[element]["_attributes"]["name"].startsWith("ADD")) args[parseInt(unconverted_args[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, type, sub_arguments)
+        if(blockly_arguments[element]["_attributes"]["name"].startsWith("ADD")) {
+            args[parseInt(blockly_arguments[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, type, sub_arguments)
+        }
         //If the argument is part of a parsed_as argument
-        else if(unconverted_args[element]["_attributes"]["name"] == "expression") args["1"] = new Arg(category, ID, content, type, sub_arguments)
-        else args[unconverted_args[element]["_attributes"]["name"]] = new Arg(category, ID, content, type, sub_arguments)
+        else if(blockly_arguments[element]["_attributes"]["name"] == "expression") {
+            args["1"] = new Arg(category, ID, content, type, sub_arguments)
+        }
+        else {
+            args[blockly_arguments[element]["_attributes"]["name"]] = new Arg(category, ID, content, type, sub_arguments)
+        }
     })
     
     return args
