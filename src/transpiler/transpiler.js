@@ -13,10 +13,10 @@ const syntaxes = {
 var imports = []
 
 module.exports = {
-    generateJavaClass: function generateJavaClass(AST) {
+    generateListenersClass: syntax_tree => {
         imports = []
         const listeners_class = fs.readFileSync(appPath + '/src/transpiler/patterns/Listeners.java', 'utf8')
-                              .replace("%child_nodes%", generateBranch(AST))
+                              .replace("%child_nodes%", generateBranch(syntax_tree["nodes"]))
                               .replace("%imports%", imports.map(element => "import " + element + ";").join("\r"))
         
         fs.mkdirSync(appPath + "/temp/fr/blosky", {recursive: true})
@@ -28,7 +28,7 @@ module.exports = {
         })
     },
     
-    generateMainClass: function generateMainClass() {
+    generateMainClass: () => {
         fs.writeFile(appPath + '/temp/fr/blosky/Main.java', fs.readFileSync(appPath + '/src/transpiler/patterns/Main.java', 'utf8'), error => {
             if(error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 2\rError:" + error)
@@ -37,7 +37,7 @@ module.exports = {
         })
     },
     
-    generatePluginYML: function generatePluginYML(settings) {
+    generatePluginConfig: settings => {
         const file = fs.readFileSync(appPath + '/src/transpiler/patterns/plugin.yml', 'utf8')
             .replace("%name%", settings["name"])
             .replace("%description%", settings["description"])
@@ -52,10 +52,10 @@ module.exports = {
         })
     },
     
-    compile: function compile(filename) {
+    compile: filename => {
         const child_process = require("child_process")
         
-        //Compiling .java files to Java bytecode (.class)
+        //Compiling .java files to Java Bytecode (.class)
         //TODO: async compilation for reporting error to user
         child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
         
@@ -67,7 +67,7 @@ module.exports = {
         child_process.execSync('jar cvf "' + filename + '.jar" -C ' + appPath + '/temp .')
     },
     
-    clearTemporaryFolder: function clearTemporaryFolder() {
+    clearTemporaryFolder: () => {
         fs.rmdir(appPath + "/temp", {recursive: true}, error => {
             if(error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 4\rError:" + error)
@@ -88,7 +88,7 @@ function generateBranch(nodes) {
         //Transpiling arguments
         if (syntaxes[category][ID]["arguments"] != null) {
             Object.keys(syntaxes[category][ID]["arguments"]).forEach(argument => {
-                let required_type = syntaxes[category][ID]["arguments"][argument]["required_type"]
+                const required_type = syntaxes[category][ID]["arguments"][argument]["required_type"]
                 java_node = java_node.replace(argument, generateArgument(nodes[node]["arguments"][argument], required_type))
             })
         }
@@ -109,7 +109,6 @@ function generateBranch(nodes) {
     
     return java_nodes
 }
-
 
 function generateArgument(properties, required_type) {
     const category = properties["category"]
@@ -176,7 +175,7 @@ function generateArgument(properties, required_type) {
 }
 
 function addImports(new_imports) {
-    new_imports.forEach(value => {
-        if (!(imports.includes(value))) imports.push(value)
+    new_imports.forEach(new_import => {
+        if (!(imports.includes(new_import))) imports.push(new_import)
     })
 }

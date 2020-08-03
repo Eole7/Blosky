@@ -1,9 +1,9 @@
-function exportProject(code, settings) {
+function exportProject(workspace, settings) {
     const transpiler = require('electron').remote.require('./transpiler/transpiler.js')
     transpiler.clearTemporaryFolder() //If the previous compilation failed
-    transpiler.generateJavaClass(blocklyToAST(code)["nodes"])
+    transpiler.generateListenersClass(blocklyWorkspaceToSyntaxTree(workspace))
     transpiler.generateMainClass()
-    transpiler.generatePluginYML(settings)
+    transpiler.generatePluginConfig(settings)
 
     const dialog = require('electron').remote.dialog
     const options = {
@@ -21,50 +21,50 @@ function exportProject(code, settings) {
     })
 }
 
-function blocklyToAST(code) {
-    const project = JSON.parse(require('xml-js').xml2json(code, {compact: true}))["xml"]
-    let AST = {}
+function blocklyWorkspaceToSyntaxTree(workspace) {
+    const project = JSON.parse(require('xml-js').xml2json(workspace, {compact: true}))["xml"]
+    let syntax_tree = {}
     
     if (Object.keys(project["block"])[0] == "0") { //If the project contains multiple events
-        Object.keys(project["block"]).forEach(value => {
-            AST = blockToNode(project["block"][value], ["nodes"], parseInt(value)+1, AST)
+        Object.keys(project["block"]).forEach(event_ID => {
+            syntax_tree = blockToNode(project["block"][event_ID], ["nodes"], parseInt(event_ID)+1, syntax_tree)
         })
     } else { //If the project contains 1 event
-        AST = blockToNode(project["block"], ["nodes"], 1, AST)
+        syntax_tree = blockToNode(project["block"], ["nodes"], 1, syntax_tree)
     }
     
-    return AST
+    return syntax_tree
 }
 
-function blockToNode(block, path, key, AST) {
+function blockToNode(block, path, key, syntax_tree) {
     const type = block["_attributes"]["type"].split("_")
     const category = type[0]
     const ID = type[1]
     let args
     let child_nodes
     
-    
+    //Adding arguments
     if (block["value"] != undefined) {
         args = blockToArgument(block["value"])
     }
     
     //Sets a json value at a specific dynamic path
-    path.reduce((o, k) => o[k] = o[k] || {}, AST)[key] = new Node(category, ID, args, child_nodes)
+    path.reduce((o, k) => o[k] = o[k] || {}, syntax_tree)[key] = new Node(category, ID, args, child_nodes)
 
     //Adding blocks which are in the same branch as the current one
     if (block["next"] != undefined && block["next"]["block"] != undefined) {
         //Blocks followed by an event are in the same branch as the event's one, but we want them as child nodes
-        if (category == "events") child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, AST)
+        if (category == "events") child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
         
-        else blockToNode(block["next"]["block"], path, key + 1, AST)
+        else blockToNode(block["next"]["block"], path, key + 1, syntax_tree)
     }
     
     //Adding child nodes
     if (category == "conditions" && block["statement"]["block"] != undefined) {
-        child_nodes = blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, AST)
+        child_nodes = blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
     }
     
-    return AST
+    return syntax_tree
 }
 
 function Node(category, ID, args, child_nodes) {
