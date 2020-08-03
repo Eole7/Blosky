@@ -19,9 +19,7 @@ module.exports = {
                               .replace("%child_nodes%", generateBranch(AST))
                               .replace("%imports%", imports.map(element => "import " + element + ";").join("\r"))
         
-        fs.mkdirSync(appPath + "/temp")
-        fs.mkdirSync(appPath+ "/temp/fr")
-        fs.mkdirSync(appPath + "/temp/fr/blosky")
+        fs.mkdirSync(appPath + "/temp/fr/blosky", {recursive: true})
         fs.writeFile(appPath + '/temp/fr/blosky/Listeners.java', listeners_class, error => {
             if(error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 1\rError:" + error)
