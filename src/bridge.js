@@ -45,9 +45,9 @@ function blocklyWorkspaceToSyntaxTree(workspace) {
 function blockToNode(block, path, key, syntax_tree) {
     const type = block["_attributes"]["type"].split("_")
     const category = type[0]
-    const ID = type[1]
+    const ID = type[1] //The syntax ID
     let args
-    let child_nodes
+    let child_nodes //Nodes contained in the current node
     
     //Adding arguments
     if (block["value"] != undefined) {
@@ -62,9 +62,8 @@ function blockToNode(block, path, key, syntax_tree) {
         //Blocks followed by an event are in the same branch as the event's one, but we want them as child nodes
         if (category == "events") {
             child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
-        }
-        else {
-            blockToNode(block["next"]["block"], path, key + 1, syntax_tree)
+        } else {
+            blockToNode(block["next"]["block"], path, key+1, syntax_tree)
         }
     }
     
@@ -76,18 +75,9 @@ function blockToNode(block, path, key, syntax_tree) {
     return syntax_tree
 }
 
-function Node(category, ID, args, child_nodes) {
-    this.category = category
-    this.ID = ID
-    this.arguments = args
-    this.child_nodes = child_nodes
-    
-    return this
-}
-
 //This function converts generates arguments of a Blockly block
 function blockToArgument(block) {
-    let args = {}
+    let args = {} //The converted arguments
     let blockly_arguments = [] //The unconverted arguments - in the Blockly's format
     
     if (Object.keys(block)[0] != "0") { //If the block contains 1 argument
@@ -97,16 +87,16 @@ function blockToArgument(block) {
     }
     
     Object.keys(blockly_arguments).forEach(element => {
-        let category
-        let ID
-        let content
+        let category //The syntax category
+        let ID //The syntax ID
+        let value
         let type
-        let sub_arguments
+        let sub_arguments //Arguments contained in the current argument
         
         if (blockly_arguments[element]["block"]["_attributes"]["type"] == "text") {
             category = "plain_text"
             type = "String"
-            content = blockly_arguments[element]["block"]["field"]["_text"]
+            value = blockly_arguments[element]["block"]["field"]["_text"]
         } else if (blockly_arguments[element]["block"]["_attributes"]["type"] == "text_join") {
             category = "argument_constructor"
         } else if (blockly_arguments[element]["block"]["_attributes"]["type"].startsWith("expressions")) {
@@ -123,26 +113,43 @@ function blockToArgument(block) {
         
         //If the argument is part of an argument constructor
         if(blockly_arguments[element]["_attributes"]["name"].startsWith("ADD")) {
-            args[parseInt(blockly_arguments[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, content, type, sub_arguments)
+            args[parseInt(blockly_arguments[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, value, type, sub_arguments)
         }
         //If the argument is part of a parsed_as argument
         else if(blockly_arguments[element]["_attributes"]["name"] == "expression") {
-            args["1"] = new Arg(category, ID, content, type, sub_arguments)
+            args["1"] = new Arg(category, ID, value, type, sub_arguments)
+            /*
+                Instead of storing the argument of the parsed as expression as an argument, we store it as a required type
+                This allows to do the conversion using the conversion methods stored in syntaxes/types.json, instead of having to create a real expression in syntaxes/expressions.json
+            */
         }
         else {
-            args[blockly_arguments[element]["_attributes"]["name"]] = new Arg(category, ID, content, type, sub_arguments)
+            args[blockly_arguments[element]["_attributes"]["name"]] = new Arg(category, ID, value, type, sub_arguments)
         }
     })
     
     return args
 }
 
-function Arg(category, ID, content, type, sub_arguments) {
-    this.category = category
-    this.ID = ID
-    this.content = content
-    this.type = type
-    this.arguments = sub_arguments
-    
-    return this
+class Node {
+    constructor(category, ID, args, child_nodes) {
+        this.category = category
+        this.ID = ID
+        this.arguments = args
+        this.child_nodes = child_nodes
+
+        return this
+    }
+}
+
+class Arg {
+    constructor(category, ID, value, type, sub_arguments) {
+        this.category = category
+        this.ID = ID
+        this.content = value
+        this.type = type
+        this.arguments = sub_arguments
+
+        return this
+    }
 }
