@@ -68,15 +68,14 @@
     </body>
     
     <script async>
-        let colors = {
+        const colors = {
             "events": "230",
             "effects": "#1E90FF",
             "expressions": "120",
             "conditions": "#ffa500",
         }
-        
+        const syntaxes = getAllSyntaxes()
         let toolbox = '<xml>'
-        var syntaxes = getAllSyntaxes()
         
         Object.keys(syntaxes).forEach(category => {
             toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
@@ -103,7 +102,7 @@
             Object.keys(syntaxes[category]).forEach(syntax_key => {
                 Blockly.Blocks[category + "_" + syntax_key] = {
                     init: function() {
-                        let block = this;
+                        const block = this;
                         let syntax = syntaxes[category][syntax_key]["syntax"];
                         let next_argument_ID = 1;
                         let args = []
@@ -159,9 +158,9 @@
         })
         toolbox += '</xml>'
         
-        let blocklyArea = document.getElementById('blocklyArea');
-        let blocklyDiv = document.getElementById('blocklyDiv');
-        let workspace = Blockly.inject(blocklyDiv, {
+        const blocklyArea = document.getElementById('blocklyArea');
+        const blocklyDiv = document.getElementById('blocklyDiv');
+        const workspace = Blockly.inject(blocklyDiv, {
             "toolbox": toolbox,
             "theme": {
                 'base': Blockly.Themes.Classic,
@@ -196,7 +195,7 @@
             "trashcan": true
         });
         
-        let onresize = e => {
+        const onresize = e => {
             let element = blocklyArea;
             let x = 0;
             let y = 0;
@@ -216,12 +215,12 @@
         Blockly.svgResize(workspace);
         
         window.onload = function() {
-            let xml = Blockly.Xml.textToDom(getCode());
+            const xml = Blockly.Xml.textToDom(getCode());
             Blockly.Xml.domToWorkspace(xml, workspace);
         };
         
         window.onunload = function() {
-            let xml = Blockly.Xml.workspaceToDom(workspace);
+            const xml = Blockly.Xml.workspaceToDom(workspace);
             setCode(Blockly.Xml.domToText(xml))
         }
     </script>
