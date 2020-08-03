@@ -41,13 +41,19 @@ function blocklyWorkspaceToSyntaxTree(workspace) {
     return syntax_tree
 }
 
-//This function converts a Blockly block to a node
+/*
+    This function converts a Blockly block to a node
+    The syntax tree is passed at every call, and new things a written to it
+    Because Blockly's workspace output is organized differently:
+        the characteristics of a block are in stored inside the previous block, even if they are in the same branch
+    
+    TODO: write the child nodes from the return of the function, not at the execution of the function (without path.reduce)
+*/
 function blockToNode(block, path, key, syntax_tree) {
     const type = block["_attributes"]["type"].split("_")
     const category = type[0]
     const ID = type[1] //The syntax ID
     let args
-    let child_nodes //Nodes contained in the current node
     
     //Adding arguments
     if (block["value"] != undefined) {
@@ -55,13 +61,13 @@ function blockToNode(block, path, key, syntax_tree) {
     }
     
     //Sets a json value at a specific dynamic path
-    path.reduce((o, k) => o[k] = o[k] || {}, syntax_tree)[key] = new Node(category, ID, args, child_nodes)
+    path.reduce((o, k) => o[k] = o[k] || {}, syntax_tree)[key] = new Node(category, ID, args)
 
     //Adding blocks which are in the same branch as the current one
     if (block["next"] != undefined && block["next"]["block"] != undefined) {
         //Blocks followed by an event are in the same branch as the event's one, but we want them as child nodes
         if (category == "events") {
-            child_nodes = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
+            blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
         } else {
             blockToNode(block["next"]["block"], path, key+1, syntax_tree)
         }
@@ -69,7 +75,7 @@ function blockToNode(block, path, key, syntax_tree) {
     
     //Adding child nodes
     if (category == "conditions" && block["statement"]["block"] != undefined) {
-        child_nodes = blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
+        blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
     }
     
     return syntax_tree
@@ -132,11 +138,10 @@ function blockToArgument(block) {
 }
 
 class Node {
-    constructor(category, ID, args, child_nodes) {
+    constructor(category, ID, args) {
         this.category = category
         this.ID = ID
         this.arguments = args
-        this.child_nodes = child_nodes
 
         return this
     }
