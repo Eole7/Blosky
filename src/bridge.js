@@ -1,6 +1,6 @@
 /*
     This files makes a bridge between the Blockly code workspace and the transpiler
-    It converts the Blockly Workspace (xml) to JSON, while reorganizing the syntax tree for better readability
+    It converts the Blockly Workspace (xml) to JSON, while reorganizing the syntax tree for better readability/usability
 */
 
 function exportProject(workspace, settings) {
