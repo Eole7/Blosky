@@ -1,5 +1,5 @@
 @EventHandler
-public void Event%ID%(%instruction% e) {
+public void Event%ID%(%instruction% event) {
 
     %child_nodes%
 

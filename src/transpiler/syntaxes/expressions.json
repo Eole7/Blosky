@@ -28,7 +28,7 @@
   },
   "4": {
     "syntax": "event player",
-    "java_syntax": "e.getPlayer()",
+    "java_syntax": "event.getPlayer()",
     "type": "Player"
   }
 }
