@@ -121,9 +121,9 @@ function generateArgument(properties, required_type) {
         case "plain_text":
             type = properties["type"]
             if (syntaxes["types"][type]["syntax"] != undefined) { //If the argument's type has a special syntax (eg "" around Strings)
-                transpiled_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["content"])
+                transpiled_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["value"])
             } else {
-                transpiled_argument = properties["content"]
+                transpiled_argument = properties["value"]
             }
             break
         

@@ -151,7 +151,7 @@ class Argument {
     constructor(category, ID, value, type, sub_arguments) {
         this.category = category
         this.ID = ID
-        this.content = value
+        this.value = value
         this.type = type
         this.arguments = sub_arguments
 
