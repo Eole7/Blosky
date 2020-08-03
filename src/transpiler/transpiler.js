@@ -118,14 +118,22 @@ function generateArgument(properties, required_type) {
     const category = properties["category"]
     let transpiled_argument
     let type //int, String, ...
+    let value //The String value
 
     switch(category) {
         case "plain_text":
-            type = properties["type"]
-            if (syntaxes["types"][type]["syntax"] != undefined) { //If the argument's type has a special syntax (eg "" around Strings)
-                transpiled_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["value"])
+            value = properties["value"]
+            if (syntaxes["types"][required_type]["matches"] != null && value.match(syntaxes["types"][required_type]["matches"])) {
+                type = required_type //If the value respects the required type match, there's no needs for conversion
             } else {
-                transpiled_argument = properties["value"]
+                type = properties["type"]
+                //TODO: Warn the user that the compilation may fails
+            }
+            
+            if (syntaxes["types"][type]["syntax"] != undefined) { //If the argument's type has a special syntax (eg "" around Strings)
+                transpiled_argument = syntaxes["types"][type]["syntax"].replace("%argument%", value)
+            } else {
+                transpiled_argument = value
             }
             break
         
@@ -167,9 +175,9 @@ function generateArgument(properties, required_type) {
     }
     
     //Checking types and fixing them if needed
-    if (required_type != "unimplemented" &&
+    if (required_type != type &&
         required_type != undefined &&
-        required_type != type &&
+        required_type != "unimplemented" &&
         syntaxes["types"][required_type]["conversion"] != undefined &&
         syntaxes["types"][required_type]["conversion"][type] != undefined) {
             transpiled_argument = syntaxes["types"][required_type]["conversion"][type].replace("%argument%", transpiled_argument)
