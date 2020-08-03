@@ -77,30 +77,30 @@ module.exports = {
     }
 }
 
-function generateBranch(nodes) {
-    let java_nodes = "" //Contains the transpiled branch
+function generateBranch(branch) {
+    let transpiled_branch = ""
     
-    Object.keys(nodes).forEach(node => {
-        const category = nodes[node]["category"]
-        let ID = nodes[node]["ID"]
+    Object.keys(branch).forEach(node => {
+        const category = branch[node]["category"]
+        let ID = branch[node]["ID"]
         let java_node = syntaxes[category][ID]["java_syntax"] //Contains the transpiled node
 
         //Transpiling arguments
         if (syntaxes[category][ID]["arguments"] != null) {
             Object.keys(syntaxes[category][ID]["arguments"]).forEach(argument => {
                 const required_type = syntaxes[category][ID]["arguments"][argument]["required_type"]
-                java_node = java_node.replace(argument, generateArgument(nodes[node]["arguments"][argument], required_type))
+                java_node = java_node.replace(argument, generateArgument(branch[node]["arguments"][argument], required_type))
             })
         }
         
-        if (nodes[node]["child_nodes"] != undefined) { //Transpiling child nodes of the current node
-            java_nodes += "\r" 
+        if (branch[node]["child_nodes"] != undefined) { //Transpiling child nodes of the current node
+            transpiled_branch += "\r" 
                 + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.txt', 'utf8')
                 .replace("%instruction%", java_node)
                 .replace("%ID%", node)
-                .replace("%child_nodes%", generateBranch(nodes[node]["child_nodes"]))
+                .replace("%child_nodes%", generateBranch(branch[node]["child_nodes"]))
         } else {
-            java_nodes += "\r" + java_node
+            transpiled_branch += "\r" + java_node
         }
 
         //Adding imports required by the current node
@@ -109,31 +109,31 @@ function generateBranch(nodes) {
         }
     })
     
-    return java_nodes
+    return transpiled_branch
 }
 
 function generateArgument(properties, required_type) {
     const category = properties["category"]
-    let java_argument //The transpiled argument
+    let transpiled_argument
     let type //int, String, ...
 
     switch(category) {
         case "plain_text":
             type = properties["type"]
             if (syntaxes["types"][type]["syntax"] != undefined) { //If the argument's type has a special syntax (eg "" around Strings)
-                java_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["content"])
+                transpiled_argument = syntaxes["types"][type]["syntax"].replace("%argument%", properties["content"])
             } else {
-                java_argument = properties["content"]
+                transpiled_argument = properties["content"]
             }
             break
         
         case "expressions":
             type = syntaxes["expressions"][(properties["ID"])]["type"]
-            java_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"]
+            transpiled_argument = syntaxes["expressions"][(properties["ID"])]["java_syntax"]
 
             if (properties["arguments"] != undefined) { //Adding sub arguments
                 Object.keys(properties["arguments"]).forEach(sub_argument => {
-                    java_argument = java_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
+                    transpiled_argument = transpiled_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
                 })
             }
 
@@ -143,15 +143,15 @@ function generateArgument(properties, required_type) {
         
         case "argument_constructor":
             if (properties["arguments"] != null) {
-                java_argument = "("
+                transpiled_argument = "("
                 type = "String"
 
                 Object.keys(properties["arguments"]).forEach(sub_argument => {
-                    java_argument += generateArgument(properties["arguments"][sub_argument], "String")
+                    transpiled_argument += generateArgument(properties["arguments"][sub_argument], "String")
                     if (Object.keys(properties["arguments"]).length != sub_argument) {
-                        java_argument += " + "
+                        transpiled_argument += " + "
                     } else {
-                        java_argument += ")"
+                        transpiled_argument += ")"
                     }
                 })
             }
@@ -159,7 +159,7 @@ function generateArgument(properties, required_type) {
         
         case "parsed_as":
             if (properties["arguments"] != null) {
-                java_argument = generateArgument(properties["arguments"]["1"], properties["type"])
+                transpiled_argument = generateArgument(properties["arguments"]["1"], properties["type"])
             }
             break
     }
@@ -170,10 +170,10 @@ function generateArgument(properties, required_type) {
         required_type != type &&
         syntaxes["types"][required_type]["conversion"] != undefined &&
         syntaxes["types"][required_type]["conversion"][type] != undefined) {
-            java_argument = syntaxes["types"][required_type]["conversion"][type].replace("%argument%", java_argument)
+            transpiled_argument = syntaxes["types"][required_type]["conversion"][type].replace("%argument%", transpiled_argument)
     }
     
-    return java_argument
+    return transpiled_argument
 }
 
 function addImports(new_imports) {

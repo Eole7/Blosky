@@ -77,7 +77,7 @@ function blockToNode(block, path, key, syntax_tree) {
 
 //This function converts generates arguments of a Blockly block
 function blockToArgument(block) {
-    let args = {} //The converted arguments
+    let arguments = {} //The converted arguments
     let blockly_arguments = [] //The unconverted arguments - in the Blockly's format
     
     if (Object.keys(block)[0] != "0") { //If the block contains 1 argument
@@ -113,7 +113,7 @@ function blockToArgument(block) {
         
         //If the argument is part of an argument constructor
         if (blockly_arguments[element]["_attributes"]["name"].startsWith("ADD")) {
-            args[parseInt(blockly_arguments[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, value, type, sub_arguments)
+            arguments[parseInt(blockly_arguments[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Argument(category, ID, value, type, sub_arguments)
         }
         //If the argument is part of a parsed_as argument
         else if (blockly_arguments[element]["_attributes"]["name"] == "expression") {
@@ -121,14 +121,14 @@ function blockToArgument(block) {
                 Instead of storing the argument of the parsed as expression as an argument, we store it as a required type
                 This allows to do the conversion using the conversion methods stored in syntaxes/types.json, instead of having to create a real expression in syntaxes/expressions.json
             */
-            args["1"] = new Arg(category, ID, value, type, sub_arguments)
+            arguments["1"] = new Argument(category, ID, value, type, sub_arguments)
         }
         else {
-            args[blockly_arguments[element]["_attributes"]["name"]] = new Arg(category, ID, value, type, sub_arguments)
+            arguments[blockly_arguments[element]["_attributes"]["name"]] = new Argument(category, ID, value, type, sub_arguments)
         }
     })
     
-    return args
+    return arguments
 }
 
 class Node {
@@ -142,7 +142,7 @@ class Node {
     }
 }
 
-class Arg {
+class Argument {
     constructor(category, ID, value, type, sub_arguments) {
         this.category = category
         this.ID = ID
