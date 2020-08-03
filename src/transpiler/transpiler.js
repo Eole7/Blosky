@@ -118,11 +118,10 @@ function generateArgument(properties, required_type) {
     const category = properties["category"]
     let transpiled_argument
     let type //int, String, ...
-    let value //The String value
 
     switch(category) {
         case "plain_text":
-            value = properties["value"]
+            let value = properties["value"]
             if (syntaxes["types"][required_type]["matches"] != null && value.match(syntaxes["types"][required_type]["matches"])) {
                 type = required_type //If the value respects the required type match, there's no needs for conversion
             } else {
