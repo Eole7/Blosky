@@ -77,6 +77,9 @@ module.exports = {
     }
 }
 
+/*
+    Generates a branch of the syntax tree
+*/
 function generateBranch(branch) {
     let transpiled_branch = ""
     
@@ -93,7 +96,7 @@ function generateBranch(branch) {
             })
         }
         
-        if (branch[node]["child_nodes"] != undefined) { //Transpiling child nodes of the current node
+        if (branch[node]["child_nodes"] != undefined) { //Transpiles child nodes of the current node
             transpiled_branch += "\r" 
                 + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.txt', 'utf8')
                 .replace("%instruction%", java_node)
@@ -103,7 +106,6 @@ function generateBranch(branch) {
             transpiled_branch += "\r" + java_node
         }
 
-        //Adding imports required by the current node
         if (syntaxes[category][ID]["imports"] != null) {
             addImports(syntaxes[category][ID]["imports"])
         }
