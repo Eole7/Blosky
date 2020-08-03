@@ -30,7 +30,7 @@ module.exports = {
     
     generateMainClass: () => {
         fs.writeFile(appPath + '/temp/fr/blosky/Main.java', fs.readFileSync(appPath + '/src/transpiler/patterns/Main.java', 'utf8'), error => {
-            if(error) {
+            if (error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 2\rError:" + error)
                 console.log(error)
             }
@@ -45,7 +45,7 @@ module.exports = {
             .replace("%author%", settings["author"])
         
         fs.writeFile(appPath + '/temp/plugin.yml', file, error => {
-            if(error) {
+            if (error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 3\rError:" + error)
                 console.log(error)
             }
@@ -69,7 +69,7 @@ module.exports = {
     
     clearTemporaryFolder: () => {
         fs.rmdir(appPath + "/temp", {recursive: true}, error => {
-            if(error) {
+            if (error) {
                 dialog.showErrorBox("Compilation failed", "Fail ID: 4\rError:" + error)
                 console.log(error)
             }
@@ -104,7 +104,9 @@ function generateBranch(nodes) {
         }
 
         //Adding imports required by the current node
-        if(syntaxes[category][ID]["imports"] != null) addImports(syntaxes[category][ID]["imports"])
+        if (syntaxes[category][ID]["imports"] != null) {
+            addImports(syntaxes[category][ID]["imports"])
+        }
     })
     
     return java_nodes

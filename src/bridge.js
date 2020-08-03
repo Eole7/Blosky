@@ -112,16 +112,16 @@ function blockToArgument(block) {
         }
         
         //If the argument is part of an argument constructor
-        if(blockly_arguments[element]["_attributes"]["name"].startsWith("ADD")) {
+        if (blockly_arguments[element]["_attributes"]["name"].startsWith("ADD")) {
             args[parseInt(blockly_arguments[element]["_attributes"]["name"].replace("ADD", ""))+1] = new Arg(category, ID, value, type, sub_arguments)
         }
         //If the argument is part of a parsed_as argument
-        else if(blockly_arguments[element]["_attributes"]["name"] == "expression") {
-            args["1"] = new Arg(category, ID, value, type, sub_arguments)
+        else if (blockly_arguments[element]["_attributes"]["name"] == "expression") {
             /*
                 Instead of storing the argument of the parsed as expression as an argument, we store it as a required type
                 This allows to do the conversion using the conversion methods stored in syntaxes/types.json, instead of having to create a real expression in syntaxes/expressions.json
             */
+            args["1"] = new Arg(category, ID, value, type, sub_arguments)
         }
         else {
             args[blockly_arguments[element]["_attributes"]["name"]] = new Arg(category, ID, value, type, sub_arguments)
