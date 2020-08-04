@@ -75,29 +75,30 @@
         <div class="settings">
             <div>
                 <p class="parameters" id="name">Name:</p>
-                <textarea class="parameters" maxlength="30" id="name_value" rows="1"></textarea>
+                <textarea class="parameters" maxlength="30" id="name_value" rows="1" onchange="updateSettingsCache()"></textarea>
             </div>
             <div>
                 <p class="parameters" id="version">Version:</p>
-                <textarea class="parameters" maxlength="20" id="version_value" rows="1"></textarea>
+                <textarea class="parameters" maxlength="20" id="version_value" rows="1" onchange="updateSettingsCache()"></textarea>
             </div>
             <div>
                 <p class="parameters" id=author>Author(s):</p>
-                <textarea class="parameters" maxlength="50" id="author_value" rows="1"></textarea>
+                <textarea class="parameters" maxlength="50" id="author_value" rows="1" onchange="updateSettingsCache()"></textarea>
             </div>
             <div>
                 <p class="parameters" id="description">Description:</p>
-                <textarea class="parameters" maxlength="200" id="description_value" rows="4"></textarea>
+                <textarea class="parameters" maxlength="200" id="description_value" rows="4" onchange="updateSettingsCache()"></textarea>
             </div>
         </div>
     </body>
     
     <script>
+        //Restores the settings from the cache
         window.onload = function() {
-            document.getElementById("name_value").innerHTML = getSettings("name");
-            document.getElementById("version_value").innerHTML = getSettings("version");
-            document.getElementById("author_value").innerHTML = getSettings("author");
-            document.getElementById("description_value").innerHTML = getSettings("description");
+            document.getElementById("name_value").innerHTML = getSetting("name");
+            document.getElementById("version_value").innerHTML = getSetting("version");
+            document.getElementById("author_value").innerHTML = getSetting("author");
+            document.getElementById("description_value").innerHTML = getSetting("description");
             
             //Makes the textareas aligned
             let description_width = parseInt(document.getElementById("description").offsetWidth);
@@ -108,12 +109,13 @@
             document.getElementById("version").style.marginRight = description_width - version_width + "px";
             document.getElementById("author").style.marginRight = description_width - author_width + "px";
         }
-        
-        window.onunload = function() {
-            setSettings("name", document.getElementById("name_value").value)
-            setSettings("version", document.getElementById("version_value").value)
-            setSettings("author", document.getElementById("author_value").value)
-            setSettings("description", document.getElementById("description_value").value)
+
+        function updateSettingsCache() {
+            setSetting("name", document.getElementById("name_value").value)
+            setSetting("version", document.getElementById("version_value").value)
+            setSetting("author", document.getElementById("author_value").value)
+            setSetting("description", document.getElementById("description_value").value)
+            setUnsavedModifications(true)
         }
     </script>
 </html>

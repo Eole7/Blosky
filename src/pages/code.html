@@ -211,10 +211,22 @@
             blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
             Blockly.svgResize(workspace);
         };
-        window.addEventListener('resize', onresize, false);
-        onresize();
-        Blockly.svgResize(workspace);
+        window.addEventListener('resize', onresize, false)
+        onresize()
+        Blockly.svgResize(workspace)
         
+        workspace.addChangeListener(event => {
+            if(isWorkspaceLoaded) {
+                setUnsavedModifications(true)
+                const xml = Blockly.Xml.workspaceToDom(workspace);
+                setCode(Blockly.Xml.domToText(xml))
+            } else {
+                if(event.type == "finished_loading") {
+                    isWorkspaceLoaded = true
+                }
+            }
+        });
+
         window.onload = function() {
             const xml = Blockly.Xml.textToDom(getCode());
             Blockly.Xml.domToWorkspace(xml, workspace);
@@ -227,12 +239,5 @@
             }
         }
 
-        workspace.addChangeListener(event => {
-            switch(event.type) {
-                case "finished_loading":
-                    isWorkspaceLoaded = true
-                    break
-            }
-        });
     </script>
 </html>

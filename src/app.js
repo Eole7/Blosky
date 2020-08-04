@@ -8,12 +8,10 @@ global.settings = {
     "description": null
 }
 
-global.code = { //TODO: Make this cleaner
-    "code": null
-}
-
-global.path = { //TODO: Make this cleaner
-    "path": null 
+global.workspace = {
+    "code": null,
+    "path": null,
+    "has_unsaved_modifications": false
 }
 
 function createWindow() {
@@ -30,75 +28,56 @@ function createWindow() {
     win.loadFile(app.getAppPath() + '/src/pages/index.html')
     win.setMenuBarVisibility(false)
     
-    win.on('close', function(e) {
-        
-        //TODO: it currently only works if the changes has been cached to the global storage
-        //TODO: Implement this for Switch workspace too
-        if(!win.webContents.getURL().endsWith("index.html")) {
-            //If it's a new unsaved project
-            if(global.path.path == null) { //TODO: check if modifications has been made
-                const choice = require("electron").dialog.showMessageBoxSync(this,
-                    {
-                        type: "warning",
-                        buttons: ["Quit", "Cancel"], //TODO: add Save button
-                        title: "Confirm closing",
-                        message: "You have unsaved changes"
-                    }) 
-                switch(choice) {
-                    case 1:
-                        e.preventDefault() 
-                        break
-                    
-                    /*
-                    Doesn't work without canceling the event
-                    case 0 :
-                        //Cannot use the saveProjectAs as it only works from the renderer process
-                        const { dialog } = require('electron')
-                        var options = {
-                            title: "Save project",
-                            buttonLabel: "Save project",
+    function checkUnsavedModifications(event) {
+        if(global.workspace.has_unsaved_modifications) {
+            const choice = require("electron").dialog.showMessageBoxSync(win,
+                {
+                    type: "warning",
+                    buttons: ["Save", "Don't save", "Cancel"],
+                    title: "Confirm closing",
+                    message: "You have unsaved changes"
+                }) 
+            switch(choice) {
+                case 0:
+                    const file = JSON.stringify(global.settings) + "\r" + global.workspace.code
+                    if(global.workspace.path != null) {
+                        fs.writeFile(global.workspace.path, file, error => {
+                            if (error) throw error
+                        })
+                    } else {
+                        const options = {
+                            title: "Save Project",
+                            buttonLabel: "Save Project",
                             filters: [{
                                 name: 'Blosky Projects',
                                 extensions: ['bsk']
                             }]
                         }
-                        dialog.showSaveDialog(options).then(result => {
-                            if (result.canceled == false) {
-                                setPath(result.filePath)
-                                fs.writeFile(result.filePath, project, function(err) {
-                                    if (err) throw err
-                                })
-                            }
-                        })
-                    break
-                    */
-
-                }
-            } else { //If it's not a new project which has unsaved modifications
-                const lines = fs.readFileSync(global.path.path, "utf-8").split("\r")
-
-                //stringify & parse is needed or the comparaison won't work
-                if(global.code.code != lines[1] || JSON.stringify(JSON.parse(lines[0])) != JSON.stringify(global.settings)) { 
-                    const choice = require("electron").dialog.showMessageBoxSync(this,
-                        {
-                            type: "warning",
-                            buttons: ["Save", "Don't save", "Cancel"],
-                            title: "Confirm closing",
-                            message: "You have unsaved changes"
-                        }) 
-                    switch(choice) {
-                        case 0:
-                            saveProject(JSON.stringify(global.settings) + "\r" + global.code.code, global.path.path)
-                            break
-
-                        case 2:
-                            e.preventDefault()
-                            break
+                        const result = require("electron").dialog.showSaveDialogSync(win, options)
+                        if (result != undefined) {
+                            global.workspace.path = result
+                            fs.writeFile(result, file, error => {
+                                if (error) throw error
+                            })
+                        } else {
+                            event.preventDefault()
+                        }
                     }
-                }
+                    break
+
+                case 2:
+                    event.preventDefault()
+                    break
             }
         }
-    }) 
+    }
+
+    win.on('close', checkUnsavedModifications)
+    win.webContents.on("will-navigate", (event, url) => {
+        if(url.endsWith("index.html")) {
+            checkUnsavedModifications(event)
+        }
+    })
 }
 
 app.whenReady().then(createWindow)
@@ -140,10 +119,10 @@ function openProject() {
             const lines = fs.readFileSync(result.filePaths[0], "utf-8").split("\r")
             const settings = JSON.parse(lines[0])
             setCode(lines[1])
-            setSettings("name", settings["name"])
-            setSettings("version", settings["version"])
-            setSettings("author", settings["author"])
-            setSettings("description", settings["description"])
+            setSetting("name", settings["name"])
+            setSetting("version", settings["version"])
+            setSetting("author", settings["author"])
+            setSetting("description", settings["description"])
             setPath(result.filePaths[0])
             window.location.replace("plugin_config.html")
         }
@@ -154,17 +133,18 @@ function saveProject(project, path) {
     if (path == null) {
         saveProjectAs(project)
     } else {
-        fs.writeFile(path, project, function(err) {
-            if (err) throw err
+        fs.writeFile(path, project, error => {
+            if (error) throw error
         })
+        setUnsavedModifications(false)
     }
 }
 
 function saveProjectAs(project) {
     const dialog = require('electron').remote.dialog
     const options = {
-        title: "Save project",
-        buttonLabel: "Save project",
+        title: "Save Project",
+        buttonLabel: "Save Project",
         filters: [{
             name: 'Blosky Projects',
             extensions: ['bsk']
@@ -178,37 +158,43 @@ function saveProjectAs(project) {
             })
         }
     })
+    setUnsavedModifications(false)
 }
 
 function setPath(value){
-    require('electron').remote.getGlobal('path').path = value
+    require('electron').remote.getGlobal('workspace').path = value
 }
 
 function getPath(){
-    return require('electron').remote.getGlobal('path').path
+    return require('electron').remote.getGlobal('workspace').path
 }
 
 function setCode(value) {
-    require('electron').remote.getGlobal('code').code = value
+    require('electron').remote.getGlobal('workspace').code = value
 }
 
 function getCode() {
-    return require('electron').remote.getGlobal('code').code
+    return require('electron').remote.getGlobal('workspace').code
 }
 
-function setSettings(key, value) {
+function setSetting(key, value) {
     require('electron').remote.getGlobal('settings')[key] = value
 }
 
-function getSettings(key) {
+function getSetting(key) {
     return require('electron').remote.getGlobal('settings')[key]
 }
 
 function clearStorage() { //TODO: find a cleaner way to do that
-    require('electron').remote.getGlobal('code').code = null
-    require('electron').remote.getGlobal('path').path = null
+    require('electron').remote.getGlobal('workspace').code = null
     require('electron').remote.getGlobal('settings').name = null
     require('electron').remote.getGlobal('settings').version = null
     require('electron').remote.getGlobal('settings').author = null
     require('electron').remote.getGlobal('settings').description = null
+    require('electron').remote.getGlobal('workspace').path = null
+    require('electron').remote.getGlobal('workspace').has_unsaved_modifications = false
+}
+
+function setUnsavedModifications(boolean) {
+    require('electron').remote.getGlobal('workspace').has_unsaved_modifications = boolean
 }
