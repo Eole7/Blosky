@@ -27,7 +27,7 @@ function createWindow() {
             nodeIntegration: true
         }
     })
-    win.loadFile(app.getAppPath() + '/src/UI/pages/index.html')
+    win.loadFile(app.getAppPath() + '/src/pages/index.html')
     win.setMenuBarVisibility(false)
     
     win.on('close', function(e) {

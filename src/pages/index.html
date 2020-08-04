@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Blosky</title>
+        <link rel="stylesheet" href="style.css">
+        <script type="text/javascript" src="../app.js"></script>
+        <script src="three.r95.min.js"></script>
+        <script src="vanta.waves.min.js"></script>
+    </head>
+    
+    <style>
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #19252d;
+        }
+        
+        h1 {
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: "Roboto", sans-serif;
+            color: lightblue;
+            text-align: center;
+            font-size: 58px;
+            padding-top: 8%;
+            text-shadow: 3px 3px #558ABB;
+        }
+        
+        button {
+            cursor: pointer;
+            border: 1px solid black;
+            font-size: 20px;
+            font-family: "Lato", sans-serif;
+            background-color: #14a698;
+            border-radius: 4px;
+            width: 100%;
+            height: 31px;
+        }
+        
+        img {
+            margin-left: auto;
+            margin-right: auto;
+            width: 10em;
+            margin-bottom: 50px;
+        }
+
+        #create_menu, #open_menu {
+            box-shadow: inset 0 0 6px #19252d;
+            display: flex;
+            flex-direction: column;
+            border-radius: 10px;
+            padding: 25px;
+            background-color: #383838;
+            width: 13em;
+        }
+        
+        #open_menu {
+            margin-right: 50px;
+        }
+
+        #projects {
+            display: flex;
+            flex-direction: row;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%);
+        }
+    </style>
+    
+    <body id=background>
+        <h1>Blosky</h1>
+        <div id=projects>
+            <div id=open_menu>
+                <img src="../../resources/open_project.png">
+                <button onclick="openProject()">Open project</button>
+            </div>
+            <div id=create_menu>
+                <img src="../../resources/create_project.png">
+                <a href="plugin_config.html">
+                    <button>Create new project</button>
+                </a>
+            </div>
+        </div>
+    </body>
+    
+    <script>
+        clearStorage()
+        VANTA.WAVES({
+            el: "body",
+            mouseControls: false,
+            touchControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x19252d,
+            shininess: 5.00,
+            waveHeight: 3.00,
+            waveSpeed: 0.90,
+            zoom: 0.95
+        })
+    </script>
+</html>

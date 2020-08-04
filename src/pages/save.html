@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>Blosky</title>
+        <link rel="stylesheet" href="style.css">
+        <script type="text/javascript" src="../app.js"></script>
+        <script type="text/javascript" src="../bridge.js"></script>
+    </head>
+    
+    <style>
+        body {
+            font-family: "Lato", sans-serif;
+            background-color: #383838;
+        }
+        
+        .sidenav {
+            height: 100%;
+            width: auto;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #202125;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+        
+        .sidenav a {
+            user-select: none;
+            padding: 6px 32px 6px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #f1f1f1;
+            display: block;
+        }
+
+        .sidenav a.active {
+            background-color: #383838 !important;
+        }
+        
+        .sidenav a:hover {
+            color: darkgray;
+        }
+        
+        #main {
+            margin-top: 100px;
+            margin-left: 50%;
+            user-select: none;
+        }
+        
+        button, #autosavediv {
+            background-color: lightblue;
+            border-color: #202125;
+            border-width: 1px;
+            font-size: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: block;
+            width: 250px;
+            margin-top: 5px;
+            height: 30px;
+            text-align: center
+        }
+        
+        #autosave {
+            cursor: pointer;
+        }
+        
+        #export_button {
+            background-color: #e9eb83;
+            margin-top: 30px;
+        }
+    </style>
+    
+    <body>
+        <nav class="sidenav">
+            <a href="index.html">Switch project</a>
+            <a href="plugin_config.html">Plugin config</a>
+            <a href="code.html">Code</a>
+            <a class="active">Save & Export</a>
+        </nav>
+        <div id="main">
+            <button onclick="saveProject(JSON.stringify(getProjectSettings()) + '\r' + getCode(), getPath())">Save</button>
+            <button onclick="saveProjectAs(JSON.stringify(getProjectSettings()) + '\r' + getCode())">Save as</button>
+            <!--
+                <div id="autosavediv">
+                    <label for="autosave">Auto save</label>
+                    <input type="checkbox" id="autosave">
+                    
+                </div>
+            -->
+            <button id="export_button" onclick="exportProject(getCode(), getProjectSettings())">Export to Spigot Plugin</button>
+        </div>
+    </body>
+    
+    <script>
+        function getProjectSettings() {
+            
+            return {
+                name: getSettings("name"),
+                version: getSettings("version"),
+                author: getSettings("author"),
+                description: getSettings("description")
+            }
+        }
+    </script>
+</html>
