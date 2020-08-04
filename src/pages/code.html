@@ -194,6 +194,8 @@
             "trashcan": true
         });
         
+        var isWorkspaceLoaded = false
+
         const onresize = e => {
             let element = blocklyArea;
             let x = 0;
@@ -219,8 +221,18 @@
         };
         
         window.onunload = function() {
-            const xml = Blockly.Xml.workspaceToDom(workspace);
-            setCode(Blockly.Xml.domToText(xml))
+            if(isWorkspaceLoaded) {
+                const xml = Blockly.Xml.workspaceToDom(workspace);
+                setCode(Blockly.Xml.domToText(xml))
+            }
         }
+
+        workspace.addChangeListener(event => {
+            switch(event.type) {
+                case "finished_loading":
+                    isWorkspaceLoaded = true
+                    break
+            }
+        });
     </script>
 </html>
