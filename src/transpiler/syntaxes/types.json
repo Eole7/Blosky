@@ -12,14 +12,14 @@
     },
     "int": {
         "java_type": "int",
-        "matches": "^([+-]?[0-9]\\d*|0)$",
+        "match": "^([+-]?[0-9]\\d*|0)$",
         "conversion": {
             "String": "Integer.parseInt(%argument%)"
         }
     },
     "float": {
         "java_type": "float",
-        "matches": "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$",
+        "match": "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$",
         "conversion": {
           "String" : "Float.parseFloat(%argument%)"
         }
@@ -32,7 +32,7 @@
     },
     "double": {
         "java_type": "double",
-        "matches": "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$",
+        "match": "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$",
         "conversion": {
           "String" : "Double.parseDouble(%argument%)"
         }

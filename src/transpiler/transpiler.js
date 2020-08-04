@@ -122,7 +122,7 @@ function generateArgument(properties, required_type) {
     switch(category) {
         case "plain_text":
             let value = properties["value"]
-            if (syntaxes["types"][required_type]["matches"] != null && value.match(syntaxes["types"][required_type]["matches"])) {
+            if (syntaxes["types"][required_type]["match"] != null && value.match(syntaxes["types"][required_type]["match"])) {
                 type = required_type //If the value respects the required type match, there's no needs for conversion
             } else {
                 type = properties["type"]
