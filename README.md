@@ -25,6 +25,7 @@ Blosky is a visual programming editor for creating Minecraft plugins, and compil
 See the full To-Do list on [Trello](https://trello.com/b/QUSLjWyG/blosky)
 
 ## Contributing
+[<img src="https://developers.google.com/blockly/images/logos/logo_built_on.svg" width="180">](https://developers.google.com/blockly/)
 - Install Node.js and Git
 - Fork the repository then clone yours
 - Open the command prompt in the folder you just cloned to
