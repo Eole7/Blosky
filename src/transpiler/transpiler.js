@@ -98,7 +98,7 @@ function generateBranch(branch) {
         
         if (branch[node]["child_nodes"] != undefined) { //Transpiles child nodes of the current node
             transpiled_branch += "\r" 
-                + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.txt', 'utf8')
+                + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.java', 'utf8')
                 .replace("%instruction%", java_node)
                 .replace("%ID%", node)
                 .replace("%child_nodes%", generateBranch(branch[node]["child_nodes"]))
