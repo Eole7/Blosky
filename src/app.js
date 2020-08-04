@@ -19,10 +19,10 @@ global.path = { //TODO: Make this cleaner
 function createWindow() {
     const win = new BrowserWindow({
         icon: app.getAppPath() + "/resources/icon.png",
-        width: 1800,
-        height: 1200,
-        minHeight: 600,
+        width: 1200,
+        height: 800,
         minWidth: 800,
+        minHeight: 600,
         webPreferences: {
             nodeIntegration: true
         }
