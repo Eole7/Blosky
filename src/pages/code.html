@@ -76,7 +76,7 @@
         const syntaxes = getAllSyntaxes()
         let toolbox = '<xml>'
         
-        //This is really messy
+        //Generating the toolbox from the syntaxes
         Object.keys(syntaxes).forEach(category => {
             toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
             
@@ -102,51 +102,63 @@
             Object.keys(syntaxes[category]).forEach(syntax_key => {
                 Blockly.Blocks[category + "_" + syntax_key] = {
                     init: function() {
-                        const block = this
                         let syntax = syntaxes[category][syntax_key]["syntax"]
                         let next_argument_ID = 1
                         let args = []
                         
                         if (syntaxes[category][syntax_key]["arguments"] != undefined) {
                             Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(argument => {
-                                syntax = syntax.replace(argument, "%" + next_argument_ID)
-                                next_argument_ID++
+                                syntax = syntax.replace(argument, "%" + next_argument_ID) //Blockly arguments are indentified by a %
                                 args.push({
                                     "type": "input_value",
                                     "name": argument,
                                 })
+                                next_argument_ID++
                             })
                         }
-                        
-                        if (category == "conditions") {
-                            this.jsonInit({
-                                "type": "text",
-                                "message0": "if " + syntax,
-                                "args0": args,
-                                "message1": "do %1",
-                                "args1": [{
-                                    "type": "input_statement",
-                                    "name": "do"
-                                }],
-                            })
+                        switch (category) {
+                            case "conditions":
+                                this.jsonInit({
+                                    "type": "text",
+                                    "message0": "if " + syntax,
+                                    "args0": args,
+                                    "message1": "do %1",
+                                    "args1": [{
+                                        "type": "input_statement",
+                                        "name": "do"
+                                    }],
+                                    "previousStatement": true,
+                                    "nextStatement": true
+                                })
+                                break
                             
-                            this.setPreviousStatement(true)
-                            this.setNextStatement(true)
-                        } else {
-                            this.jsonInit({
-                                "type": "text",
-                                "message0": syntax,
-                                "args0": args,
-                            })
-
-                            if (category == "events") {
-                                this.setNextStatement(true)
-                            } else if (category == "effects") {
-                                this.setPreviousStatement(true)
-                                this.setNextStatement(true)
-                            } else if (category == "expressions") {
-                                this.setOutput(true)
-                            }
+                            case "events":
+                                this.jsonInit({
+                                    "type": "text",
+                                    "message0": syntax,
+                                    "args0": args,
+                                    "nextStatement": true
+                                })
+                                break
+                            
+                            case "effects":
+                                this.jsonInit({
+                                    "type": "text",
+                                    "message0": syntax,
+                                    "args0": args,
+                                    "nextStatement": true,
+                                    "previousStatement": true
+                                })
+                                break
+                            
+                            case "expressions":
+                                this.jsonInit({
+                                    "type": "text",
+                                    "message0": syntax,
+                                    "args0": args,
+                                    "output": true
+                                })
+                                break
                         }
                         this.setInputsInline(true);
                         this.setColour(colors[category])
@@ -199,7 +211,7 @@
         
         var isWorkspaceLoaded = false
 
-        const onresize = e => {
+        const onresize = () => {
             let element = blocklyArea
             let x = 0
             let y = 0
@@ -213,7 +225,7 @@
             blocklyDiv.style.width = blocklyArea.offsetWidth + 'px'
             blocklyDiv.style.height = blocklyArea.offsetHeight + 'px'
             Blockly.svgResize(workspace)
-        };
+        }
         window.addEventListener('resize', onresize, false)
         onresize()
         Blockly.svgResize(workspace)
