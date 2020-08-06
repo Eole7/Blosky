@@ -102,20 +102,20 @@
             Object.keys(syntaxes[category]).forEach(syntax_key => {
                 Blockly.Blocks[category + "_" + syntax_key] = {
                     init: function() {
-                        const block = this;
-                        let syntax = syntaxes[category][syntax_key]["syntax"];
-                        let next_argument_ID = 1;
+                        const block = this
+                        let syntax = syntaxes[category][syntax_key]["syntax"]
+                        let next_argument_ID = 1
                         let args = []
                         
                         if (syntaxes[category][syntax_key]["arguments"] != undefined) {
                             Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(argument => {
-                                syntax = syntax.replace(argument, "%" + next_argument_ID);
+                                syntax = syntax.replace(argument, "%" + next_argument_ID)
                                 next_argument_ID++
                                 args.push({
                                     "type": "input_value",
                                     "name": argument,
                                 })
-                            });
+                            })
                         }
                         
                         if (category == "conditions") {
@@ -128,7 +128,7 @@
                                     "type": "input_statement",
                                     "name": "do"
                                 }],
-                            });
+                            })
                             
                             this.setPreviousStatement(true)
                             this.setNextStatement(true)
@@ -137,7 +137,7 @@
                                 "type": "text",
                                 "message0": syntax,
                                 "args0": args,
-                            });
+                            })
 
                             if (category == "events") {
                                 this.setNextStatement(true)
@@ -158,8 +158,8 @@
         })
         toolbox += '</xml>'
         
-        const blocklyArea = document.getElementById('blocklyArea');
-        const blocklyDiv = document.getElementById('blocklyDiv');
+        const blocklyArea = document.getElementById('blocklyArea')
+        const blocklyDiv = document.getElementById('blocklyDiv')
         const workspace = Blockly.inject(blocklyDiv, {
             "toolbox": toolbox,
             "sounds": false,
@@ -200,19 +200,19 @@
         var isWorkspaceLoaded = false
 
         const onresize = e => {
-            let element = blocklyArea;
-            let x = 0;
-            let y = 0;
+            let element = blocklyArea
+            let x = 0
+            let y = 0
             do {
-                x += element.offsetLeft;
-                y += element.offsetTop;
-                element = element.offsetParent;
+                x += element.offsetLeft
+                y += element.offsetTop
+                element = element.offsetParent
             } while (element);
-            blocklyDiv.style.left = x + 'px';
-            blocklyDiv.style.top = y + 'px';
-            blocklyDiv.style.width = blocklyArea.offsetWidth + 'px';
-            blocklyDiv.style.height = blocklyArea.offsetHeight + 'px';
-            Blockly.svgResize(workspace);
+            blocklyDiv.style.left = x + 'px'
+            blocklyDiv.style.top = y + 'px'
+            blocklyDiv.style.width = blocklyArea.offsetWidth + 'px'
+            blocklyDiv.style.height = blocklyArea.offsetHeight + 'px'
+            Blockly.svgResize(workspace)
         };
         window.addEventListener('resize', onresize, false)
         onresize()
@@ -221,8 +221,7 @@
         workspace.addChangeListener(event => {
             if (isWorkspaceLoaded) {
                 setUnsavedModifications(true)
-                const xml = Blockly.Xml.workspaceToDom(workspace);
-                setCode(Blockly.Xml.domToText(xml))
+                setCode(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace))) //Caching the workspace
             } else {
                 if(event.type == "finished_loading") {
                     isWorkspaceLoaded = true
@@ -230,9 +229,8 @@
             }
         });
 
-        window.onload = () => { //Restoring workspace
-            const xml = Blockly.Xml.textToDom(getCode());
-            Blockly.Xml.domToWorkspace(xml, workspace);
+        window.onload = () => { 
+            Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(getCode()), workspace) //Restoring the workspace
         };
 
     </script>

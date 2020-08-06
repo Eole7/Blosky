@@ -95,19 +95,19 @@
     <script>
         //Restores the settings from the cache
         window.onload = function() {
-            document.getElementById("name_value").innerHTML = getSetting("name");
-            document.getElementById("version_value").innerHTML = getSetting("version");
-            document.getElementById("author_value").innerHTML = getSetting("author");
-            document.getElementById("description_value").innerHTML = getSetting("description");
+            document.getElementById("name_value").innerHTML = getSetting("name")
+            document.getElementById("version_value").innerHTML = getSetting("version")
+            document.getElementById("author_value").innerHTML = getSetting("author")
+            document.getElementById("description_value").innerHTML = getSetting("description")
             
             //Makes the textareas aligned
-            const description_width = parseInt(document.getElementById("description").offsetWidth);
-            const name_width = parseInt(document.getElementById("name").offsetWidth);
-            const version_width = parseInt(document.getElementById("version").offsetWidth);
-            const author_width = parseInt(document.getElementById("author").offsetWidth);
-            document.getElementById("name").style.marginRight = description_width - name_width + "px";
-            document.getElementById("version").style.marginRight = description_width - version_width + "px";
-            document.getElementById("author").style.marginRight = description_width - author_width + "px";
+            const description_width = parseInt(document.getElementById("description").offsetWidth)
+            const name_width = parseInt(document.getElementById("name").offsetWidth)
+            const version_width = parseInt(document.getElementById("version").offsetWidth)
+            const author_width = parseInt(document.getElementById("author").offsetWidth)
+            document.getElementById("name").style.marginRight = description_width - name_width + "px"
+            document.getElementById("version").style.marginRight = description_width - version_width + "px"
+            document.getElementById("author").style.marginRight = description_width - author_width + "px"
         }
 
         function updateSettingsCache() {
