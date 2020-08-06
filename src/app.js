@@ -129,7 +129,7 @@ function openProject() {
     })
 }
 
-function saveProject(project, path) {
+function saveProject(project, path) { //TODO: directly get the project & path from the cache
     if (path == null) {
         saveProjectAs(project)
     } else {
@@ -140,7 +140,7 @@ function saveProject(project, path) {
     }
 }
 
-function saveProjectAs(project) {
+function saveProjectAs(project) { //TODO: directly get the project from the cache
     const dialog = require('electron').remote.dialog
     const options = {
         title: "Save Project",
