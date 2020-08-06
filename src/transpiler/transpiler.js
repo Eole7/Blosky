@@ -139,7 +139,7 @@ function generateArgument(properties, required_type) {
         
         case "expressions":
             const ID = properties["ID"]
-            type = syntaxes["expressions"][ID]["type"]
+            type = syntaxes["expressions"][ID]["return_type"]
             transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]
 
             if (properties["arguments"] != undefined) { //Adding sub arguments of the current argument
