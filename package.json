@@ -15,7 +15,6 @@
     "url": "https://github.com/Eole7/Blosky/issues"
   },
   "build": {
-    "copyright": "Copyright © 2020 Eole7",
     "appId": "fr.eole7.blosky",
     "productName": "Blosky",
     "asar": "false",
