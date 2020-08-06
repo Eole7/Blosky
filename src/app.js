@@ -37,7 +37,7 @@ function createWindow() {
                     title: "Confirm closing",
                     message: "You have unsaved changes"
                 }) 
-            switch(choice) {
+            switch (choice) {
                 case 0:
                     const file = JSON.stringify(global.settings) + "\r" + global.workspace.code
                     if(global.workspace.path != null) {
@@ -54,12 +54,12 @@ function createWindow() {
                             }]
                         }
                         const result = require("electron").dialog.showSaveDialogSync(win, options)
-                        if (result != undefined) {
+                        if (result != undefined) { //If the user selected a path
                             global.workspace.path = result
                             fs.writeFile(result, file, error => {
                                 if (error) throw error
                             })
-                        } else {
+                        } else { //If the user canceled saving
                             event.preventDefault()
                         }
                     }

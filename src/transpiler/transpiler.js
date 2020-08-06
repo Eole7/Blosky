@@ -120,7 +120,7 @@ function generateArgument(properties, required_type) {
     let transpiled_argument
     let type //int, String, ...
 
-    switch(category) {
+    switch (category) {
         case "plain_text":
             let value = properties["value"]
             if (syntaxes["types"][required_type]["match"] != null && value.match(syntaxes["types"][required_type]["match"])) {
