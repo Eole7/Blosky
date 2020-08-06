@@ -44,7 +44,7 @@ function blocklyWorkspaceToSyntaxTree(workspace) {
 /*
     This function converts a Blockly block to a node
     The syntax tree is passed at every call, and new things a written to it, because Blockly's workspace output is organized differently:
-        the characteristics of a block are in stored inside the previous block, even if they are in the same branch
+        every block is stored inside inside the previous block, even if they are in the same branch
     
     TODO: write the child nodes from the return of the function, not at the execution of the function (without path.reduce)
 */

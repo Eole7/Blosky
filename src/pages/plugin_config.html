@@ -101,10 +101,10 @@
             document.getElementById("description_value").innerHTML = getSetting("description");
             
             //Makes the textareas aligned
-            let description_width = parseInt(document.getElementById("description").offsetWidth);
-            let name_width = parseInt(document.getElementById("name").offsetWidth);
-            let version_width = parseInt(document.getElementById("version").offsetWidth);
-            let author_width = parseInt(document.getElementById("author").offsetWidth);
+            const description_width = parseInt(document.getElementById("description").offsetWidth);
+            const name_width = parseInt(document.getElementById("name").offsetWidth);
+            const version_width = parseInt(document.getElementById("version").offsetWidth);
+            const author_width = parseInt(document.getElementById("author").offsetWidth);
             document.getElementById("name").style.marginRight = description_width - name_width + "px";
             document.getElementById("version").style.marginRight = description_width - version_width + "px";
             document.getElementById("author").style.marginRight = description_width - author_width + "px";

@@ -1,7 +1,7 @@
 const fs = require('fs')
 const {app, BrowserWindow} = require('electron')
 
-global.settings = {
+global.settings = { //Global app storage: can be accessed from the main and renderer processes
     "name": null,
     "version": null,
     "author": null,
@@ -22,7 +22,7 @@ function createWindow() {
         minWidth: 800,
         minHeight: 600,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true //ability of accessing Node.js resources from within the renderer process
         }
     })
     win.loadFile(app.getAppPath() + '/src/pages/index.html')
@@ -74,7 +74,7 @@ function createWindow() {
 
     win.on('close', checkUnsavedModifications)
     win.webContents.on("will-navigate", (event, url) => {
-        if(url.endsWith("index.html")) {
+        if(url.endsWith("index.html")) {  //When the user clicks on "Switch Workspace"
             checkUnsavedModifications(event)
         }
     })

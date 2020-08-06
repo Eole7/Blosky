@@ -76,6 +76,7 @@
         const syntaxes = getAllSyntaxes()
         let toolbox = '<xml>'
         
+        //This is really messy
         Object.keys(syntaxes).forEach(category => {
             toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
             
@@ -216,7 +217,7 @@
         Blockly.svgResize(workspace)
         
         workspace.addChangeListener(event => {
-            if(isWorkspaceLoaded) {
+            if (isWorkspaceLoaded) {
                 setUnsavedModifications(true)
                 const xml = Blockly.Xml.workspaceToDom(workspace);
                 setCode(Blockly.Xml.domToText(xml))
@@ -227,17 +228,10 @@
             }
         });
 
-        window.onload = function() {
+        window.onload = () => { //Restoring workspace
             const xml = Blockly.Xml.textToDom(getCode());
             Blockly.Xml.domToWorkspace(xml, workspace);
         };
-        
-        window.onunload = function() {
-            if(isWorkspaceLoaded) {
-                const xml = Blockly.Xml.workspaceToDom(workspace);
-                setCode(Blockly.Xml.domToText(xml))
-            }
-        }
 
     </script>
 </html>
