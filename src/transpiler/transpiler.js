@@ -56,14 +56,12 @@ module.exports = {
         const child_process = require("child_process")
         
         //Compiling .java files to Java Bytecode (.class)
-        //TODO: async compilation for reporting error to user
         child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.16.1.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
         
         fs.unlinkSync(appPath + "/temp/fr/blosky/Main.java")
         fs.unlinkSync(appPath + "/temp/fr/blosky/Listeners.java")
         
-        //Encapsulates the files into a .jar
-        //TODO: async encapsulation for reporting error to user
+        //Encapsulating the files into a .jar
         child_process.execSync('jar cvf "' + filename + '.jar" -C ' + appPath + '/temp .')
     },
     
@@ -76,14 +74,12 @@ module.exports = {
         })
     }
 }
-
-/*
-    Generates a branch of the syntax tree
-*/
+    
+//Generates a branch of the syntax tree
 function generateBranch(branch) {
     let transpiled_branch = ""
     
-    Object.keys(branch).forEach(node => {
+    Object.keys(branch).forEach(node => { //A node is basically a line
         const category = branch[node]["category"]
         let ID = branch[node]["ID"]
         let java_node = syntaxes[category][ID]["java_syntax"] //Contains the transpiled node
@@ -96,7 +92,7 @@ function generateBranch(branch) {
             })
         }
         
-        if (branch[node]["child_nodes"] != undefined) { //If the branch contains another branch we add it
+        if (branch[node]["child_nodes"] != undefined) { //If the branch contains another branch, we add it
             transpiled_branch += "\r" 
                 + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.java', 'utf8') //Getting the "pattern" of the current node (eg "if()" for conditions)
                 .replace("%instruction%", java_node)
@@ -115,6 +111,7 @@ function generateBranch(branch) {
     return transpiled_branch
 }
 
+//Generate an argument of a node
 function generateArgument(properties, required_type) {
     const category = properties["category"]
     let transpiled_argument
@@ -124,7 +121,7 @@ function generateArgument(properties, required_type) {
         case "plain_text":
             let value = properties["value"]
             if (syntaxes["types"][required_type]["match"] != null && value.match(syntaxes["types"][required_type]["match"])) {
-                type = required_type //If the value already respects the required type match, there's no needs for conversion
+                type = required_type //If the value already respects the required type match, there's no needs to use the conversion method
             } else {
                 type = properties["type"]
                 //TODO: Warn the user that the compilation may fails
@@ -143,7 +140,7 @@ function generateArgument(properties, required_type) {
             transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]
 
             if (properties["arguments"] != undefined) { //Adding sub arguments of the current argument
-                Object.keys(properties["arguments"]).forEach(sub_argument /*the ID of the subargument (eg ${player})*/ => {
+                Object.keys(properties["arguments"]).forEach(sub_argument /*the ID of the subargument (eg §{player})*/ => {
                     transpiled_argument = transpiled_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
                 })
             }
@@ -154,12 +151,12 @@ function generateArgument(properties, required_type) {
             }
             break
         
-        case "argument_constructor":
+        case "argument_constructor": //An argument constructor is more like a String builder
             if (properties["arguments"] != null) {
                 transpiled_argument = "("
                 type = "String"
 
-                Object.keys(properties["arguments"]).forEach(sub_argument /*the ID of the subargument (eg ${player})*/ => {
+                Object.keys(properties["arguments"]).forEach(sub_argument /*the ID of the subargument (eg §{player})*/ => {
                     transpiled_argument += generateArgument(properties["arguments"][sub_argument], "String")
                     if (Object.keys(properties["arguments"]).length != sub_argument) {
                         transpiled_argument += " + "
@@ -176,8 +173,6 @@ function generateArgument(properties, required_type) {
                 transpiled_argument = generateArgument(properties["arguments"]["1"], properties["type"])
             }
             break
-            //return
-            //does the type fixing still has to be performed if the user specified the type?
     }
     
     //Checking types and fixing them if needed

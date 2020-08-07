@@ -1,7 +1,7 @@
 const fs = require('fs')
 const {app, BrowserWindow} = require('electron')
 
-global.settings = { //Global app storage: can be accessed from the main and renderer processes
+global.settings = { //Global app storage: can be accessed from both main and renderer process
     "name": null,
     "version": null,
     "author": null,
@@ -15,36 +15,34 @@ global.workspace = {
 }
 
 function createWindow() {
-    const win = new BrowserWindow({
+    const window = new BrowserWindow({
         icon: app.getAppPath() + "/resources/icon.png",
         width: 1280,
         height: 800,
         minWidth: 800,
         minHeight: 600,
         webPreferences: {
-            nodeIntegration: true //ability of accessing Node.js resources from within the renderer process
+            nodeIntegration: true //accessing Node.js resources from within the renderer process
         }
     })
-    win.loadFile(app.getAppPath() + '/src/pages/index.html')
-    win.setMenuBarVisibility(false)
+    window.loadFile(app.getAppPath() + '/src/pages/index.html')
+    window.setMenuBarVisibility(false)
     
     function checkUnsavedModifications(event) {
         if(global.workspace.has_unsaved_modifications) {
-            const choice = require("electron").dialog.showMessageBoxSync(win,
+            const choice = require("electron").dialog.showMessageBoxSync(window,
                 {
                     type: "warning",
                     buttons: ["Save", "Don't save", "Cancel"],
                     title: "Confirm closing",
                     message: "You have unsaved changes"
-                }) 
+                })
             switch (choice) {
-                case 0:
-                    const file = JSON.stringify(global.settings) + "\r" + global.workspace.code
-                    if(global.workspace.path != null) {
-                        fs.writeFile(global.workspace.path, file, error => {
-                            if (error) throw error
-                        })
-                    } else {
+                case 0: //If the user clicked on Save
+                    let path;
+                    if(global.workspace.path != null) { //If it's an existing project
+                        path = global.workspace.path
+                    } else { //If it's a new project, we ask the user for the path
                         const options = {
                             title: "Save Project",
                             buttonLabel: "Save Project",
@@ -53,28 +51,27 @@ function createWindow() {
                                 extensions: ['bsk']
                             }]
                         }
-                        const result = require("electron").dialog.showSaveDialogSync(win, options)
-                        if (result != undefined) { //If the user selected a path
-                            global.workspace.path = result
-                            fs.writeFile(result, file, error => {
-                                if (error) throw error
-                            })
-                        } else { //If the user canceled saving
+                        path = require("electron").dialog.showSaveDialogSync(window, options)
+                        if (path == undefined) { //If the user canceled saving
                             event.preventDefault()
+                            return
                         }
                     }
+                    fs.writeFile(path, (JSON.stringify(global.settings) + "\r" + global.workspace.code), error => {
+                        if (error) throw error
+                    })
                     break
 
-                case 2:
+                case 2: //If the user clicked on Cancel
                     event.preventDefault()
                     break
             }
         }
     }
 
-    win.on('close', checkUnsavedModifications)
-    win.webContents.on("will-navigate", (event, url) => {
-        if(url.endsWith("index.html")) {  //When the user clicks on "Switch Workspace"
+    window.on('close', checkUnsavedModifications)
+    window.webContents.on("will-navigate", (event, url) => {
+        if(url.endsWith("index.html")) { //When the user clicks on "Switch Workspace"
             checkUnsavedModifications(event)
         }
     })
@@ -130,7 +127,7 @@ function openProject() {
 }
 
 function saveProject(project, path) { //TODO: directly get the project & path from the cache
-    if (path == null) {
+    if (path == null) { //If it's a new project
         saveProjectAs(project)
     } else {
         fs.writeFile(path, project, error => {
@@ -153,8 +150,8 @@ function saveProjectAs(project) { //TODO: directly get the project from the cach
     dialog.showSaveDialog(options).then(result => {
         if (result.canceled == false) {
             setPath(result.filePath)
-            fs.writeFile(result.filePath, project, function(err) {
-                if (err) throw err
+            fs.writeFile(result.filePath, project, error => {
+                if (error) throw error
             })
         }
     })
