@@ -41,3 +41,4 @@ jobs:
             dist/*.zip
             dist/*.dmg
             dist/win-unpacked/
+            dist/*.deb

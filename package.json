@@ -1,11 +1,15 @@
 {
   "name": "Blosky",
-  "author": "Eole7",
+  "author": {
+    "name": "Eole7",
+    "email": "42918804+Eole7@users.noreply.github.com",
+    "url": "https://github.com/Eole7/"
+  },
   "description": "A visual programming editor for creating Minecraft Plugins",
   "main": "src/app.js",
   "homepage": "https://github.com/Eole7/Blosky",
   "version": "0.4.0",
-  "email": "42918804+Eole7@users.noreply.github.com",
+  
   "repository": {
     "type": "git",
     "url": "https://github.com/Eole7/Blosky"
