@@ -57,7 +57,7 @@ module.exports = {
         
         //Compiling .java files to Java Bytecode (.class)
         //TODO: async compilation for reporting error to user
-        child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.12.2.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
+        child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.16.1.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
         
         fs.unlinkSync(appPath + "/temp/fr/blosky/Main.java")
         fs.unlinkSync(appPath + "/temp/fr/blosky/Listeners.java")
