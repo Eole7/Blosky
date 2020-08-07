@@ -26,6 +26,11 @@
       "icon": "resources/icon.ico"
     },
     "linux": {
+      "target": [
+        "snap",
+        "deb",
+        "AppImage"
+      ],
       "icon": "resources/icon.png"
     },
     "nsis": {
