@@ -2,12 +2,12 @@
 ![alt text](https://i.goopics.net/aDZpR.jpg)
 ![alt text](https://i.goopics.net/e2jgx.jpg)
 
-Blosky is a visual programming editor for creating Minecraft plugins, and compiling them into Java.
+Blosky is a visual programming editor for creating Minecraft Java plugins
 
 ## Installation
 - Install the JDK (Java Development Kit) to be able to compile your plugins: https://www.oracle.com/java/technologies/javase-jdk14-downloads.html
 - [Download](https://github.com/Eole7/Blosky/releases) the latest version of Blosky in portable or installer version. If you want to use nightly builds, download them in [Actions](https://github.com/Eole7/Blosky/actions?query=branch%3Amaster+is%3Asuccess).
-  Blosky has been packaged for Windows, macOS and Linux, but it has only been tested on Windows for the moment.
+  Blosky has been packaged for Windows, macOS and Linux, but it has only been tested on Windows for the moment
   - If you select the version to be installed, ignore the Windows SmartScreen alerts, and then follow the instructions given by the installer
   - If you choose the portable version, just extract the zip file
 - Blosky has only a few syntaxes for the moment and lacks basic features; don't plan to make a real plugin with it
