@@ -80,7 +80,7 @@
         Object.keys(syntaxes).forEach(category => {
             toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
             
-            if (category == "expressions") {
+            if (category == "expressions") { //Manually adding some expressions
                 Blockly.Blocks['parsed_as'] = {
                     init: function() {
                         this.appendValueInput("expression")

@@ -80,8 +80,8 @@ function generateBranch(branch) {
     let transpiled_branch = ""
     
     Object.keys(branch).forEach(node => { //A node is basically a line
-        const category = branch[node]["category"]
-        let ID = branch[node]["ID"]
+        const category = branch[node]["category"] //The syntax category
+        let ID = branch[node]["ID"] //The syntax ID
         let java_node = syntaxes[category][ID]["java_syntax"] //Contains the transpiled node
 
         //Transpiling arguments
@@ -113,9 +113,9 @@ function generateBranch(branch) {
 
 //Generate an argument of a node
 function generateArgument(properties, required_type) {
-    const category = properties["category"]
-    let transpiled_argument
-    let type //int, String, ...
+    const category = properties["category"] //The argument category
+    let transpiled_argument //The argument in Java code
+    let type //The return type of the argument (int, String, ...)
 
     switch (category) {
         case "plain_text":

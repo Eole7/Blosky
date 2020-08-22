@@ -91,6 +91,8 @@ app.on('activate', () => {
     }
 })
 
+
+//Get the syntaxes from the renderer process
 function getAllSyntaxes() {
     const appPath = require('electron').remote.app.getAppPath()
     
@@ -102,6 +104,7 @@ function getAllSyntaxes() {
     } 
 }
 
+//Open a project from the renderer process
 function openProject() {
     const dialog = require('electron').remote.dialog
     const options = {
@@ -126,6 +129,7 @@ function openProject() {
     })
 }
 
+//Save a project from the renderer process
 function saveProject(project, path) { //TODO: directly get the project & path from the cache
     if (path == null) { //If it's a new project
         saveProjectAs(project)
@@ -137,6 +141,7 @@ function saveProject(project, path) { //TODO: directly get the project & path fr
     }
 }
 
+//Save a project with path input from the renderer process
 function saveProjectAs(project) { //TODO: directly get the project from the cache
     const dialog = require('electron').remote.dialog
     const options = {
@@ -158,6 +163,8 @@ function saveProjectAs(project) { //TODO: directly get the project from the cach
     setUnsavedModifications(false)
 }
 
+
+//Access the global storage from the renderer process
 function setPath(value){
     require('electron').remote.getGlobal('workspace').path = value
 }

@@ -6,7 +6,7 @@
 function exportProject(workspace, settings) {
     const transpiler = require('electron').remote.require('./transpiler/transpiler.js')
     transpiler.clearTemporaryFolder() //If the previous compilation failed
-    transpiler.generateListenersClass(blocklyWorkspaceToSyntaxTree(workspace))
+    transpiler.generateListenersClass(workspaceToSyntaxTree(workspace))
     transpiler.generateMainClass()
     transpiler.generatePluginConfig(settings)
 
@@ -26,7 +26,7 @@ function exportProject(workspace, settings) {
     })
 }
 
-function blocklyWorkspaceToSyntaxTree(workspace) {
+function workspaceToSyntaxTree(workspace) {
     workspace = JSON.parse(require('xml-js').xml2json(workspace, {compact: true}))["xml"]
     let syntax_tree = {}
     
@@ -43,7 +43,7 @@ function blocklyWorkspaceToSyntaxTree(workspace) {
 
 /*
     This function converts a Blockly block to a node
-    The syntax tree is passed at every call, and new things a written to it, because Blockly's workspace output is organized differently:
+    The syntax tree is passed at every call, and new things a written to it, as Blockly's workspace output is differently organized:
         every block is stored inside inside the previous block, even if they are in the same branch
     
     TODO: write the child nodes from the return of the function, not at the execution of the function (without path.reduce)
