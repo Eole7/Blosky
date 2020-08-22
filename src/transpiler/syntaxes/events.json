@@ -1,16 +1,23 @@
 {
-  "1": {
+  "PlayerMoveEvent": {
     "syntax": "On player move",
     "java_syntax": "PlayerMoveEvent",
     "imports": [
       "org.bukkit.event.player.PlayerMoveEvent"
     ]
   },
-  "2": {
+  "PlayerCommandPreprocessEvent": {
     "syntax": "On player execute command",
     "java_syntax": "PlayerCommandPreprocessEvent",
     "imports": [
       "org.bukkit.event.player.PlayerCommandPreprocessEvent"
+    ]
+  },
+  "InventoryClickEvent": {
+    "syntax": "On inventory click",
+    "java_syntax": "InventoryClickEvent",
+    "imports": [
+      "org.bukkit.event.inventory.InventoryClickEvent"
     ]
   }
 }

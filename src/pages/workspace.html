@@ -84,15 +84,15 @@
                 Blockly.Blocks['parsed_as'] = {
                     init: function() {
                         this.appendValueInput("expression")
-                            .setCheck(null);
+                            .setCheck(null)
                         this.appendDummyInput()
                             .appendField("parsed as")
-                            .appendField(new Blockly.FieldDropdown([["text","String"], ["number","float"], ["integer","int"], ["world","World"], ["player","Player"], ["offline player","OfflinePlayer"], ["boolean","boolean"]]), "type");
-                        this.setInputsInline(true);
-                        this.setColour("#0c945d");
+                            .appendField(new Blockly.FieldDropdown([["text","String"], ["number","float"], ["integer","int"], ["world","World"], ["player","Player"], ["offline player","OfflinePlayer"], ["boolean","boolean"]]), "type")
+                        this.setInputsInline(true)
+                        this.setColour("#0c945d")
                         this.setOutput(true)
                     }
-                };
+                }
                 
                 toolbox += '<block type="text"></block>'
                 toolbox += '<block type="text_join"></block>' //TODO: +/- buttons instead of mutator, and inline inputs
@@ -160,7 +160,7 @@
                                 })
                                 break
                         }
-                        this.setInputsInline(true);
+                        this.setInputsInline(true)
                         this.setColour(colors[category])
                     }
                 }
@@ -207,7 +207,7 @@
                 "scaleSpeed": 1.2
             },
             "trashcan": true
-        });
+        })
         
         var isWorkspaceLoaded = false
 
@@ -219,7 +219,7 @@
                 x += element.offsetLeft
                 y += element.offsetTop
                 element = element.offsetParent
-            } while (element);
+            } while (element)
             blocklyDiv.style.left = x + 'px'
             blocklyDiv.style.top = y + 'px'
             blocklyDiv.style.width = blocklyArea.offsetWidth + 'px'
@@ -239,11 +239,11 @@
                     isWorkspaceLoaded = true
                 }
             }
-        });
+        })
 
         window.onload = () => { 
             Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(getCode()), workspace) //Restoring the workspace
-        };
+        }
 
     </script>
 </html>

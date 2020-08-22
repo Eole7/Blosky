@@ -11,10 +11,12 @@ const syntaxes = {
 }
 
 var imports = []
+var current_event = ""
 
 module.exports = {
     generateListenersClass: syntax_tree => {
         imports = [] //Cleaning imports of the previous exportation
+        current_event = ""
         const listeners_class = fs.readFileSync(appPath + '/src/transpiler/patterns/Listeners.java', 'utf8')
                               .replace("%child_nodes%", generateBranch(syntax_tree["nodes"]))
                               .replace("%imports%", imports.map(element => "import " + element + ";").join("\r"))
@@ -84,6 +86,8 @@ function generateBranch(branch) {
         let ID = branch[node]["ID"] //The syntax ID
         let java_node = syntaxes[category][ID]["java_syntax"] //Contains the transpiled node
 
+        if (category == "events") current_event = ID 
+
         //Transpiling arguments
         if (syntaxes[category][ID]["arguments"] != null) {
             Object.keys(syntaxes[category][ID]["arguments"]).forEach(argument => {
@@ -116,7 +120,7 @@ function generateArgument(properties, required_type) {
     const category = properties["category"] //The argument category
     let transpiled_argument //The argument in Java code
     let type //The return type of the argument (int, String, ...)
-
+    
     switch (category) {
         case "plain_text":
             let value = properties["value"]
@@ -137,7 +141,16 @@ function generateArgument(properties, required_type) {
         case "expressions":
             const ID = properties["ID"]
             type = syntaxes["expressions"][ID]["return_type"]
-            transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]
+
+            if (syntaxes["expressions"][ID]["context_dependent"] == undefined || syntaxes["expressions"][ID]["context_dependent"] == false) {
+                transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]
+            } else {
+                if (syntaxes["expressions"][ID]["java_syntax"]["exceptions"][current_event] == undefined) {
+                    transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]["default"]
+                } else {
+                    transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]["exceptions"][current_event]
+                }
+            }
 
             if (properties["arguments"] != undefined) { //Adding sub arguments of the current argument
                 Object.keys(properties["arguments"]).forEach(sub_argument /*the ID of the subargument (eg §{player})*/ => {
@@ -174,6 +187,7 @@ function generateArgument(properties, required_type) {
             }
             break
     }
+   
     
     //Checking types and fixing them if needed
     if (required_type != type &&

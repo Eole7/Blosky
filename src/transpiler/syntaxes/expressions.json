@@ -28,7 +28,14 @@
   },
   "4": {
     "syntax": "event player",
-    "java_syntax": "event.getPlayer()",
+    "context_dependent": "Event",
+    "java_syntax": {
+      "default": "event.getPlayer()",
+      "exceptions": {
+        "InventoryClickEvent": "event.getWhoClicked()"
+
+      }
+    },
     "return_type": "Player"
   }
 }
