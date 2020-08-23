@@ -35,7 +35,7 @@ module.exports = {
             function generateBranch(branch) {
                 let transpiled_branch = ""
                 
-                Object.keys(branch).forEach(node => { //A node is basically a line
+                Object.keys(branch).forEach(node => { //A node is basically a statement
                     const category = branch[node]["category"] //The syntax category
                     let ID = branch[node]["ID"] //The syntax ID
                     let java_node = syntaxes[category][ID]["java_syntax"] //Contains the transpiled node

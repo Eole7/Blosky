@@ -1,5 +1,5 @@
 {
-  "1": {
+  "BroadcastMessage": {
     "syntax": "broadcast §{text}",
     "java_syntax": "Bukkit.broadcastMessage(§{text});",
     "arguments": {
@@ -8,7 +8,7 @@
       }
     }
   },
-  "2": {
+  "SendMessage": {
     "syntax": "send §{text} to §{player}",
     "java_syntax": "§{player}.sendMessage(§{text});",
     "arguments": {

@@ -1,5 +1,5 @@
 {
-    "while": {
+    "While": {
         "syntax": "while §{condition}",
         "java_syntax": "while(§{condition})",
         "arguments": {

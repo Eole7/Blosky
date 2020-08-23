@@ -1,5 +1,5 @@
 {
-  "1": {
+  "PlayerHealth": {
     "syntax": "§{player}'s health",
     "java_syntax": "§{player}.getHealth()",
     "return_type": "double",
@@ -10,7 +10,7 @@
       }
     }
   },
-  "2": {
+  "PlayerName": {
     "syntax": "§{player}'s name",
     "java_syntax": "§{player}.getName()",
     "return_type": "String",
@@ -21,12 +21,12 @@
       }
     }
   },
-  "3": {
+  "OnlinePlayers": {
     "syntax": "all online players",
     "java_syntax": "Bukkit.getOnlinePlayers()",
     "return_type": "Collection"
   },
-  "4": {
+  "EventPlayer": {
     "syntax": "event player",
     "context_dependent": "Event",
     "java_syntax": {
