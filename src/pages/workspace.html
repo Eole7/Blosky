@@ -71,8 +71,8 @@
             "events": "230",
             "effects": "#1E90FF",
             "expressions": "120",
-            "conditions": "#ffa500",
-            "loops": "#d9bd1e"
+            "conditions": "#a9b01e",
+            "loops": "#c9b020"
         }
         const syntaxes = getAllSyntaxes()
         let toolbox = '<xml>'
@@ -191,7 +191,12 @@
                                 break
                         }
                         this.setInputsInline(true)
-                        this.setColour(colors[category])
+
+                        if(syntaxes[category][syntax_key]["colour"] != undefined) {
+                            this.setColour(syntaxes[category][syntax_key]["colour"])
+                        } else {
+                            this.setColour(colors[category])
+                        }
                     }
                 }
                 toolbox += '<block type="' + category + "_" + syntax_key + '"></block>'

@@ -7,7 +7,8 @@
             "required_type": "boolean"
         }
     },
-    "type": "control_statement"
+    "type": "control_statement",
+    "colour": "#ffa500"
 },
   "Equals": {
     "syntax": "§{string-1} equals §{string-2}",
