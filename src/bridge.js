@@ -4,11 +4,12 @@
 */
 
 function exportProject(workspace, settings) {
-    const transpiler = require('electron').remote.require('./transpiler/transpiler.js')
+    const {Transpiler} = require('electron').remote.require('./transpiler/transpiler.js')
+    const transpiler = new Transpiler(workspaceToSyntaxTree(workspace), settings)
     transpiler.clearTemporaryFolder() //If the previous compilation failed
-    transpiler.generateListenersClass(workspaceToSyntaxTree(workspace))
+    transpiler.generateListenersClass()
     transpiler.generateMainClass()
-    transpiler.generatePluginConfig(settings)
+    transpiler.generatePluginConfig()
 
     const dialog = require('electron').remote.dialog
     const options = {
@@ -18,11 +19,9 @@ function exportProject(workspace, settings) {
     dialog.showSaveDialog(options).then(result => {
         if (result.canceled == false) {
             transpiler.compile(result.filePath)
-            transpiler.clearTemporaryFolder()
             alert(settings["name"] + " was successfully compiled to " + result.filePath)
-        } else {
-            transpiler.clearTemporaryFolder()
         }
+        transpiler.clearTemporaryFolder()
     })
 }
 
@@ -141,7 +140,7 @@ function blockToArgument(block) {
 }
 
 class Node {
-    constructor(category, ID, args) {
+    constructor (category, ID, args) {
         this.category = category
         this.ID = ID
         this.arguments = args
@@ -151,7 +150,7 @@ class Node {
 }
 
 class Argument {
-    constructor(category, ID, value, type, sub_arguments) {
+    constructor (category, ID, value, type, sub_arguments) {
         this.category = category
         this.ID = ID
         this.value = value
