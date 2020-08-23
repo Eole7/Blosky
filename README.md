@@ -1,5 +1,5 @@
 # Blosky
-![alt text](https://i.goopics.net/aDZpR.jpg)
+![alt text](https://i.goopics.net/nJ8xQ.jpg)
 ![alt text](https://i.goopics.net/e2jgx.jpg)
 
 Blosky is a visual programming editor for creating Minecraft Java plugins
