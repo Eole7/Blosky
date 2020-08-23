@@ -266,11 +266,11 @@
         Blockly.svgResize(workspace)
         
         workspace.addChangeListener(event => {
-            if ((isWorkspaceLoaded || getCode() == null || getCode().length <= 61) //if the workspace is empty or not loaded yet
-                && event.type != "ui" /*ie opening the toolbox*/) {
+            if (isWorkspaceLoaded && event.type != "ui" /*ie opening the toolbox*/) {
                 setUnsavedModifications(true)
                 setCode(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace))) //Caching the workspace
-            } else if (event.type == "finished_loading"){
+            //If the workspace is empty, the "finished_loading" event isn't called so we directly mark it as loaded
+            } else if (event.type == "finished_loading" || getCode() == null || getCode().length <= 61 ){
                 isWorkspaceLoaded = true
             }
         })
