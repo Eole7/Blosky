@@ -22,7 +22,8 @@ function createWindow() {
         minWidth: 800,
         minHeight: 600,
         webPreferences: {
-            nodeIntegration: true //accessing Node.js resources from within the renderer process
+            nodeIntegration: true, //accessing Node.js resources from within the renderer process
+            enableRemoteModule: true
         }
     })
     window.loadFile(app.getAppPath() + '/src/pages/index.html')
@@ -101,6 +102,7 @@ function getAllSyntaxes() {
         effects: JSON.parse(fs.readFileSync(appPath+ "/src/transpiler/syntaxes/effects.json")),
         expressions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/expressions.json")),
         conditions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/conditions.json")),
+        loops: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/loops.json"))
     } 
 }
 
