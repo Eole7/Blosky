@@ -72,12 +72,17 @@
             "effects": "#1E90FF",
             "expressions": "120",
             "conditions": "#ffa500",
+            "loops": "#d9bd1e"
         }
         const syntaxes = getAllSyntaxes()
         let toolbox = '<xml>'
         
         //Generating the toolbox from the syntaxes
         Object.keys(syntaxes).forEach(category => {
+            
+            //Adding a separator between categories
+            if (category.match("(effects|expressions|conditions)")) toolbox += "<sep></sep>"
+            
             toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
             
             if (category == "expressions") { //Manually adding some expressions
@@ -116,22 +121,8 @@
                                 next_argument_ID++
                             })
                         }
+                        
                         switch (category) {
-                            case "conditions":
-                                this.jsonInit({
-                                    "type": "text",
-                                    "message0": "if " + syntax,
-                                    "args0": args,
-                                    "message1": "do %1",
-                                    "args1": [{
-                                        "type": "input_statement",
-                                        "name": "do"
-                                    }],
-                                    "previousStatement": true,
-                                    "nextStatement": true
-                                })
-                                break
-                            
                             case "events":
                                 this.jsonInit({
                                     "type": "text",
@@ -150,13 +141,52 @@
                                     "previousStatement": true
                                 })
                                 break
-                            
+                                                        
                             case "expressions":
                                 this.jsonInit({
                                     "type": "text",
                                     "message0": syntax,
                                     "args0": args,
                                     "output": true
+                                })
+                                break
+                            
+                            case "conditions":
+                                if (syntaxes[category][syntax_key]["type"] == "control_statement") {
+                                    this.jsonInit({
+                                        "type": "text",
+                                        "message0": syntax,
+                                        "args0": args,
+                                        "message1": "do %1",
+                                        "args1": [{
+                                            "type": "input_statement",
+                                            "name": "do"
+                                        }],
+                                        "previousStatement": true,
+                                        "nextStatement": true
+                                    })
+                                } else {
+                                    this.jsonInit({
+                                        "type": "text",
+                                        "message0": syntax,
+                                        "args0": args,
+                                        "output": true
+                                    })
+                                }
+                                break
+                            
+                            case "loops":
+                                this.jsonInit({
+                                    "type": "text",
+                                    "message0": syntax,
+                                    "args0": args,
+                                    "message1": "do %1",
+                                    "args1": [{
+                                        "type": "input_statement",
+                                        "name": "do"
+                                    }],
+                                    "previousStatement": true,
+                                    "nextStatement": true,
                                 })
                                 break
                         }

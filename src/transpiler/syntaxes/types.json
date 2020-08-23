@@ -6,7 +6,8 @@
           "double": "String.valueOf(%argument%)",
           "float": "String.valueOf(%argument%)",
           "Collection": "%argument%.toString()",
-          "Player": "%argument%.toString()"
+          "Player": "%argument%.toString()",
+          "boolean": "String.valueOf(%argument%)"
         }
     },
     "int": {
@@ -31,6 +32,9 @@
         "conversion": {
           "String" : "Double.parseDouble(%argument%)"
         }
+    },
+    "boolean": {
+        "match": "^(true|false)$"
     },
     "Collection": {}
 }

@@ -1,5 +1,15 @@
 {
   "1": {
+    "syntax": "if §{condition}",
+    "java_syntax": "if(§{condition})",
+    "arguments": {
+        "§{condition}": {
+            "required_type": "boolean"
+        }
+    },
+    "type": "control_statement"
+},
+  "Equals": {
     "syntax": "§{string-1} equals §{string-2}",
     "java_syntax": "(§{string-1}).equals(§{string-2})",
     "arguments": {
@@ -9,9 +19,11 @@
       "§{string-2}": {
         "required_type": "String"
       }
-    }
+    },
+    "return_type": "boolean",
+    "type": "value_return"
   },
-  "2": {
+  "MathematicalEquality": {
     "syntax": "§{object-1} = §{object-2}",
     "negated_syntax": "§{object-1} ≠ §{object-2}",
     "negated_java_syntax": "§{object-1} != §{object-2}",
@@ -23,9 +35,10 @@
       "§{object-2}": {
         "required_type": "float"
       }
-    }
+    },
+    "return_type": "boolean"
   },
-  "3": {
+  "GreaterThan": {
     "syntax": "§{object-1} > §{object-2}",
     "java_syntax": "§{object-1} > §{object-2}",
     "arguments": {
@@ -35,9 +48,10 @@
       "§{object-2}": {
         "required_type": "float"
       }
-    }
+    },
+    "return_type": "boolean"
   },
-  "4": {
+  "SmallerThan": {
     "syntax": "§{object-1} < §{object-2}",
     "java_syntax": "§{object-1} < §{object-2}",
     "arguments": {
@@ -47,9 +61,10 @@
       "§{object-2}": {
         "required_type": "float"
       }
-    }
+    },
+    "return_type": "boolean"
   },
-  "5": {
+  "GreaterOrEqualTo": {
     "syntax": "§{object-1} >= §{object-2}",
     "java_syntax": "§{object-1} >= §{object-2}",
     "arguments": {
@@ -59,9 +74,10 @@
       "§{object-2}": {
         "required_type": "float"
       }
-    }
+    },
+    "return_type": "boolean"
   },
-  "6": {
+  "SmallerOrEqualTo": {
     "syntax": "§{object-1} <= §{object-2}",
     "java_syntax": "§{object-1} <= §{object-2}",
     "arguments": {
@@ -71,6 +87,7 @@
       "§{object-2}": {
         "required_type": "float"
       }
-    }
+    },
+    "return_type": "boolean"
   }
 }

@@ -72,7 +72,7 @@ function blockToNode(block, path, key, syntax_tree) {
     }
     
     //Writes child nodes to the syntax_tree
-    if (category == "conditions" && block["statement"]["block"] != undefined) {
+    if (block["statement"] != undefined) {
         syntax_tree = blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
     }
     
@@ -105,6 +105,9 @@ function blockToArgument(block) {
             category = "argument_constructor"
         } else if (blockly_arguments[element]["block"]["_attributes"]["type"].startsWith("expressions")) {
             category = "expressions"
+            ID = blockly_arguments[element]["block"]["_attributes"]["type"].split("_")[1]
+        } else if (blockly_arguments[element]["block"]["_attributes"]["type"].startsWith("conditions")) {
+            category = "conditions"
             ID = blockly_arguments[element]["block"]["_attributes"]["type"].split("_")[1]
         } else if(blockly_arguments[element]["block"]["_attributes"]["type"] == "parsed_as") {
             category = "parsed_as"

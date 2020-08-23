@@ -1,5 +1,3 @@
 %instruction% {
-
     %child_nodes%
-
 }

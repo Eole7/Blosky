@@ -1,0 +1,11 @@
+{
+    "while": {
+        "syntax": "while §{condition}",
+        "java_syntax": "while(§{condition})",
+        "arguments": {
+            "§{condition}": {
+                "required_type": "boolean"
+            }
+        }
+    }
+}

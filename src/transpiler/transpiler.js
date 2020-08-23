@@ -10,6 +10,7 @@ module.exports = {
                 effects: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/effects.json")),
                 expressions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/expressions.json")),
                 conditions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/conditions.json")),
+                loops: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/loops.json")),
                 types: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/types.json"))
             }
             
@@ -51,7 +52,7 @@ module.exports = {
                     
                     if (branch[node]["child_nodes"] != undefined) { //If the branch contains another branch, we add it
                         transpiled_branch += "\r"
-                            + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.java', 'utf8') //Getting the "pattern" of the current node (eg "if()" for conditions)
+                            + fs.readFileSync(appPath + '/src/transpiler/patterns/' + category + '.java', 'utf8') //Getting the pattern of the current node (eg "if()" for conditions)
                             .replace("%instruction%", java_node)
                             .replace("%ID%", node) //Each event has an ID
                             .replace("%child_nodes%", generateBranch(branch[node]["child_nodes"]))
@@ -76,8 +77,9 @@ module.exports = {
                 
                 switch (category) {
                     case "plain_text":
-                        let value = properties["value"]
-                        if (syntaxes["types"][required_type]["match"] != null && value.match(syntaxes["types"][required_type]["match"])) {
+                        const value = properties["value"]
+
+                        if (required_type != "unimplemented" && syntaxes["types"][required_type]["match"] != undefined && value.match(syntaxes["types"][required_type]["match"])) {
                             type = required_type //If the value already respects the required type match, there's no needs to use the conversion method
                         } else {
                             type = properties["type"]
@@ -92,26 +94,28 @@ module.exports = {
                         break
                     
                     case "expressions":
+                    case "conditions":
                         const ID = properties["ID"]
-                        type = syntaxes["expressions"][ID]["return_type"]
-                        
-                        if (syntaxes["expressions"][ID]["context_dependent"] == undefined || syntaxes["expressions"][ID]["context_dependent"] == false) {
-                            transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]
+                        type = syntaxes[category][ID]["return_type"]
+
+                        if (syntaxes[category][ID]["context_dependent"] == undefined || syntaxes[category][ID]["context_dependent"] == false) {
+                            transpiled_argument = syntaxes[category][ID]["java_syntax"]
                         } else {
-                            if (syntaxes["expressions"][ID]["java_syntax"]["exceptions"][instance.current_event] == undefined) {
-                                transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]["default"]
+                            if (syntaxes[category][ID]["java_syntax"]["exceptions"][instance.current_event] == undefined) {
+                                transpiled_argument = syntaxes[category][ID]["java_syntax"]["default"]
                             } else {
-                                transpiled_argument = syntaxes["expressions"][ID]["java_syntax"]["exceptions"][instance.current_event]
+                                transpiled_argument = syntaxes[category][ID]["java_syntax"]["exceptions"][instance.current_event]
                             }
                         }
                         
-                        if (properties["arguments"] != undefined) { //Adding sub arguments of the current argument
+                        if (properties["arguments"] != undefined) { //Adding arguments of the current argument
                             Object.keys(properties["arguments"]).forEach(sub_argument /*the ID of the subargument (eg §{player})*/ => {
-                                transpiled_argument = transpiled_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], "unimplemented"))
+                                const required_type = syntaxes[category][ID]["arguments"][sub_argument]["required_type"]
+                                transpiled_argument = transpiled_argument.replace(sub_argument, generateArgument(properties["arguments"][sub_argument], required_type))
                             })
                         }
                         
-                        //Adding imports required by the expression
+                        //Adding imports required by the expression/condition
                         if (syntaxes[category][ID]["imports"] != null) {
                             addImports(syntaxes[category][ID]["imports"])
                         }
@@ -161,7 +165,7 @@ module.exports = {
                 })
             }
         }
-
+        
         this.generateMainClass = () => {
             fs.writeFile(appPath + '/temp/fr/blosky/Main.java', fs.readFileSync(appPath + '/src/transpiler/patterns/Main.java', 'utf8'), error => {
                 if (error) {
