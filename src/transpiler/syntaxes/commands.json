@@ -1,0 +1,20 @@
+{
+    "RegisterCommand": {
+        "syntax": "register new command with name §{name}, description §{description}, permission §{permission} to run",
+        "java_syntax": "if(command.getName().equalsIgnoreCase(§{name}))",
+        "arguments": {
+            "§{name}": {
+                "required_type": "String",
+                "input_type": "text"
+            },
+            "§{description}": {
+                "required_type": "String",
+                "input_type": "text"
+            },
+            "§{permission}": {
+                "required_type": "String",
+                "input_type": "text"
+            }
+        }
+    }
+}

@@ -5,9 +5,11 @@
 
 function exportProject(workspace, settings) {
     const {Transpiler} = require('electron').remote.require('./transpiler/transpiler.js')
-    const transpiler = new Transpiler(workspaceToSyntaxTree(workspace), settings)
+    let syntax_tree = workspaceToSyntaxTrees(workspace)
+    const transpiler = new Transpiler(syntax_tree["listeners"], syntax_tree["commands"], settings)
     transpiler.clearTemporaryFolder() //If the previous compilation failed
     transpiler.generateListenersClass()
+    transpiler.generateCommandsClass()
     transpiler.generateMainClass()
     transpiler.generatePluginConfig()
 
@@ -17,7 +19,7 @@ function exportProject(workspace, settings) {
         buttonLabel: "Save plugin",
     }
     dialog.showSaveDialog(options).then(result => {
-        if (result.canceled == false) {
+        if(result.canceled == false) {
             transpiler.compile(result.filePath)
             alert(settings["name"] + " was successfully compiled to " + result.filePath)
         }
@@ -25,19 +27,38 @@ function exportProject(workspace, settings) {
     })
 }
 
-function workspaceToSyntaxTree(workspace) {
+function workspaceToSyntaxTrees(workspace) {
     workspace = JSON.parse(require('xml-js').xml2json(workspace, {compact: true}))["xml"]
-    let syntax_tree = {}
-    
-    if (Object.keys(workspace["block"])[0] == "0") { //If the project contains multiple events
-        Object.keys(workspace["block"]).forEach(event_ID => {
-            syntax_tree = blockToNode(workspace["block"][event_ID], ["nodes"], parseInt(event_ID)+1, syntax_tree)
+
+    //The workspace is split into 2 syntax trees, one for the listeners and another for commands (so they can be put in different Java classes)
+    let listeners_syntax_tree = {}
+    let commands_syntax_tree = {}
+
+    if(Array.isArray(workspace["block"])) { //If the project contains several events
+        let next_listeners_event_ID = 1
+        let next_commands_event_ID = 1
+
+        Object.keys(workspace["block"]).forEach(event_index => {
+            if(workspace["block"][event_index]["_attributes"]["type"].startsWith("commands")) {
+                commands_syntax_tree = blockToNode(workspace["block"][event_index], ["nodes"], next_commands_event_ID, commands_syntax_tree)
+                next_commands_event_ID++
+            } else {
+                listeners_syntax_tree = blockToNode(workspace["block"][event_index], ["nodes"], next_listeners_event_ID, listeners_syntax_tree)
+                next_listeners_event_ID++
+            }
         })
     } else { //If the project contains 1 event
-        syntax_tree = blockToNode(workspace["block"], ["nodes"], 1, syntax_tree)
+        if(workspace["block"]["_attributes"]["type"].startsWith("commands")) {
+            commands_syntax_tree = blockToNode(workspace["block"], ["nodes"], 1, commands_syntax_tree)
+        } else {
+            listeners_syntax_tree = blockToNode(workspace["block"], ["nodes"], 1, listeners_syntax_tree)
+        }
     }
     
-    return syntax_tree
+    return {
+        "listeners": listeners_syntax_tree,
+        "commands": commands_syntax_tree
+    }
 }
 
 /*
@@ -54,17 +75,17 @@ function blockToNode(block, path, key, syntax_tree) {
     let args //The block's arguments
     
     //Gets arguments
-    if (block["value"] != undefined) {
-        args = blockToArgument(block["value"])
+    if(block["value"] != undefined || block["field"] != undefined) {
+        args = inputsToArguments(block["value"] != undefined ? block["value"] : null, block["field"] != undefined ? block["field"] : null)
     }
     
     //Sets a json value at a specific dynamic path
     path.reduce((o, k) => o[k] = o[k] || {}, syntax_tree)[key] = new Node(category, ID, args)
 
     //Adds blocks that are in the same branch as the current one
-    if (block["next"] != undefined && block["next"]["block"] != undefined) {
-        //Blocks followed by an event are in the same branch as the event's one, but we want them as child nodes
-        if (category == "events") {
+    if(block["next"] != undefined && block["next"]["block"] != undefined) {
+        //Blocks followed by an event/command registration are in the same branch as the event's one, but we want them as child nodes
+        if(category == "events" || category == "commands") {
             syntax_tree = blockToNode(block["next"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
         } else {
             syntax_tree = blockToNode(block["next"]["block"], path, key+1, syntax_tree)
@@ -72,73 +93,104 @@ function blockToNode(block, path, key, syntax_tree) {
     }
     
     //Writes child nodes to the syntax_tree
-    if (block["statement"] != undefined) {
+    if(block["statement"] != undefined) {
         syntax_tree = blockToNode(block["statement"]["block"], path.concat([key, "child_nodes"]), 1, syntax_tree)
     }
     
     return syntax_tree
 }
 
-//Generates arguments of a Blockly block
-function blockToArgument(block) {
+/*
+    Generates arguments of a node
+
+    There are two types of arguments
+    input_blocks: ie expression
+    input_values: raw text, ie RegisterCommand
+*/
+function inputsToArguments(input_blocks, input_values) {
     let arguments = {} //The converted arguments
-    let blockly_arguments = [] //The unconverted arguments - still in the Blockly's format
-    
-    if (Object.keys(block)[0] != "0") { //If the block contains 1 argument
-        blockly_arguments.push(block)
-    } else { //If the block contains several arguments
-        blockly_arguments = block
+
+    if(input_values != null) {
+        if(Array.isArray(input_values)) { //If there are several arguments
+            Object.keys(input_values).forEach(index => {
+                let field_name = input_values[index]["_attributes"]["name"]
+                arguments[field_name] = {
+                    "category": "plain_text", 
+                    "value": input_values[index]["_text"],
+                    "type": "String"
+                }
+            })
+        } else { //If there is one argument
+            let field_name = input_values["_attributes"]["name"]
+            arguments[field_name] = {
+                "category": "plain_text", 
+                "value": input_values["_text"],
+                "type": "String"
+            }
+        }
     }
-    
-    Object.keys(blockly_arguments).forEach(element => {
-        let category //The syntax category
-        let ID //The syntax ID
-        let value //The String value
-        let type //The Java type
-        let sub_arguments //Arguments contained in the current argument
-        
-        if (blockly_arguments[element]["block"]["_attributes"]["type"] == "text") {
-            category = "plain_text"
-            type = "String"
-            value = blockly_arguments[element]["block"]["field"]["_text"]
-        } else if (blockly_arguments[element]["block"]["_attributes"]["type"] == "text_join") {
-            category = "argument_constructor"
-        } else if (blockly_arguments[element]["block"]["_attributes"]["type"].startsWith("expressions")) {
-            category = "expressions"
-            ID = blockly_arguments[element]["block"]["_attributes"]["type"].split("_")[1]
-        } else if (blockly_arguments[element]["block"]["_attributes"]["type"].startsWith("conditions")) {
-            category = "conditions"
-            ID = blockly_arguments[element]["block"]["_attributes"]["type"].split("_")[1]
-        } else if(blockly_arguments[element]["block"]["_attributes"]["type"] == "parsed_as") {
-            category = "parsed_as"
-            type = blockly_arguments[element]["block"]["field"]["_text"]
+
+    if(input_blocks != null) {
+        //If there is only one argument, we store it as an element of an array (the same way as if there are several arguments)
+        if(!(Array.isArray(input_blocks))) { 
+            const original = input_blocks
+            input_blocks = []
+            input_blocks.push(original)
         }
-        
-        if (blockly_arguments[element]["block"]["value"] != undefined) {
-            sub_arguments = blockToArgument(blockly_arguments[element]["block"]["value"])
-        }
-        
-        //If the argument is part of an argument constructor
-        if (blockly_arguments[element]["_attributes"]["name"].startsWith("ADD")) {
-            arguments[
-                parseInt(
-                    blockly_arguments[element]["_attributes"]["name"].replace("ADD", "")
-                )+1
-            ] = new Argument(category, ID, value, type, sub_arguments)
-        }
-        //If the argument is part of a parsed_as argument
-        else if (blockly_arguments[element]["_attributes"]["name"] == "expression") {
-            /*
-                Instead of storing the argument of the parsed as expression as an argument, we store it as a required type
-                This allows to do the conversion using the conversion methods stored in syntaxes/types.json, instead of having to create a real expression in syntaxes/expressions.json
-            */
-            arguments["1"] = new Argument(category, ID, value, type, sub_arguments)
-        }
-        else { //Just a simple argument
-            arguments[blockly_arguments[element]["_attributes"]["name"]] = new Argument(category, ID, value, type, sub_arguments)
-        }
-    })
-    
+
+        Object.keys(input_blocks).forEach(index => {
+            let category //The syntax category
+            let ID //The syntax ID
+            let value //The String value
+            let type //The Java type
+            let sub_arguments //Arguments contained in the current argument
+            
+            //Getting all the properties of the current argument
+            if(input_blocks[index]["block"]["_attributes"]["type"] == "text") {
+                category = "plain_text"
+                type = "String"
+                value = input_blocks[index]["block"]["field"]["_text"]
+            } else if(input_blocks[index]["block"]["_attributes"]["type"] == "text_join") {
+                category = "argument_constructor"
+            } else if(input_blocks[index]["block"]["_attributes"]["type"].startsWith("expressions")) {
+                category = "expressions"
+                ID = input_blocks[index]["block"]["_attributes"]["type"].split("_")[1]
+            } else if(input_blocks[index]["block"]["_attributes"]["type"].startsWith("conditions")) {
+                category = "conditions"
+                ID = input_blocks[index]["block"]["_attributes"]["type"].split("_")[1]
+            } else if(input_blocks[index]["block"]["_attributes"]["type"] == "parsed_as") {
+                category = "parsed_as"
+                type = input_blocks[index]["block"]["field"]["_text"]
+            }
+            
+            //Adding arguments of the current argument
+            if(input_blocks[index]["block"]["value"] != undefined || input_blocks[index]["block"]["field"] != undefined) {
+                sub_arguments = inputsToArguments(input_blocks[index]["block"]["value"] != undefined ? input_blocks[index]["block"]["value"] : null, 
+                                                 input_blocks[index]["block"]["field"] != undefined ? input_blocks[index]["block"]["field"] : null)
+            }
+            //If the current argument is a subargument of an argument constructor
+            if(input_blocks[index]["_attributes"]["name"].startsWith("ADD")) {
+                arguments[
+                    parseInt(
+                        input_blocks[index]["_attributes"]["name"].replace("ADD", "")
+                    )+1
+                ] = new Argument(category, ID, value, type, sub_arguments)
+            }
+            //If the current argument is the subargument of a parsed_as argument
+            else if(input_blocks[index]["_attributes"]["name"] == "expression") {
+                /*
+                    Instead of storing the argument of the parsed as expression as an argument, we store it as a required type
+                    This allows to do the conversion using the conversion methods stored in syntaxes/types.json, instead of having to create a real expression in syntaxes/expressions.json
+                */
+                arguments["1"] = new Argument(category, ID, value, type, sub_arguments)
+            }
+             //Just a simple argument
+            else {
+                arguments[input_blocks[index]["_attributes"]["name"]] = new Argument(category, ID, value, type, sub_arguments)
+            }
+        })
+    }
+
     return arguments
 }
 

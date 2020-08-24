@@ -53,13 +53,13 @@ function createWindow() {
                             }]
                         }
                         path = require("electron").dialog.showSaveDialogSync(window, options)
-                        if (path == undefined) { //If the user canceled saving
+                        if(path == undefined) { //If the user canceled saving
                             event.preventDefault()
                             return
                         }
                     }
                     fs.writeFile(path, (JSON.stringify(global.settings) + "\r" + global.workspace.code), error => {
-                        if (error) throw error
+                        if(error) throw error
                     })
                     break
 
@@ -81,13 +81,13 @@ function createWindow() {
 app.whenReady().then(createWindow)
 
 app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
+    if(process.platform !== 'darwin') {
         app.quit()
     }
 })
 
 app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
+    if(BrowserWindow.getAllWindows().length === 0) {
         createWindow()
     }
 })
@@ -99,6 +99,7 @@ function getAllSyntaxes() {
     
     return {
         events: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/events.json")),
+        commands: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/commands.json")),
         effects: JSON.parse(fs.readFileSync(appPath+ "/src/transpiler/syntaxes/effects.json")),
         expressions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/expressions.json")),
         conditions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/conditions.json")),
@@ -117,7 +118,7 @@ function openProject() {
         }]
     }
     dialog.showOpenDialog(options).then(result => {
-        if (result.canceled == false) {
+        if(result.canceled == false) {
             const lines = fs.readFileSync(result.filePaths[0], "utf-8").split("\r")
             const settings = JSON.parse(lines[0])
             setCode(lines[1])
@@ -133,11 +134,11 @@ function openProject() {
 
 //Save a project from the renderer process
 function saveProject(project, path) { //TODO: directly get the project & path from the cache
-    if (path == null) { //If it's a new project
+    if(path == null) { //If it's a new project
         saveProjectAs(project)
     } else {
         fs.writeFile(path, project, error => {
-            if (error) throw error
+            if(error) throw error
         })
         setUnsavedModifications(false)
     }
@@ -155,10 +156,10 @@ function saveProjectAs(project) { //TODO: directly get the project from the cach
         }]
     }
     dialog.showSaveDialog(options).then(result => {
-        if (result.canceled == false) {
+        if(result.canceled == false) {
             setPath(result.filePath)
             fs.writeFile(result.filePath, project, error => {
-                if (error) throw error
+                if(error) throw error
             })
         }
     })

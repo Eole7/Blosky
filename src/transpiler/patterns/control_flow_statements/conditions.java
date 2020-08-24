@@ -1,0 +1,5 @@
+%instruction% {
+
+    %child_nodes%
+
+}

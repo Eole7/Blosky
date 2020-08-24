@@ -69,6 +69,7 @@
     <script async>
         const colors = {
             "events": "230",
+            "commands": "#b03798",
             "effects": "#1E90FF",
             "expressions": "120",
             "conditions": "#a9b01e",
@@ -81,15 +82,14 @@
         Object.keys(syntaxes).forEach(category => {
             
             //Adding a separator between categories
-            if (category.match("(effects|expressions|conditions)")) toolbox += "<sep></sep>"
+            if(category.match("(effects|expressions|conditions)")) toolbox += "<sep></sep>"
             
             toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
             
-            if (category == "expressions") { //Manually adding some expressions
+            if(category == "expressions") { //Manually adding some expressions
                 Blockly.Blocks['parsed_as'] = {
                     init: function() {
                         this.appendValueInput("expression")
-                            .setCheck(null)
                         this.appendDummyInput()
                             .appendField("parsed as")
                             .appendField(new Blockly.FieldDropdown([["text","String"], ["number","float"], ["integer","int"], ["world","World"], ["player","Player"], ["offline player","OfflinePlayer"], ["boolean","boolean"]]), "type")
@@ -111,11 +111,19 @@
                         let next_argument_ID = 1
                         let args = []
                         
-                        if (syntaxes[category][syntax_key]["arguments"] != undefined) {
+                        if(syntaxes[category][syntax_key]["arguments"] != undefined) {
                             Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(argument => {
                                 syntax = syntax.replace(argument, "%" + next_argument_ID) //Blockly arguments are indentified by a %
+                                
+                                let input_type
+                                if(syntaxes[category][syntax_key]["arguments"][argument]["input_type"] == "text") {
+                                    input_type = "field_input"
+                                } else {
+                                    input_type = "input_value"
+                                }
+
                                 args.push({
-                                    "type": "input_value",
+                                    "type": input_type,
                                     "name": argument,
                                 })
                                 next_argument_ID++
@@ -124,6 +132,15 @@
                         
                         switch (category) {
                             case "events":
+                                this.jsonInit({
+                                    "type": "text",
+                                    "message0": syntax,
+                                    "args0": args,
+                                    "nextStatement": true
+                                })
+                                break
+                            
+                            case "commands":
                                 this.jsonInit({
                                     "type": "text",
                                     "message0": syntax,
@@ -152,7 +169,7 @@
                                 break
                             
                             case "conditions":
-                                if (syntaxes[category][syntax_key]["type"] == "control_flow_statement") {
+                                if(syntaxes[category][syntax_key]["type"] == "control_flow_statement") {
                                     this.jsonInit({
                                         "type": "text",
                                         "message0": syntax,
@@ -266,11 +283,11 @@
         Blockly.svgResize(workspace)
         
         workspace.addChangeListener(event => {
-            if (isWorkspaceLoaded && event.type != "ui" /*ie opening the toolbox*/) {
+            if(isWorkspaceLoaded && event.type != "ui" /*ie opening the toolbox*/) {
                 setUnsavedModifications(true)
                 setCode(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace))) //Caching the workspace
             //If the workspace is empty, the "finished_loading" event isn't called so we directly mark it as loaded
-            } else if (event.type == "finished_loading" || getCode() == null || getCode().length <= 61 ){
+            } else if(event.type == "finished_loading" || getCode() == null || getCode().length <= 61 ){
                 isWorkspaceLoaded = true
             }
         })

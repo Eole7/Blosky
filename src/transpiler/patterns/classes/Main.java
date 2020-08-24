@@ -8,7 +8,8 @@ public class Main extends JavaPlugin {
 		@Override
 		public void onEnable() {
 		
-			Bukkit.getServer().getPluginManager().registerEvents(new Listeners(), this);
+			%listeners%
+			%commands%
 
 	}
 
