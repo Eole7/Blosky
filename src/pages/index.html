@@ -20,7 +20,6 @@
         
         h1 {
             margin: 0;
-            padding: 0;
             user-select: none;
             font-family: "Roboto", sans-serif;
             color: lightblue;
@@ -31,6 +30,8 @@
         }
         
         button {
+            user-select: none;
+            -webkit-user-drag: none;
             cursor: pointer;
             border: 1px solid black;
             font-size: 20px;
@@ -41,7 +42,13 @@
             height: 31px;
         }
         
+        a {
+            -webkit-user-drag: none;
+        }
+
         img {
+            user-select: none;
+            -webkit-user-drag: none;
             margin-left: auto;
             margin-right: auto;
             width: 10em;
