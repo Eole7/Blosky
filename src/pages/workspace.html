@@ -60,7 +60,7 @@
             <a class="active">Workspace</a>
             <a href="save-export.html">Save & Export</a>
         </nav>
-
+        
         <div id=container>
             <div id="blocklyDiv" style="position: absolute"></div>
             <div id="blocklyArea"></div>
@@ -122,7 +122,7 @@
                                 } else {
                                     input_type = "input_value"
                                 }
-
+                                
                                 args.push({
                                     "type": input_type,
                                     "name": argument,
@@ -159,7 +159,7 @@
                                     "previousStatement": true
                                 })
                                 break
-                                                        
+                                                
                             case "expressions":
                                 this.jsonInit({
                                     "type": "text",
@@ -209,7 +209,7 @@
                                 break
                         }
                         this.setInputsInline(true)
-
+                        
                         if(syntaxes[category][syntax_key]["colour"] != undefined) {
                             this.setColour(syntaxes[category][syntax_key]["colour"])
                         } else {
@@ -263,7 +263,7 @@
         })
         
         var isWorkspaceLoaded = false
-
+        
         const onresize = () => {
             let element = blocklyArea
             let x = 0
@@ -292,10 +292,9 @@
                 isWorkspaceLoaded = true
             }
         })
-
+        
         window.onload = () => { 
             Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(getCode()), workspace) //Restoring the workspace
         }
-
     </script>
 </html>

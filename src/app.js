@@ -62,14 +62,14 @@ function createWindow() {
                         if(error) throw error
                     })
                     break
-
+                
                 case 2: //If the user clicked on Cancel
                     event.preventDefault()
                     break
             }
         }
     }
-
+    
     window.on('close', checkUnsavedModifications)
     window.webContents.on("will-navigate", (event, url) => {
         if(url.endsWith("index.html")) { //When the user clicks on "Switch Workspace"

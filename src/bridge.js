@@ -12,7 +12,7 @@ function exportProject(workspace, settings) {
     transpiler.generateCommandsClass()
     transpiler.generateMainClass()
     transpiler.generatePluginConfig()
-
+    
     const dialog = require('electron').remote.dialog
     const options = {
         title: "Save plugin",
@@ -29,11 +29,11 @@ function exportProject(workspace, settings) {
 
 function workspaceToSyntaxTrees(workspace) {
     workspace = JSON.parse(require('xml-js').xml2json(workspace, {compact: true}))["xml"]
-
+    
     //The workspace is split into 2 syntax trees, one for the listeners and another for commands (so they can be put in different Java classes)
     let listeners_syntax_tree = {}
     let commands_syntax_tree = {}
-
+    
     if(Array.isArray(workspace["block"])) { //If the project contains several events
         let next_listeners_event_ID = 1
         let next_commands_event_ID = 1
@@ -81,7 +81,7 @@ function blockToNode(block, path, key, syntax_tree) {
     
     //Sets a json value at a specific dynamic path
     path.reduce((o, k) => o[k] = o[k] || {}, syntax_tree)[key] = new Node(category, ID, args)
-
+    
     //Adds blocks that are in the same branch as the current one
     if(block["next"] != undefined && block["next"]["block"] != undefined) {
         //Blocks followed by an event/command registration are in the same branch as the event's one, but we want them as child nodes
@@ -109,7 +109,7 @@ function blockToNode(block, path, key, syntax_tree) {
 */
 function inputsToArguments(input_blocks, input_values) {
     let arguments = {} //The converted arguments
-
+    
     if(input_values != null) {
         if(Array.isArray(input_values)) { //If there are several arguments
             Object.keys(input_values).forEach(index => {
@@ -129,7 +129,7 @@ function inputsToArguments(input_blocks, input_values) {
             }
         }
     }
-
+    
     if(input_blocks != null) {
         //If there is only one argument, we store it as an element of an array (the same way as if there are several arguments)
         if(!(Array.isArray(input_blocks))) { 
@@ -137,7 +137,7 @@ function inputsToArguments(input_blocks, input_values) {
             input_blocks = []
             input_blocks.push(original)
         }
-
+        
         Object.keys(input_blocks).forEach(index => {
             let category //The syntax category
             let ID //The syntax ID
@@ -190,7 +190,7 @@ function inputsToArguments(input_blocks, input_values) {
             }
         })
     }
-
+    
     return arguments
 }
 

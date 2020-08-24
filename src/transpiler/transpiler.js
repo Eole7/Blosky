@@ -19,13 +19,13 @@ module.exports = {
         this.hasListeners = false
         this.commands = []
         instance = this
-
+        
         this.generateListenersClass = function() {
             if(Object.keys(listeners_syntax_tree).length > 0) {
                 this.imports = []
                 this.current_event
                 this.hasListeners = true
-
+                
                 const listeners_class = fs.readFileSync(appPath + '/src/transpiler/patterns/classes/Listeners.java', 'utf8')
                                         .replace("%child_nodes%", generateBranch(listeners_syntax_tree["nodes"]))
                                         .replace("%imports%", this.imports.map(element => "import " + element + ";").join("\r"))
@@ -39,7 +39,7 @@ module.exports = {
                 })
             }
         }
-
+        
         this.generateCommandsClass = function() {
             if(Object.keys(commands_syntax_tree).length > 0) {
                 this.imports = []
@@ -63,7 +63,7 @@ module.exports = {
             let file = fs.readFileSync(appPath + '/src/transpiler/patterns/classes/Main.java', 'utf8')
                         .replace("%commands%", this.commands.map(command => 'this.getCommand("' + command.name + '").setExecutor(new Commands());').join("\r"))
                         .replace("%listeners%", this.hasListeners ? "Bukkit.getServer().getPluginManager().registerEvents(new Listeners(), this);" : "")
-
+            
             fs.writeFile(appPath + '/temp/fr/blosky/Main.java', file, error => {
                 if(error) {
                     dialog.showErrorBox("Compilation failed", "Fail ID: 2\rError:" + error)
@@ -99,7 +99,7 @@ module.exports = {
                 }
             })
         }
-
+        
         this.compile = (path) => {
             const child_process = require("child_process")
             
@@ -113,7 +113,7 @@ module.exports = {
             //Encapsulating the files into a .jar
             child_process.execSync('jar cvf "' + path + '.jar" -C ' + appPath + '/temp .')
         }
-
+        
         this.clearTemporaryFolder = () => {
             fs.rmdirSync(appPath + "/temp", {recursive: true})
         }
@@ -123,7 +123,7 @@ module.exports = {
 //Generates a branch of the syntax tree
 function generateBranch(branch) {
     let transpiled_branch = ""
-
+    
     Object.keys(branch).forEach(node => { //A node is a statement
         let category = branch[node]["category"] //The syntax category
         let ID = branch[node]["ID"] //The syntax ID
