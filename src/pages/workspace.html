@@ -48,7 +48,6 @@
 
         #blocklyArea {
             width: auto;
-            height: 1000px;
             margin-left: 225px;
         }
     </style>
@@ -61,7 +60,7 @@
             <a href="save-export.html">Save & Export</a>
         </nav>
         
-        <div id=container>
+        <div>
             <div id="blocklyDiv" style="position: absolute"></div>
             <div id="blocklyArea"></div>
         </div>
@@ -273,6 +272,8 @@
                 y += element.offsetTop
                 element = element.offsetParent
             } while (element)
+            
+            blocklyArea.style.height = window.innerHeight-16 + 'px'
             blocklyDiv.style.left = x + 'px'
             blocklyDiv.style.top = y + 'px'
             blocklyDiv.style.width = blocklyArea.offsetWidth + 'px'
