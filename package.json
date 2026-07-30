@@ -50,8 +50,8 @@
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "electron": "^9.3.2",
-    "electron-builder": "^22.14.13"
+    "electron": "^39.8.5",
+    "electron-builder": "^26.15.3"
   },
   "scripts": {
     "build": "electron-builder"
