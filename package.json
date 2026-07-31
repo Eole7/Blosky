@@ -54,5 +54,9 @@
   },
   "scripts": {
     "build": "electron-builder"
+  },
+  "allowScripts": {
+    "electron@39.8.5": true,
+    "electron-winstaller@5.4.0": true
   }
 }
