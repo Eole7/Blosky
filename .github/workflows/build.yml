@@ -49,7 +49,7 @@ jobs:
             -e BUILD_VERSION=${{ env.BUILD_VERSION }} `
             -e BUILD_PRODUCT_NAME="${{ env.BUILD_PRODUCT_NAME }}" `
             electronuserland/builder:latest `
-            bash -c "npm install && npm run build -- --linux --config.productName=""$BUILD_PRODUCT_NAME"""
+            bash /app/.github/scripts/linux-build.sh
 
       - name: Stage artifacts for manual retrieval
         run: node .github/scripts/stage-artifacts.js
