@@ -20,7 +20,7 @@
   "build": {
     "appId": "fr.eole.blosky",
     "productName": "Blosky",
-    "publish": "never",
+    "publish": "none",
     "asar": "false",
     "win": {
       "target": [
