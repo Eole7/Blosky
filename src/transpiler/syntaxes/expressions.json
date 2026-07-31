@@ -32,8 +32,21 @@
     "java_syntax": {
       "default": "event.getPlayer()",
       "exceptions": {
-        "InventoryClickEvent": "event.getWhoClicked()"
-
+        "InventoryClickEvent": "event.getWhoClicked()",
+        "BlockBreakEvent": "event.getPlayer()",
+        "BlockPlaceEvent": "event.getPlayer()",
+        "EntityDeathEvent": "null",
+        "EntitySpawnEvent": "null",
+        "EntityTameEvent": "((EntityTameEvent) event).getOwner() instanceof Player ? (Player) ((EntityTameEvent) event).getOwner() : null",
+        "EntityTargetEvent": "((EntityTargetEvent) event).getTarget() instanceof Player ? (Player) ((EntityTargetEvent) event).getTarget() : null",
+        "EntityExplodeEvent": "null",
+        "CreatureSpawnEvent": "null",
+        "VehicleEnterEvent": "event.getVehicle() instanceof Player ? (Player) event.getVehicle() : null",
+        "VehicleExitEvent": "event.getVehicle() instanceof Player ? (Player) event.getVehicle() : null",
+        "WeatherChangeEvent": "null",
+        "WorldLoadEvent": "null",
+        "WorldUnloadEvent": "null",
+        "ServerListPingEvent": "null"
       }
     },
     "return_type": "Player"
