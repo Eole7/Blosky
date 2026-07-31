@@ -1,0 +1,146 @@
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #19252d;
+}
+
+h1 {
+    margin: 0;
+    user-select: none;
+    font-family: "Roboto", sans-serif;
+    color: lightblue;
+    text-align: center;
+    font-size: 58px;
+    top: 12%;
+    text-shadow: 3px 3px #558ABB;
+}
+
+button {
+    user-select: none;
+    -webkit-user-drag: none;
+    cursor: pointer;
+    border: 1px solid black;
+    font-size: 20px;
+    font-family: "Lato", sans-serif;
+    background-color: #14a698;
+    border-radius: 4px;
+    width: 100%;
+    height: 31px;
+}
+
+a {
+    -webkit-user-drag: none;
+}
+
+img {
+    user-select: none;
+    -webkit-user-drag: none;
+    margin-left: auto;
+    margin-right: auto;
+    width: 10em;
+    margin-bottom: 50px;
+}
+
+#create_menu, #open_menu {
+    box-shadow: inset 0 0 6px #19252d;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 25px;
+    background-color: #383838;
+    width: 13em;
+}
+
+#open_menu {
+    margin-right: 50px;
+}
+
+#projects {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+}
+
+body {
+    font-family: "Lato", sans-serif;
+    background-color: #383838;
+}
+
+.sidenav {
+    height: 100%;
+    width: auto;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #202125;
+    overflow-x: hidden;
+    padding-top: 20px;
+}
+
+.sidenav a {
+    user-select: none;
+    -webkit-user-drag: none;
+    padding: 6px 32px 6px 32px;
+    text-decoration: none;
+    font-size: 25px;
+    color: #f1f1f1;
+    display: block;
+}
+
+.sidenav a.active {
+    background-color: #383838 !important;
+}
+
+.sidenav a:hover {
+    color: darkgray;
+}
+
+#blocklyArea {
+    width: auto;
+    margin-left: 225px;
+}
+
+.settings {
+    user-select: none;
+    color: whitesmoke;
+    margin-top: 100px;
+    margin-left: 50%;
+}
+
+.parameters {
+    font-size: 15px;
+    display: inline-block;
+    font-family: "Lato", sans-serif;
+    vertical-align: middle;
+    color: whitesmoke;
+}
+
+textarea.parameters {
+    resize: none;
+    width: 300px;
+    background-color: #3D4144;
+    border-radius: 4px;
+    color: whitesmoke;
+}
+
+#main {
+    margin-top: 100px;
+    margin-left: 50%;
+    user-select: none;
+}
+
+#autosave {
+    cursor: pointer;
+}
+
+#export_button {
+    background-color: #744144;
+    margin-top: 30px;
+}

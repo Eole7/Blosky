@@ -17,4 +17,15 @@
             }
         }
     }
+    ,
+    "SendCommandMessage": {
+        "syntax": "send message §{text} to command sender",
+        "java_syntax": "sender.sendMessage(§{text});",
+        "arguments": {
+            "§{text}": {
+                "required_type": "String",
+                "input_type": "text"
+            }
+        }
+    }
 }

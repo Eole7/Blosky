@@ -6,7 +6,8 @@
       "§{text}": {
         "required_type": "String"
       }
-    }
+    },
+    "category": "Server Effects"
   },
   "SendMessage": {
     "syntax": "send §{text} to §{player}",
@@ -18,6 +19,212 @@
       "§{text}": {
         "required_type": "String"
       }
+    },
+    "category": "Player Effects"
+  },
+  "SendMessageToPlayer": {
+    "syntax": "send message §{text} to player §{player}",
+    "java_syntax": "§{player}.sendMessage(§{text});",
+    "arguments": {
+      "§{player}": {
+        "required_type": "Player"
+      },
+      "§{text}": {
+        "required_type": "String"
+      }
+    },
+    "category": "Player Effects"
+  },
+  "DamageEntity": {
+    "syntax": "damage entity §{entity} by §{amount}",
+    "java_syntax": "§{entity}.damage(§{amount});",
+    "arguments": {
+      "§{entity}": { "required_type": "Entity" },
+      "§{amount}": { "required_type": "double" }
+    },
+    "category": "Entity Effects"
+  },
+  "HealEntity": {
+    "syntax": "heal entity §{entity} by §{amount}",
+    "java_syntax": "§{entity}.setHealth(§{entity}.getHealth() + §{amount});",
+    "arguments": {
+      "§{entity}": { "required_type": "Entity" },
+      "§{amount}": { "required_type": "double" }
+    },
+    "category": "Entity Effects"
+  },
+  "SetEntityOnFire": {
+    "syntax": "set entity §{entity} on fire for §{seconds} seconds",
+    "java_syntax": "§{entity}.setFireTicks(§{seconds} * 20);",
+    "arguments": {
+      "§{entity}": { "required_type": "Entity" },
+      "§{seconds}": { "required_type": "int" }
+    },
+    "category": "Entity Effects"
+  },
+  "TeleportEntity": {
+    "syntax": "teleport entity §{entity} to x:§{x} y:§{y} z:§{z}",
+    "java_syntax": "§{entity}.teleport(new Location(§{entity}.getWorld(), §{x}, §{y}, §{z}));",
+    "arguments": {
+      "§{entity}": { "required_type": "Entity" },
+      "§{x}": { "required_type": "double" },
+      "§{y}": { "required_type": "double" },
+      "§{z}": { "required_type": "double" }
+    },
+    "category": "Entity Effects"
+  },
+  "SetEntityCustomName": {
+    "syntax": "set custom name of entity §{entity} to §{name}",
+    "java_syntax": "§{entity}.setCustomName(§{name});",
+    "arguments": {
+      "§{entity}": { "required_type": "Entity" },
+      "§{name}": { "required_type": "String" }
+    },
+    "category": "Entity Effects"
+  },
+  "RideEntity": {
+    "syntax": "make player §{player} ride entity §{entity}",
+    "java_syntax": "§{entity}.addPassenger(§{player});",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{entity}": { "required_type": "Entity" }
+    },
+    "category": "Entity Effects"
+  },
+  "LeashEntity": {
+    "syntax": "leash entity §{entity} to player §{player}",
+    "java_syntax": "§{entity}.setLeashHolder(§{player});",
+    "arguments": {
+      "§{entity}": { "required_type": "Entity" },
+      "§{player}": { "required_type": "Player" }
+    },
+    "category": "Entity Effects"
+  },
+  "KickPlayer": {
+    "syntax": "kick player §{player} with reason §{reason}",
+    "java_syntax": "§{player}.kickPlayer(§{reason});",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{reason}": { "required_type": "String" }
+    },
+    "category": "Player Effects"
+  },
+  "TeleportPlayer": {
+    "syntax": "teleport player §{player} to player §{target}",
+    "java_syntax": "§{player}.teleport(§{target}.getLocation());",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{target}": { "required_type": "Player" }
+    },
+    "category": "Player Effects"
+  },
+  "GiveItem": {
+    "syntax": "give item §{item} to player §{player}",
+    "java_syntax": "§{player}.getInventory().addItem(new ItemStack(Material.valueOf(§{item})));",
+    "arguments": {
+      "§{item}": { "required_type": "String" },
+      "§{player}": { "required_type": "Player" }
+    },
+    "category": "Player Effects"
+  },
+  "SetPlayerHealth": {
+    "syntax": "set health of player §{player} to §{health}",
+    "java_syntax": "§{player}.setHealth(§{health});",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{health}": { "required_type": "double" }
+    },
+    "category": "Player Effects"
+  },
+  "SetPlayerGamemode": {
+    "syntax": "set gamemode of player §{player} to §{gamemode}",
+    "java_syntax": "§{player}.setGameMode(GameMode.valueOf(§{gamemode}));",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{gamemode}": { "required_type": "String" }
+    },
+    "category": "Player Effects"
+  },
+  "SetPlayerLevel": {
+    "syntax": "set level of player §{player} to §{level}",
+    "java_syntax": "§{player}.setLevel(§{level});",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{level}": { "required_type": "int" }
+    },
+    "category": "Player Effects"
+  },
+  "TeleportPlayerToCoords": {
+    "syntax": "teleport player §{player} to x:§{x} y:§{y} z:§{z}",
+    "java_syntax": "§{player}.teleport(new Location(§{player}.getWorld(), §{x}, §{y}, §{z}));",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{x}": { "required_type": "double" },
+      "§{y}": { "required_type": "double" },
+      "§{z}": { "required_type": "double" }
+    },
+    "category": "Player Effects"
+  },
+  "GivePotionEffect": {
+    "syntax": "give potion effect §{effect} to player §{player} for §{duration} seconds at level §{level}",
+    "java_syntax": "§{player}.addPotionEffect(new PotionEffect(PotionEffectType.getByName(§{effect}), §{duration}*20, §{level}-1));",
+    "arguments": {
+      "§{effect}": { "required_type": "String" },
+      "§{player}": { "required_type": "Player" },
+      "§{duration}": { "required_type": "int" },
+      "§{level}": { "required_type": "int" }
+    },
+    "category": "Player Effects"
+  },
+  "SetWorldTime": {
+    "syntax": "set time of world §{world} to §{time}",
+    "java_syntax": "§{world}.setTime(§{time});",
+    "arguments": {
+      "§{world}": { "required_type": "World" },
+      "§{time}": { "required_type": "long" }
+    }
+  },
+  "SetWorldWeather": {
+    "syntax": "set weather of world §{world} to §{weather}",
+    "java_syntax": "if(§{weather}.equals(\"RAIN\")){§{world}.setStorm(true);}else{§{world}.setStorm(false);}",
+    "arguments": {
+      "§{world}": { "required_type": "World" },
+      "§{weather}": { "required_type": "String" }
+    }
+  },
+  "PlaySoundToPlayer": {
+    "syntax": "play sound §{sound} to player §{player}",
+    "java_syntax": "§{player}.playSound(§{player}.getLocation(), Sound.valueOf(§{sound}), 1.0F, 1.0F);",
+    "arguments": {
+      "§{sound}": { "required_type": "String" },
+      "§{player}": { "required_type": "Player" }
+    }
+  },
+  "SpawnEntity": {
+    "syntax": "spawn entity §{entity} at x:§{x} y:§{y} z:§{z} in world §{world}",
+    "java_syntax": "§{world}.spawnEntity(new Location(§{world}, §{x}, §{y}, §{z}), EntityType.valueOf(§{entity}));",
+    "arguments": {
+      "§{entity}": { "required_type": "String" },
+      "§{x}": { "required_type": "double" },
+      "§{y}": { "required_type": "double" },
+      "§{z}": { "required_type": "double" },
+      "§{world}": { "required_type": "World" }
+    }
+  },
+  "SetPlayerWalkSpeed": {
+    "syntax": "set walk speed of player §{player} to §{speed}",
+    "java_syntax": "§{player}.setWalkSpeed((float)§{speed});",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{speed}": { "required_type": "double" }
+    }
+  },
+  "SetPlayerFlySpeed": {
+    "syntax": "set fly speed of player §{player} to §{speed}",
+    "java_syntax": "§{player}.setFlySpeed((float)§{speed});",
+    "arguments": {
+      "§{player}": { "required_type": "Player" },
+      "§{speed}": { "required_type": "double" }
     }
   }
 }

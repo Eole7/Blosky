@@ -4,76 +4,9 @@
         <meta charset="utf-8">
         <title>Blosky</title>
         <link rel="stylesheet" href="style.css">
-        <script type="text/javascript" src="../app.js"></script>
-        <script type="text/javascript" src="../bridge.js"></script>
     </head>
     
-    <style>
-        body {
-            font-family: "Lato", sans-serif;
-            background-color: #383838;
-        }
-        
-        .sidenav {
-            height: 100%;
-            width: auto;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #202125;
-            overflow-x: hidden;
-            padding-top: 20px;
-        }
-        
-        .sidenav a {
-            user-select: none;
-            -webkit-user-drag: none;
-            padding: 6px 32px 6px 32px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #f1f1f1;
-            display: block;
-        }
-        
-        .sidenav a.active {
-            background-color: #383838 !important;
-        }
-        
-        .sidenav a:hover {
-            color: darkgray;
-        }
-        
-        #main {
-            margin-top: 100px;
-            margin-left: 50%;
-            user-select: none;
-        }
-        
-        button, #autosavediv {
-            background-color: #3D4144;
-            border-color: #202125;
-            border-width: 1px;
-            font-size: 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: block;
-            width: 250px;
-            margin-top: 5px;
-            height: 30px;
-            text-align: center;
-            color: whitesmoke;
-        }
-        
-        #autosave {
-            cursor: pointer;
-        }
-        
-        #export_button {
-            background-color: #744144;
-            margin-top: 30px;
-        }
-    </style>
+
     
     <body>
         <nav class="sidenav">
@@ -83,8 +16,8 @@
             <a class="active">Save & Export</a>
         </nav>
         <div id="main">
-            <button onclick="saveProject(JSON.stringify(getProjectSettings()) + '\r' + getCode(), getPath())">Save</button>
-            <button onclick="saveProjectAs(JSON.stringify(getProjectSettings()) + '\r' + getCode())">Save as</button>
+            <button id="save_button">Save</button>
+            <button id="save_as_button">Save as</button>
             <!--
                 <div id="autosavediv">
                     <label for="autosave">Auto save</label>
@@ -92,19 +25,44 @@
                     
                 </div>
             -->
-            <button id="export_button" onclick="exportProject(getCode(), getProjectSettings())">Export to Spigot Plugin</button>
+            <button id="export_button">Export to Spigot Plugin</button>
         </div>
     </body>
     
     <script>
-        function getProjectSettings() {
-            
+        async function getProjectSettings() {
             return {
-                name: getSetting("name"),
-                version: getSetting("version"),
-                author: getSetting("author"),
-                description: getSetting("description")
+                name: await window.bloskyAPI.getSetting("name"),
+                version: await window.bloskyAPI.getSetting("version"),
+                author: await window.bloskyAPI.getSetting("author"),
+                description: await window.bloskyAPI.getSetting("description")
             }
         }
+
+        async function doSave() {
+            const project = JSON.stringify(await getProjectSettings()) + '\r' + await window.bloskyAPI.getCode()
+            const path = await window.bloskyAPI.getPath()
+            await window.bloskyAPI.saveProject(project, path)
+        }
+
+        async function doSaveAs() {
+            const project = JSON.stringify(await getProjectSettings()) + '\r' + await window.bloskyAPI.getCode()
+            await window.bloskyAPI.saveProjectAs(project)
+        }
+
+        async function doExport() {
+            const settings = await getProjectSettings()
+            const code = await window.bloskyAPI.getCode()
+            const result = await window.bloskyAPI.exportProject(code, settings)
+            if(result.success) {
+                alert(settings.name + ' was successfully compiled to ' + result.path + '.jar')
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('save_button').addEventListener('click', doSave)
+            document.getElementById('save_as_button').addEventListener('click', doSaveAs)
+            document.getElementById('export_button').addEventListener('click', doExport)
+        })
     </script>
 </html>

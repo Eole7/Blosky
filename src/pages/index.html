@@ -4,88 +4,18 @@
         <meta charset="utf-8">
         <title>Blosky</title>
         <link rel="stylesheet" href="style.css">
-        <script type="text/javascript" src="../app.js"></script>
         <script src="index_background/three.js"></script>
         <script src="index_background/vanta_waves.js"></script>
     </head>
     
-    <style>
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            background-color: #19252d;
-        }
-        
-        h1 {
-            margin: 0;
-            user-select: none;
-            font-family: "Roboto", sans-serif;
-            color: lightblue;
-            text-align: center;
-            font-size: 58px;
-            top: 12%;
-            text-shadow: 3px 3px #558ABB;
-        }
-        
-        button {
-            user-select: none;
-            -webkit-user-drag: none;
-            cursor: pointer;
-            border: 1px solid black;
-            font-size: 20px;
-            font-family: "Lato", sans-serif;
-            background-color: #14a698;
-            border-radius: 4px;
-            width: 100%;
-            height: 31px;
-        }
-        
-        a {
-            -webkit-user-drag: none;
-        }
-        
-        img {
-            user-select: none;
-            -webkit-user-drag: none;
-            margin-left: auto;
-            margin-right: auto;
-            width: 10em;
-            margin-bottom: 50px;
-        }
-        
-        #create_menu, #open_menu {
-            box-shadow: inset 0 0 6px #19252d;
-            display: flex;
-            flex-direction: column;
-            border-radius: 10px;
-            padding: 25px;
-            background-color: #383838;
-            width: 13em;
-        }
-        
-        #open_menu {
-            margin-right: 50px;
-        }
-        
-        #projects {
-            position: relative;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -40%);
-        }
-    </style>
+
     
     <body id=background>
         <h1>Blosky</h1>
         <div id=projects>
             <div id=open_menu>
                 <img src="../../resources/open_project.png">
-                <button onclick="openProject()">Open project</button>
+                <button onclick="window.bloskyAPI.openProject().then(result => { if(!result.canceled) { window.location.replace('plugin_config.html'); } })">Open project</button>
             </div>
             <div id=create_menu>
                 <img src="../../resources/create_project.png">
@@ -97,7 +27,7 @@
     </body>
     
     <script>
-        clearStorage()
+        window.bloskyAPI.clearStorage()
         VANTA.WAVES({
             el: "body",
             mouseControls: false,

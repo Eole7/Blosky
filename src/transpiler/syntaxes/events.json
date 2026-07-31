@@ -1,23 +1,242 @@
 {
+  "PlayerJoinEvent": {
+    "syntax": "On player join",
+    "java_syntax": "PlayerJoinEvent",
+    "imports": ["org.bukkit.event.player.PlayerJoinEvent"],
+    "category": "Player Events"
+  },
+  "PlayerQuitEvent": {
+    "syntax": "On player quit",
+    "java_syntax": "PlayerQuitEvent",
+    "imports": ["org.bukkit.event.player.PlayerQuitEvent"],
+    "category": "Player Events"
+  },
   "PlayerMoveEvent": {
     "syntax": "On player move",
     "java_syntax": "PlayerMoveEvent",
-    "imports": [
-      "org.bukkit.event.player.PlayerMoveEvent"
-    ]
+    "imports": ["org.bukkit.event.player.PlayerMoveEvent"],
+    "category": "Player Events"
   },
   "PlayerCommandPreprocessEvent": {
     "syntax": "On player execute command",
     "java_syntax": "PlayerCommandPreprocessEvent",
-    "imports": [
-      "org.bukkit.event.player.PlayerCommandPreprocessEvent"
-    ]
+    "imports": ["org.bukkit.event.player.PlayerCommandPreprocessEvent"],
+    "category": "Player Events"
+  },
+  "PlayerChatEvent": {
+    "syntax": "On player chat",
+    "java_syntax": "AsyncPlayerChatEvent",
+    "imports": ["org.bukkit.event.player.AsyncPlayerChatEvent"],
+    "category": "Player Events"
+  },
+  "PlayerDeathEvent": {
+    "syntax": "On player death",
+    "java_syntax": "PlayerDeathEvent",
+    "imports": ["org.bukkit.event.entity.PlayerDeathEvent"],
+    "category": "Player Events"
+  },
+  "PlayerRespawnEvent": {
+    "syntax": "On player respawn",
+    "java_syntax": "PlayerRespawnEvent",
+    "imports": ["org.bukkit.event.player.PlayerRespawnEvent"],
+    "category": "Player Events"
+  },
+  "PlayerDropItemEvent": {
+    "syntax": "On player drop item",
+    "java_syntax": "PlayerDropItemEvent",
+    "imports": ["org.bukkit.event.player.PlayerDropItemEvent"],
+    "category": "Player Events"
+  },
+  "PlayerPickupItemEvent": {
+    "syntax": "On player pickup item",
+    "java_syntax": "PlayerPickupItemEvent",
+    "imports": ["org.bukkit.event.player.PlayerPickupItemEvent"],
+    "category": "Player Events"
+  },
+  "PlayerInteractEvent": {
+    "syntax": "On player interact",
+    "java_syntax": "PlayerInteractEvent",
+    "imports": ["org.bukkit.event.player.PlayerInteractEvent"],
+    "category": "Player Events"
+  },
+  "PlayerFishEvent": {
+    "syntax": "On player fish",
+    "java_syntax": "PlayerFishEvent",
+    "imports": ["org.bukkit.event.player.PlayerFishEvent"],
+    "category": "Player Events"
+  },
+  "PlayerBedEnterEvent": {
+    "syntax": "On player enter bed",
+    "java_syntax": "PlayerBedEnterEvent",
+    "imports": ["org.bukkit.event.player.PlayerBedEnterEvent"],
+    "category": "Player Events"
+  },
+  "PlayerBedLeaveEvent": {
+    "syntax": "On player leave bed",
+    "java_syntax": "PlayerBedLeaveEvent",
+    "imports": ["org.bukkit.event.player.PlayerBedLeaveEvent"],
+    "category": "Player Events"
+  },
+  "PlayerExpChangeEvent": {
+    "syntax": "On player experience change",
+    "java_syntax": "PlayerExpChangeEvent",
+    "imports": ["org.bukkit.event.player.PlayerExpChangeEvent"],
+    "category": "Player Events"
+  },
+  "PlayerLevelChangeEvent": {
+    "syntax": "On player level change",
+    "java_syntax": "PlayerLevelChangeEvent",
+    "imports": ["org.bukkit.event.player.PlayerLevelChangeEvent"],
+    "category": "Player Events"
+  },
+  "PlayerShearEntityEvent": {
+    "syntax": "On player shear entity",
+    "java_syntax": "PlayerShearEntityEvent",
+    "imports": ["org.bukkit.event.player.PlayerShearEntityEvent"],
+    "category": "Player Events"
+  },
+  "PlayerSwapHandItemsEvent": {
+    "syntax": "On player swap hand items",
+    "java_syntax": "PlayerSwapHandItemsEvent",
+    "imports": ["org.bukkit.event.player.PlayerSwapHandItemsEvent"],
+    "category": "Player Events"
+  },
+  "PlayerToggleSneakEvent": {
+    "syntax": "On player toggle sneak",
+    "java_syntax": "PlayerToggleSneakEvent",
+    "imports": ["org.bukkit.event.player.PlayerToggleSneakEvent"],
+    "category": "Player Events"
+  },
+  "PlayerToggleSprintEvent": {
+    "syntax": "On player toggle sprint",
+    "java_syntax": "PlayerToggleSprintEvent",
+    "imports": ["org.bukkit.event.player.PlayerToggleSprintEvent"],
+    "category": "Player Events"
+  },
+  "PlayerToggleFlightEvent": {
+    "syntax": "On player toggle flight",
+    "java_syntax": "PlayerToggleFlightEvent",
+    "imports": ["org.bukkit.event.player.PlayerToggleFlightEvent"],
+    "category": "Player Events"
+  },
+  "PlayerPortalEvent": {
+    "syntax": "On player portal",
+    "java_syntax": "PlayerPortalEvent",
+    "imports": ["org.bukkit.event.player.PlayerPortalEvent"],
+    "category": "Player Events"
+  },
+  "PlayerTeleportEvent": {
+    "syntax": "On player teleport",
+    "java_syntax": "PlayerTeleportEvent",
+    "imports": ["org.bukkit.event.player.PlayerTeleportEvent"],
+    "category": "Player Events"
+  },
+  "PlayerItemConsumeEvent": {
+    "syntax": "On player consume item",
+    "java_syntax": "PlayerItemConsumeEvent",
+    "imports": ["org.bukkit.event.player.PlayerItemConsumeEvent"],
+    "category": "Player Events"
+  },
+  "PlayerItemBreakEvent": {
+    "syntax": "On player break item",
+    "java_syntax": "PlayerItemBreakEvent",
+    "imports": ["org.bukkit.event.player.PlayerItemBreakEvent"],
+    "category": "Player Events"
+  },
+  "PlayerInteractEntityEvent": {
+    "syntax": "On player interact entity",
+    "java_syntax": "PlayerInteractEntityEvent",
+    "imports": ["org.bukkit.event.player.PlayerInteractEntityEvent"],
+    "category": "Player Events"
+  },
+  "EntityDeathEvent": {
+    "syntax": "On entity death",
+    "java_syntax": "EntityDeathEvent",
+    "imports": ["org.bukkit.event.entity.EntityDeathEvent"],
+    "category": "Entity Events"
+  },
+  "EntitySpawnEvent": {
+    "syntax": "On entity spawn",
+    "java_syntax": "EntitySpawnEvent",
+    "imports": ["org.bukkit.event.entity.EntitySpawnEvent"],
+    "category": "Entity Events"
+  },
+  "EntityTameEvent": {
+    "syntax": "On entity tame",
+    "java_syntax": "EntityTameEvent",
+    "imports": ["org.bukkit.event.entity.EntityTameEvent"],
+    "category": "Entity Events"
+  },
+  "EntityTargetEvent": {
+    "syntax": "On entity target",
+    "java_syntax": "EntityTargetEvent",
+    "imports": ["org.bukkit.event.entity.EntityTargetEvent"],
+    "category": "Entity Events"
+  },
+  "EntityExplodeEvent": {
+    "syntax": "On entity explode",
+    "java_syntax": "EntityExplodeEvent",
+    "imports": ["org.bukkit.event.entity.EntityExplodeEvent"],
+    "category": "Entity Events"
+  },
+  "CreatureSpawnEvent": {
+    "syntax": "On creature spawn",
+    "java_syntax": "CreatureSpawnEvent",
+    "imports": ["org.bukkit.event.entity.CreatureSpawnEvent"],
+    "category": "Entity Events"
+  },
+  "VehicleEnterEvent": {
+    "syntax": "On vehicle enter",
+    "java_syntax": "VehicleEnterEvent",
+    "imports": ["org.bukkit.event.vehicle.VehicleEnterEvent"],
+    "category": "Vehicle Events"
+  },
+  "VehicleExitEvent": {
+    "syntax": "On vehicle exit",
+    "java_syntax": "VehicleExitEvent",
+    "imports": ["org.bukkit.event.vehicle.VehicleExitEvent"],
+    "category": "Vehicle Events"
+  },
+  "WeatherChangeEvent": {
+    "syntax": "On weather change",
+    "java_syntax": "WeatherChangeEvent",
+    "imports": ["org.bukkit.event.weather.WeatherChangeEvent"],
+    "category": "World Events"
+  },
+  "WorldLoadEvent": {
+    "syntax": "On world load",
+    "java_syntax": "WorldLoadEvent",
+    "imports": ["org.bukkit.event.world.WorldLoadEvent"],
+    "category": "World Events"
+  },
+  "WorldUnloadEvent": {
+    "syntax": "On world unload",
+    "java_syntax": "WorldUnloadEvent",
+    "imports": ["org.bukkit.event.world.WorldUnloadEvent"],
+    "category": "World Events"
+  },
+  "ServerListPingEvent": {
+    "syntax": "On server list ping",
+    "java_syntax": "ServerListPingEvent",
+    "imports": ["org.bukkit.event.server.ServerListPingEvent"],
+    "category": "Server Events"
   },
   "InventoryClickEvent": {
     "syntax": "On inventory click",
     "java_syntax": "InventoryClickEvent",
-    "imports": [
-      "org.bukkit.event.inventory.InventoryClickEvent"
-    ]
+    "imports": ["org.bukkit.event.inventory.InventoryClickEvent"],
+    "category": "Inventory Events"
+  },
+  "BlockBreakEvent": {
+    "syntax": "On block break",
+    "java_syntax": "BlockBreakEvent",
+    "imports": ["org.bukkit.event.block.BlockBreakEvent"],
+    "category": "Block Events"
+  },
+  "BlockPlaceEvent": {
+    "syntax": "On block place",
+    "java_syntax": "BlockPlaceEvent",
+    "imports": ["org.bukkit.event.block.BlockPlaceEvent"],
+    "category": "Block Events"
   }
 }

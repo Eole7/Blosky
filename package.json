@@ -46,11 +46,17 @@
     }
   },
   "dependencies": {
-    "file-system": "^2.2.2",
     "xml-js": "^1.6.11"
   },
   "devDependencies": {
-    "electron": "^9.3.2",
-    "electron-builder": "^22.9.1"
+    "electron": "^39.8.5",
+    "electron-builder": "^26.15.3"
+  },
+  "scripts": {
+    "build": "electron-builder"
+  },
+  "allowScripts": {
+    "electron@39.8.5": true,
+    "electron-winstaller@5.4.0": true
   }
 }

@@ -1,5 +1,6 @@
 const fs = require('fs')
-const {app, BrowserWindow} = require('electron')
+const path = require('path')
+const {app, BrowserWindow, ipcMain, dialog} = require('electron')
 
 global.settings = { //Global app storage: can be accessed from both main and renderer process
     "name": null,
@@ -22,8 +23,9 @@ function createWindow() {
         minWidth: 800,
         minHeight: 600,
         webPreferences: {
-            nodeIntegration: true, //accessing Node.js resources from within the renderer process
-            enableRemoteModule: true
+            contextIsolation: true,
+            nodeIntegration: false,
+            preload: path.join(__dirname, 'preload.js')
         }
     })
     window.loadFile(app.getAppPath() + '/src/pages/index.html')
@@ -31,7 +33,7 @@ function createWindow() {
     
     function checkUnsavedModifications(event) {
         if(global.workspace.has_unsaved_modifications) {
-            const choice = require("electron").dialog.showMessageBoxSync(window,
+            const choice = dialog.showMessageBoxSync(window,
                 {
                     type: "warning",
                     buttons: ["Save", "Don't save", "Cancel"],
@@ -40,9 +42,9 @@ function createWindow() {
                 })
             switch (choice) {
                 case 0: //If the user clicked on Save
-                    let path;
+                    let savePath;
                     if(global.workspace.path != null) { //If it's an existing project
-                        path = global.workspace.path
+                        savePath = global.workspace.path
                     } else { //If it's a new project, we ask the user for the path
                         const options = {
                             title: "Save Project",
@@ -52,15 +54,13 @@ function createWindow() {
                                 extensions: ['bsk']
                             }]
                         }
-                        path = require("electron").dialog.showSaveDialogSync(window, options)
-                        if(path == undefined) { //If the user canceled saving
+                        savePath = dialog.showSaveDialogSync(window, options)
+                        if(savePath == undefined) { //If the user canceled saving
                             event.preventDefault()
                             return
                         }
                     }
-                    fs.writeFile(path, (JSON.stringify(global.settings) + "\r" + global.workspace.code), error => {
-                        if(error) throw error
-                    })
+                    fs.writeFileSync(savePath, (JSON.stringify(global.settings) + "\r" + global.workspace.code))
                     break
                 
                 case 2: //If the user clicked on Cancel
@@ -92,24 +92,20 @@ app.on('activate', () => {
     }
 })
 
+const appPath = app.getAppPath()
 
-//Get the syntaxes from the renderer process
 function getAllSyntaxes() {
-    const appPath = require('electron').remote.app.getAppPath()
-    
     return {
         events: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/events.json")),
         commands: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/commands.json")),
-        effects: JSON.parse(fs.readFileSync(appPath+ "/src/transpiler/syntaxes/effects.json")),
+        effects: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/effects.json")),
         expressions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/expressions.json")),
         conditions: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/conditions.json")),
         loops: JSON.parse(fs.readFileSync(appPath + "/src/transpiler/syntaxes/loops.json"))
     } 
 }
 
-//Open a project from the renderer process
-function openProject() {
-    const dialog = require('electron').remote.dialog
+async function openProject() {
     const options = {
         properties: ['openFile'],
         filters: [{
@@ -117,36 +113,32 @@ function openProject() {
             extensions: ['bsk']
         }]
     }
-    dialog.showOpenDialog(options).then(result => {
-        if(result.canceled == false) {
-            const lines = fs.readFileSync(result.filePaths[0], "utf-8").split("\r")
-            const settings = JSON.parse(lines[0])
-            setCode(lines[1])
-            setSetting("name", settings["name"])
-            setSetting("version", settings["version"])
-            setSetting("author", settings["author"])
-            setSetting("description", settings["description"])
-            setPath(result.filePaths[0])
-            window.location.replace("plugin_config.html")
-        }
-    })
+    const result = await dialog.showOpenDialog(options)
+    if(result.canceled == false) {
+        const lines = fs.readFileSync(result.filePaths[0], "utf-8").split("\r")
+        const settings = JSON.parse(lines[0])
+        setCode(lines[1])
+        setSetting("name", settings["name"])
+        setSetting("version", settings["version"])
+        setSetting("author", settings["author"])
+        setSetting("description", settings["description"])
+        setPath(result.filePaths[0])
+        return { canceled: false, path: result.filePaths[0], settings, code: lines[1] }
+    }
+    return { canceled: true }
 }
 
-//Save a project from the renderer process
-function saveProject(project, path) { //TODO: directly get the project & path from the cache
-    if(path == null) { //If it's a new project
-        saveProjectAs(project)
+function saveProject(project, path) {
+    if(path == null) {
+        return saveProjectAs(project)
     } else {
-        fs.writeFile(path, project, error => {
-            if(error) throw error
-        })
+        fs.writeFileSync(path, project)
         setUnsavedModifications(false)
+        return { success: true }
     }
 }
 
-//Save a project with path input from the renderer process
-function saveProjectAs(project) { //TODO: directly get the project from the cache
-    const dialog = require('electron').remote.dialog
+async function saveProjectAs(project) {
     const options = {
         title: "Save Project",
         buttonLabel: "Save Project",
@@ -155,53 +147,93 @@ function saveProjectAs(project) { //TODO: directly get the project from the cach
             extensions: ['bsk']
         }]
     }
-    dialog.showSaveDialog(options).then(result => {
-        if(result.canceled == false) {
-            setPath(result.filePath)
-            fs.writeFile(result.filePath, project, error => {
-                if(error) throw error
-            })
-        }
-    })
+    const result = await dialog.showSaveDialog(options)
+    if(result.canceled == false) {
+        setPath(result.filePath)
+        fs.writeFileSync(result.filePath, project)
+        setUnsavedModifications(false)
+        return { canceled: false, path: result.filePath }
+    }
     setUnsavedModifications(false)
+    return { canceled: true }
 }
 
-
-//Access the global storage from the renderer process
 function setPath(value){
-    require('electron').remote.getGlobal('workspace').path = value
+    global.workspace.path = value
 }
 
 function getPath(){
-    return require('electron').remote.getGlobal('workspace').path
+    return global.workspace.path
 }
 
 function setCode(value) {
-    require('electron').remote.getGlobal('workspace').code = value
+    global.workspace.code = value
 }
 
 function getCode() {
-    return require('electron').remote.getGlobal('workspace').code
+    return global.workspace.code
 }
 
 function setSetting(key, value) {
-    require('electron').remote.getGlobal('settings')[key] = value
+    global.settings[key] = value
 }
 
 function getSetting(key) {
-    return require('electron').remote.getGlobal('settings')[key]
+    return global.settings[key]
 }
 
-function clearStorage() { //TODO: find a cleaner way to do that
-    require('electron').remote.getGlobal('workspace').code = null
-    require('electron').remote.getGlobal('settings').name = null
-    require('electron').remote.getGlobal('settings').version = null
-    require('electron').remote.getGlobal('settings').author = null
-    require('electron').remote.getGlobal('settings').description = null
-    require('electron').remote.getGlobal('workspace').path = null
-    require('electron').remote.getGlobal('workspace').has_unsaved_modifications = false
+function clearStorage() {
+    global.workspace.code = null
+    global.settings.name = null
+    global.settings.version = null
+    global.settings.author = null
+    global.settings.description = null
+    global.workspace.path = null
+    global.workspace.has_unsaved_modifications = false
 }
 
 function setUnsavedModifications(boolean) {
-    require('electron').remote.getGlobal('workspace').has_unsaved_modifications = boolean
+    global.workspace.has_unsaved_modifications = boolean
 }
+
+const channels = require('./ipc-channels')
+
+ipcMain.handle(channels.GET_ALL_SYNTAXES, () => getAllSyntaxes())
+ipcMain.handle(channels.OPEN_PROJECT, async () => openProject())
+ipcMain.handle(channels.SAVE_PROJECT, async (_, project, path) => saveProject(project, path))
+ipcMain.handle(channels.SAVE_PROJECT_AS, async (_, project) => saveProjectAs(project))
+ipcMain.handle(channels.GET_PATH, () => getPath())
+ipcMain.handle(channels.SET_PATH, (_, path) => setPath(path))
+ipcMain.handle(channels.GET_CODE, () => getCode())
+ipcMain.handle(channels.SET_CODE, (_, code) => setCode(code))
+ipcMain.handle(channels.GET_SETTING, (_, key) => getSetting(key))
+ipcMain.handle(channels.SET_SETTING, (_, key, value) => setSetting(key, value))
+ipcMain.handle(channels.CLEAR_STORAGE, () => clearStorage())
+ipcMain.handle(channels.SET_UNSAVED_MODIFICATIONS, (_, value) => setUnsavedModifications(value))
+ipcMain.handle(channels.EXPORT_PROJECT, async (_, workspace, settings) => {
+    const { workspaceToSyntaxTrees } = require('./transpiler/bridge-logic.js')
+    const { Transpiler } = require('./transpiler/transpiler.js')
+    
+    const syntax_tree = workspaceToSyntaxTrees(workspace)
+    const transpiler = new Transpiler(syntax_tree.listeners, syntax_tree.commands, settings)
+    transpiler.clearTemporaryFolder()
+    transpiler.generateListenersClass()
+    transpiler.generateCommandsClass()
+    transpiler.generateMainClass()
+    transpiler.generatePluginConfig()
+    
+    try {
+        const result = await dialog.showSaveDialog({ title: "Save plugin", buttonLabel: "Save plugin" })
+        if(result.canceled === false) {
+            await transpiler.compile(result.filePath)
+            return { success: true, path: result.filePath }
+        }
+        return { canceled: true }
+    } catch (error) {
+        dialog.showErrorBox("Compilation failed", "Fail ID: 0\rError:" + error.message)
+        console.error(error)
+        throw error
+    } finally {
+        transpiler.clearTemporaryFolder()
+    }
+})
