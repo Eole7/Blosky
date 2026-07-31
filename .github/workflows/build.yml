@@ -40,7 +40,8 @@ jobs:
           java-version: 17
 
       - name: Read build version and set product name
-        run: node -e "const fs=require('fs');const v=fs.readFileSync('build-version.ver','utf8').trim();const env=process.env.GITHUB_ENV;fs.appendFileSync(env,`BUILD_VERSION=${v}\nBUILD_PRODUCT_NAME=Blosky-${v}\n`);"
+        run: |
+          node -e "const fs=require('fs');const v=fs.readFileSync('build-version.ver','utf8').trim();const env=process.env.GITHUB_ENV;fs.appendFileSync(env,`BUILD_VERSION=${v}\nBUILD_PRODUCT_NAME=Blosky-${v}\n`);"
 
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
@@ -50,41 +51,43 @@ jobs:
           args: --config.productName="${{ env.BUILD_PRODUCT_NAME }}"
 
       - name: Stage artifacts for manual retrieval
-        run: node -e "
-          const fs = require('fs');
-          const path = require('path');
-          const os = require('os');
-          const platform = process.env.RUNNER_PLATFORM || '';
-          const version = process.env.BUILD_VERSION || '0.0.0';
-          const productName = process.env.BUILD_PRODUCT_NAME || 'Blosky';
-          const dist = path.join(process.env.GITHUB_WORKSPACE, 'dist');
-          const stage = path.join(process.env.GITHUB_WORKSPACE, 'artifacts');
-          if (!fs.existsSync(dist)) { console.log('dist not found, nothing to stage'); process.exit(0); }
-          fs.mkdirSync(stage, { recursive: true });
-          const entries = fs.readdirSync(dist);
-          const map = {
-            win32: ['.exe', '.blockmap'],
-            linux: ['.AppImage', '.snap', '.deb', '.zip'],
-            darwin: ['.dmg', '.zip']
-          };
-          const exts = map[os.platform()] || ['.exe', '.AppImage', '.deb', '.dmg', '.snap', '.zip', '.blockmap'];
-          let count = 0;
-          for (const f of entries) {
-            if (exts.some(e => f.endsWith(e))) {
-              const src = path.join(dist, f);
-              const base = f.replace(/Blosky(?: Setup)?/g, productName).replace(/-0\.5\.0/, '-' + version);
-              const dst = path.join(stage, base);
-              fs.copyFileSync(src, dst);
-              console.log('staged: ' + dst);
-              count++;
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = require('path');
+            const os = require('os');
+            const platform = process.env.RUNNER_PLATFORM || '';
+            const version = process.env.BUILD_VERSION || '0.0.0';
+            const productName = process.env.BUILD_PRODUCT_NAME || 'Blosky';
+            const dist = path.join(process.env.GITHUB_WORKSPACE, 'dist');
+            const stage = path.join(process.env.GITHUB_WORKSPACE, 'artifacts');
+            if (!fs.existsSync(dist)) { console.log('dist not found, nothing to stage'); process.exit(0); }
+            fs.mkdirSync(stage, { recursive: true });
+            const entries = fs.readdirSync(dist);
+            const map = {
+              win32: ['.exe', '.blockmap'],
+              linux: ['.AppImage', '.snap', '.deb', '.zip'],
+              darwin: ['.dmg', '.zip']
+            };
+            const exts = map[os.platform()] || ['.exe', '.AppImage', '.deb', '.dmg', '.snap', '.zip', '.blockmap'];
+            let count = 0;
+            for (const f of entries) {
+              if (exts.some(e => f.endsWith(e))) {
+                const src = path.join(dist, f);
+                const base = f.replace(/Blosky(?: Setup)?/g, productName).replace(/-0\.5\.0/, '-' + version);
+                const dst = path.join(stage, base);
+                fs.copyFileSync(src, dst);
+                console.log('staged: ' + dst);
+                count++;
+              }
             }
-          }
-          console.log('staged ' + count + ' artifact(s) to: ' + stage);
-          process.env.ARTIFACTS_DIR = stage;
-        "
+            console.log('staged ' + count + ' artifact(s) to: ' + stage);
+            process.env.ARTIFACTS_DIR = stage;
+          "
 
       - name: List staged artifacts
-        run: node -e "const fs=require('fs');const path=require('path');const stage=path.join(process.env.GITHUB_WORKSPACE,'artifacts');if(!fs.existsSync(stage)){console.log('artifacts dir not found');process.exit(0);}for(const f of fs.readdirSync(stage)){const p=path.join(stage,f);const s=fs.statSync(p);console.log(s.size+' '+p);}"
+        run: |
+          node -e "const fs=require('fs');const path=require('path');const stage=path.join(process.env.GITHUB_WORKSPACE,'artifacts');if(!fs.existsSync(stage)){console.log('artifacts dir not found');process.exit(0);}for(const f of fs.readdirSync(stage)){const p=path.join(stage,f);const s=fs.statSync(p);console.log(s.size+' '+p);}"
 
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v4.1.1
