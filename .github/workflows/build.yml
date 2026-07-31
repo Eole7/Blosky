@@ -38,8 +38,11 @@ jobs:
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
           args: --config.productName="${{ env.BUILD_PRODUCT_NAME }}" --publish never --win
 
-      - name: Find Docker executable
-        run: node .github/scripts/find-docker.js
+      - name: Debug Docker
+        run: |
+          node -e "console.log(process.env.Path)"
+          node -e "require('child_process').exec('where docker',(e,o,er)=>console.log(o||er))"
+          node -e "require('child_process').exec('docker version',(e,o,er)=>console.log(o||er))"
 
       - name: Build Linux artifacts with Docker
         run: |
