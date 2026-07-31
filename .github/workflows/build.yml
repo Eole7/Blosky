@@ -40,3 +40,6 @@ jobs:
             dist/*.dmg
             dist/win-unpacked/
             dist/*.deb
+            
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v4.1.1
