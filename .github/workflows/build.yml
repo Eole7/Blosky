@@ -36,11 +36,14 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
-          args: --config.productName="${{ env.BUILD_PRODUCT_NAME }}" --win
+          args: --config.productName="${{ env.BUILD_PRODUCT_NAME }}" --publish never --win
+
+      - name: Find Docker executable
+        run: node .github/scripts/find-docker.js
 
       - name: Build Linux artifacts with Docker
         run: |
-          docker run --rm `
+          & "${{ env.DOCKER_EXE }}" run --rm `
             -v "${{ github.workspace }}:/app" `
             -w /app `
             -e BUILD_VERSION=${{ env.BUILD_VERSION }} `
