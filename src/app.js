@@ -225,10 +225,14 @@ ipcMain.handle(channels.EXPORT_PROJECT, async (_, workspace, settings) => {
     try {
         const result = await dialog.showSaveDialog({ title: "Save plugin", buttonLabel: "Save plugin" })
         if(result.canceled === false) {
-            transpiler.compile(result.filePath)
+            await transpiler.compile(result.filePath)
             return { success: true, path: result.filePath }
         }
         return { canceled: true }
+    } catch (error) {
+        dialog.showErrorBox("Compilation failed", "Fail ID: 0\rError:" + error.message)
+        console.error(error)
+        throw error
     } finally {
         transpiler.clearTemporaryFolder()
     }

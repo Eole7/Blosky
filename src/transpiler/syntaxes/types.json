@@ -16,6 +16,12 @@
             "String": "Integer.parseInt(%argument%)"
         }
     },
+    "long": {
+        "match": "^([+-]?[0-9]\\d*|0)$",
+        "conversion": {
+            "String": "Long.parseLong(%argument%)"
+        }
+    },
     "float": {
         "match": "^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$",
         "conversion": {
@@ -34,7 +40,10 @@
         }
     },
     "boolean": {
-        "match": "^(true|false)$"
+        "match": "^(true|false)$",
+        "conversion": {
+          "String": "Boolean.parseBoolean(%argument%)"
+        }
     },
     "Collection": {}
 }

@@ -2,13 +2,14 @@ name: Build/release
 
 on: [push, pull_request]
 
+permissions:
+  attestations: write
+  contents: read
+  id-token: write
+
 jobs:
   release:
     runs-on: default
-
-    strategy:
-      matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -21,6 +22,12 @@ jobs:
         with:
           node-version: 20
 
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: Build/release Electron app
         uses: samuelmeuli/action-electron-builder@v1
         with:
@@ -28,18 +35,10 @@ jobs:
 
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
 
-      - name: Upload to artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: blosky-nightly-all
-          path: |
-            dist/*.exe
-            dist/*.AppImage
-            dist/*.snap
-            dist/*.zip
-            dist/*.dmg
-            dist/win-unpacked/
-            dist/*.deb
-            
+      - name: Show build outputs
+        run: |
+          echo "Build artifacts are in: ${{ github.workspace }}/dist"
+          ls -la "${{ github.workspace }}/dist" || true
+
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v4.1.1

@@ -1,6 +1,8 @@
 var instance;
 
 const fs = require("fs");
+const path = require("path")
+const { Worker } = require('worker_threads')
 const dialog = require("electron").dialog
 const appPath = require("electron").app.getAppPath()
 
@@ -101,17 +103,22 @@ module.exports = {
         }
         
         this.compile = (path) => {
-            const child_process = require("child_process")
-            
-            //Compiling .java files to Java Bytecode (.class)
-            child_process.execSync("javac -classpath " + appPath + "/src/transpiler/Libraries/Spigot/1.16.1.jar -target 8 -source 8 " + appPath + "/temp/fr/blosky/*.java")
-            
-            fs.unlinkSync(appPath + "/temp/fr/blosky/Main.java")
-            if(this.hasListeners) fs.unlinkSync(appPath + "/temp/fr/blosky/Listeners.java")
-            if(this.commands.length > 0) fs.unlinkSync(appPath + "/temp/fr/blosky/Commands.java")
-            
-            //Encapsulating the files into a .jar
-            child_process.execSync('jar cvf "' + path + '.jar" -C ' + appPath + '/temp .')
+            return new Promise((resolve, reject) => {
+                const worker = new Worker(path.join(appPath, 'src/transpiler/compile-worker.js'), {
+                    workerData: {
+                        appPath: appPath,
+                        outputPath: path,
+                        hasListeners: this.hasListeners,
+                        hasCommands: this.commands.length > 0
+                    }
+                });
+                worker.on('message', (msg) => {
+                    if (msg.success) resolve(msg.result);
+                    else reject(new Error(msg.error));
+                    worker.terminate();
+                });
+                worker.on('error', reject);
+            });
         }
         
         this.clearTemporaryFolder = () => {
