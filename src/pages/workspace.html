@@ -4,53 +4,12 @@
         <meta charset="utf-8">
         <title>Blosky</title>
         <link rel="stylesheet" href="style.css">
-        <script type="text/javascript" src="../app.js"></script>
         <script src="../blockly/blockly_compressed.js"></script>
         <script src="../blockly/blocks_compressed.js"></script>
         <script src="../blockly/en.js"></script>
     </head>
     
-    <style>
-        body {
-            font-family: "Lato", sans-serif;
-            background-color: #383838;
-        }
 
-        .sidenav {
-            height: 100%;
-            width: auto;
-            position: fixed;
-            z-index: 1;
-            top: 0;
-            left: 0;
-            background-color: #202125;
-            overflow-x: hidden;
-            padding-top: 20px;
-        }
-
-        .sidenav a {
-            user-select: none;
-            -webkit-user-drag: none;
-            padding: 6px 32px 6px 32px;
-            text-decoration: none;
-            font-size: 25px;
-            color: #f1f1f1;
-            display: block;
-        }
-
-        .sidenav a.active {
-            background-color: #383838 !important;
-        }
-
-        .sidenav a:hover {
-            color: darkgray;
-        }
-
-        #blocklyArea {
-            width: auto;
-            margin-left: 225px;
-        }
-    </style>
     
     <body>
         <nav class="sidenav">
@@ -66,110 +25,134 @@
         </div>
     </body>
     
-    <script async>
-        const colors = {
-            "events": "230",
-            "commands": "#b03798",
-            "effects": "#1E90FF",
-            "expressions": "120",
-            "conditions": "#a9b01e",
-            "loops": "#c9b020"
-        }
-        const syntaxes = getAllSyntaxes()
-        let toolbox = '<xml>'
-        
-        //Generating the toolbox from the syntaxes
-        Object.keys(syntaxes).forEach(category => {
+    <script>
+        (async () => {
+            const colors = {
+                "events": "230",
+                "commands": "#b03798",
+                "effects": "#1E90FF",
+                "expressions": "120",
+                "conditions": "#a9b01e",
+                "loops": "#c9b020"
+            }
+            const syntaxes = await window.bloskyAPI.getAllSyntaxes()
+            let toolbox = '<xml>'
             
-            //Adding a separator between categories
-            if(category.match("(effects|expressions|conditions)")) toolbox += "<sep></sep>"
-            
-            toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
-            
-            if(category == "expressions") { //Manually adding some expressions
-                Blockly.Blocks['parsed_as'] = {
-                    init: function() {
-                        this.appendValueInput("expression")
-                        this.appendDummyInput()
-                            .appendField("parsed as")
-                            .appendField(new Blockly.FieldDropdown([["text","String"], ["number","float"], ["integer","int"], ["world","World"], ["player","Player"], ["offline player","OfflinePlayer"], ["boolean","boolean"]]), "type")
-                        this.setInputsInline(true)
-                        this.setColour("#0c945d")
-                        this.setOutput(true)
+            //Generating the toolbox from the syntaxes
+            Object.keys(syntaxes).forEach(category => {
+                
+                //Adding a separator between categories
+                if(category.match("(effects|expressions|conditions)")) toolbox += "<sep></sep>"
+                
+                toolbox += '<category name="' + category.charAt(0).toUpperCase() + category.slice(1) + '" colour="' + colors[category] + '">'
+                
+                if(category == "expressions") { //Manually adding some expressions
+                    Blockly.Blocks['parsed_as'] = {
+                        init: function() {
+                            this.appendValueInput("expression")
+                            this.appendDummyInput()
+                                .appendField("parsed as")
+                                .appendField(new Blockly.FieldDropdown([["text","String"], ["number","float"], ["integer","int"], ["world","World"], ["player","Player"], ["offline player","OfflinePlayer"], ["boolean","boolean"]]), "type")
+                            this.setInputsInline(true)
+                            this.setColour("#0c945d")
+                            this.setOutput(true)
+                        }
                     }
+                    
+                    toolbox += '<block type="text"></block>'
+                    toolbox += '<block type="text_join"></block>' //TODO: +/- buttons instead of mutator, and inline inputs
+                    toolbox += '<block type="parsed_as"></block>'
                 }
                 
-                toolbox += '<block type="text"></block>'
-                toolbox += '<block type="text_join"></block>' //TODO: +/- buttons instead of mutator, and inline inputs
-                toolbox += '<block type="parsed_as"></block>'
-            }
-            
-            Object.keys(syntaxes[category]).forEach(syntax_key => {
-                Blockly.Blocks[category + "_" + syntax_key] = {
-                    init: function() {
-                        let syntax = syntaxes[category][syntax_key]["syntax"]
-                        let next_argument_ID = 1
-                        let args = []
-                        
-                        if(syntaxes[category][syntax_key]["arguments"] != undefined) {
-                            Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(argument => {
-                                syntax = syntax.replace(argument, "%" + next_argument_ID) //Blockly arguments are indentified by a %
-                                
-                                let input_type
-                                if(syntaxes[category][syntax_key]["arguments"][argument]["input_type"] == "text") {
-                                    input_type = "field_input"
-                                } else {
-                                    input_type = "input_value"
-                                }
-                                
-                                args.push({
-                                    "type": input_type,
-                                    "name": argument,
-                                })
-                                next_argument_ID++
-                            })
-                        }
-                        
-                        switch (category) {
-                            case "events":
-                                this.jsonInit({
-                                    "type": "text",
-                                    "message0": syntax,
-                                    "args0": args,
-                                    "nextStatement": true
-                                })
-                                break
+                Object.keys(syntaxes[category]).forEach(syntax_key => {
+                    Blockly.Blocks[category + "_" + syntax_key] = {
+                        init: function() {
+                            let syntax = syntaxes[category][syntax_key]["syntax"]
+                            let next_argument_ID = 1
+                            let args = []
                             
-                            case "commands":
-                                this.jsonInit({
-                                    "type": "text",
-                                    "message0": syntax,
-                                    "args0": args,
-                                    "nextStatement": true
+                            if(syntaxes[category][syntax_key]["arguments"] != undefined) {
+                                Object.keys(syntaxes[category][syntax_key]["arguments"]).forEach(argument => {
+                                    syntax = syntax.replace(argument, "%" + next_argument_ID) //Blockly arguments are indentified by a %
+                                    
+                                    let input_type
+                                    if(syntaxes[category][syntax_key]["arguments"][argument]["input_type"] == "text") {
+                                        input_type = "field_input"
+                                    } else {
+                                        input_type = "input_value"
+                                    }
+                                    
+                                    args.push({
+                                        "type": input_type,
+                                        "name": argument,
+                                    })
+                                    next_argument_ID++
                                 })
-                                break
+                            }
                             
-                            case "effects":
-                                this.jsonInit({
-                                    "type": "text",
-                                    "message0": syntax,
-                                    "args0": args,
-                                    "nextStatement": true,
-                                    "previousStatement": true
-                                })
-                                break
+                            switch (category) {
+                                case "events":
+                                    this.jsonInit({
+                                        "type": "text",
+                                        "message0": syntax,
+                                        "args0": args,
+                                        "nextStatement": true
+                                    })
+                                    break
+                                
+                                case "commands":
+                                    this.jsonInit({
+                                        "type": "text",
+                                        "message0": syntax,
+                                        "args0": args,
+                                        "nextStatement": true
+                                    })
+                                    break
+                                
+                                case "effects":
+                                    this.jsonInit({
+                                        "type": "text",
+                                        "message0": syntax,
+                                        "args0": args,
+                                        "nextStatement": true,
+                                        "previousStatement": true
+                                    })
+                                    break
                                                 
-                            case "expressions":
-                                this.jsonInit({
-                                    "type": "text",
-                                    "message0": syntax,
-                                    "args0": args,
-                                    "output": true
-                                })
-                                break
-                            
-                            case "conditions":
-                                if(syntaxes[category][syntax_key]["type"] == "control_flow_statement") {
+                                case "expressions":
+                                    this.jsonInit({
+                                        "type": "text",
+                                        "message0": syntax,
+                                        "args0": args,
+                                        "output": true
+                                    })
+                                    break
+                                
+                                case "conditions":
+                                    if(syntaxes[category][syntax_key]["type"] == "control_flow_statement") {
+                                        this.jsonInit({
+                                            "type": "text",
+                                            "message0": syntax,
+                                            "args0": args,
+                                            "message1": "do %1",
+                                            "args1": [{
+                                                "type": "input_statement",
+                                                "name": "do"
+                                            }],
+                                            "previousStatement": true,
+                                            "nextStatement": true
+                                        })
+                                    } else {
+                                        this.jsonInit({
+                                            "type": "text",
+                                            "message0": syntax,
+                                            "args0": args,
+                                            "output": true
+                                        })
+                                    }
+                                    break
+                                
+                                case "loops":
                                     this.jsonInit({
                                         "type": "text",
                                         "message0": syntax,
@@ -180,122 +163,106 @@
                                             "name": "do"
                                         }],
                                         "previousStatement": true,
-                                        "nextStatement": true
+                                        "nextStatement": true,
                                     })
-                                } else {
-                                    this.jsonInit({
-                                        "type": "text",
-                                        "message0": syntax,
-                                        "args0": args,
-                                        "output": true
-                                    })
-                                }
-                                break
+                                    break
+                            }
+                            this.setInputsInline(true)
                             
-                            case "loops":
-                                this.jsonInit({
-                                    "type": "text",
-                                    "message0": syntax,
-                                    "args0": args,
-                                    "message1": "do %1",
-                                    "args1": [{
-                                        "type": "input_statement",
-                                        "name": "do"
-                                    }],
-                                    "previousStatement": true,
-                                    "nextStatement": true,
-                                })
-                                break
-                        }
-                        this.setInputsInline(true)
-                        
-                        if(syntaxes[category][syntax_key]["colour"] != undefined) {
-                            this.setColour(syntaxes[category][syntax_key]["colour"])
-                        } else {
-                            this.setColour(colors[category])
+                            if(syntaxes[category][syntax_key]["colour"] != undefined) {
+                                this.setColour(syntaxes[category][syntax_key]["colour"])
+                            } else {
+                                this.setColour(colors[category])
+                            }
                         }
                     }
-                }
-                toolbox += '<block type="' + category + "_" + syntax_key + '"></block>'
+                    toolbox += '<block type="' + category + "_" + syntax_key + '"></block>'
+                })
+                toolbox += '</category>'
             })
-            toolbox += '</category>'
-        })
-        toolbox += '</xml>'
-        
-        const blocklyArea = document.getElementById('blocklyArea')
-        const blocklyDiv = document.getElementById('blocklyDiv')
-        const workspace = Blockly.inject(blocklyDiv, {
-            "toolbox": toolbox,
-            "sounds": false,
-            "disable": false,
-            "theme": {
-                'base': Blockly.Themes.Classic,
-                'startHats': true,
-                'componentStyles': {
-                    'workspaceBackgroundColour': '#323335',
-                    'toolboxBackgroundColour': '#383838',
-                    'toolboxForegroundColour': '#fff',
-                    'flyoutBackgroundColour': '#383838',
-                    'flyoutForegroundColour': '#ccc',
-                    'flyoutOpacity': 1,
-                    'scrollbarColour': '#797979',
-                    'insertionMarkerColour': '#fff',
-                    'insertionMarkerOpacity': 0.3,
-                    'scrollbarOpacity': 0.4,
-                    'cursorColour': '#d0d0d0'
-                }
-            },
-            "move": {
-                "scrollbars": true,
-                "drag": true,
-                "wheel": true
-            },
-            "zoom": {
-                "controls": true,
-                "wheel": false,
-                "startScale": 1.05,
-                "maxScale": 3,
-                "minScale": 0.2,
-                "scaleSpeed": 1.2
-            },
-            "trashcan": true
-        })
-        
-        var isWorkspaceLoaded = false
-        
-        const onresize = () => {
-            let element = blocklyArea
-            let x = 0
-            let y = 0
-            do {
-                x += element.offsetLeft
-                y += element.offsetTop
-                element = element.offsetParent
-            } while (element)
+            toolbox += '</xml>'
             
-            blocklyArea.style.height = window.innerHeight-16 + 'px'
-            blocklyDiv.style.left = x + 'px'
-            blocklyDiv.style.top = y + 'px'
-            blocklyDiv.style.width = blocklyArea.offsetWidth + 'px'
-            blocklyDiv.style.height = blocklyArea.offsetHeight + 'px'
+            const blocklyArea = document.getElementById('blocklyArea')
+            const blocklyDiv = document.getElementById('blocklyDiv')
+            const workspace = Blockly.inject(blocklyDiv, {
+                "toolbox": toolbox,
+                "sounds": false,
+                "disable": false,
+                "theme": {
+                    'base': Blockly.Themes.Classic,
+                    'startHats': true,
+                    'componentStyles': {
+                        'workspaceBackgroundColour': '#323335',
+                        'toolboxBackgroundColour': '#383838',
+                        'toolboxForegroundColour': '#fff',
+                        'flyoutBackgroundColour': '#383838',
+                        'flyoutForegroundColour': '#ccc',
+                        'flyoutOpacity': 1,
+                        'scrollbarColour': '#797979',
+                        'insertionMarkerColour': '#fff',
+                        'insertionMarkerOpacity': 0.3,
+                        'scrollbarOpacity': 0.4,
+                        'cursorColour': '#d0d0d0'
+                    }
+                },
+                "move": {
+                    "scrollbars": true,
+                    "drag": true,
+                    "wheel": true
+                },
+                "zoom": {
+                    "controls": true,
+                    "wheel": false,
+                    "startScale": 1.05,
+                    "maxScale": 3,
+                    "minScale": 0.2,
+                    "scaleSpeed": 1.2
+                },
+                "trashcan": true
+            })
+            
+            let isWorkspaceLoaded = false
+            
+            const onresize = () => {
+                let element = blocklyArea
+                let x = 0
+                let y = 0
+                do {
+                    x += element.offsetLeft
+                    y += element.offsetTop
+                    element = element.offsetParent
+                } while (element)
+                
+                blocklyArea.style.height = window.innerHeight-16 + 'px'
+                blocklyDiv.style.left = x + 'px'
+                blocklyDiv.style.top = y + 'px'
+                blocklyDiv.style.width = blocklyArea.offsetWidth + 'px'
+                blocklyDiv.style.height = blocklyArea.offsetHeight + 'px'
+                Blockly.svgResize(workspace)
+            }
+            window.addEventListener('resize', onresize, false)
+            onresize()
             Blockly.svgResize(workspace)
-        }
-        window.addEventListener('resize', onresize, false)
-        onresize()
-        Blockly.svgResize(workspace)
-        
-        workspace.addChangeListener(event => {
-            if(isWorkspaceLoaded && event.type != "ui" /*ie opening the toolbox*/) {
-                setUnsavedModifications(true)
-                setCode(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace))) //Caching the workspace
-            //If the workspace is empty, the "finished_loading" event isn't called so we directly mark it as loaded
-            } else if(event.type == "finished_loading" || getCode() == null || getCode().length <= 61 ){
+            
+            workspace.addChangeListener(async event => {
+                if(isWorkspaceLoaded && event.type != "ui" /*ie opening the toolbox*/) {
+                    await window.bloskyAPI.setUnsavedModifications(true)
+                    await window.bloskyAPI.setCode(Blockly.Xml.domToText(Blockly.Xml.workspaceToDom(workspace))) //Caching the workspace
+                } else {
+                    const code = await window.bloskyAPI.getCode()
+                    //If the workspace is empty, the "finished_loading" event isn't called so we directly mark it as loaded
+                    if(event.type == "finished_loading" || code == null || code.length <= 61 ){
+                        isWorkspaceLoaded = true
+                    }
+                }
+            })
+            
+            const code = await window.bloskyAPI.getCode()
+            if(code != null && code.length > 61) {
+                Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(code), workspace)
+            } else {
                 isWorkspaceLoaded = true
             }
-        })
-        
-        window.onload = () => { 
-            Blockly.Xml.domToWorkspace(Blockly.Xml.textToDom(getCode()), workspace) //Restoring the workspace
-        }
+        })()
     </script>
 </html>
